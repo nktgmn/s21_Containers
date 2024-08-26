@@ -77,10 +77,10 @@ bool operator==(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
         res = false;
     }
 
-    if ((s21_vec.size() != vec.size()) || (s21_vec.capacity() != vec.capacity())) {
+    if ((s21_vec.size() != vec.size()) ||
+        (s21_vec.capacity() != vec.capacity())) {
         res = false;
     }
-
 
     return res;
 }
@@ -89,6 +89,5 @@ template <typename T, typename N>
 bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
     return !(s21_vec == vec);
 }
-
 
 #endif  // S21_TEST_H_

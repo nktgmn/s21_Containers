@@ -72,9 +72,7 @@ vector<T> &vector<T>::operator=(const vector &other) {
 
         size_t new_cap = other.capacity_ > capacity_ ? other.capacity_ : capacity_;
 
-        T *new_data =
-            reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
-        ;
+        T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
         try {
             for (; k < other.size_; ++k) {
@@ -106,16 +104,46 @@ vector<T> &vector<T>::operator=(vector &&other) noexcept {
         clear();
         delete[] reinterpret_cast<char *>(data_);
 
-        size_t new_cap = other.capacity_ > capacity_ ? other.capacity_ : capacity_;
-
         size_ = other.size_;
-        capacity_ = new_cap;
+        capacity_ = other.capacity_;
         data_ = other.data_;
 
         other.data_ = nullptr;
         other.capacity_ = 0;
         other.size_ = 0;
     }
+
+    return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator=(std::initializer_list<T> ilist) {
+    size_t k = 0;
+
+    size_t new_cap = ilist.size() > capacity_ ? ilist.size() : capacity_;
+
+    T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
+
+    try {
+        for (const auto &elem : ilist) {
+            new (new_data + k) T(elem);
+            ++k;
+        }
+
+    } catch (...) {
+        for (size_t i = 0; i < k; ++i) {
+            (new_data + i)->~T();
+        }
+        delete[] reinterpret_cast<char *>(new_data);
+        throw;
+    }
+
+    clear();
+    delete[] reinterpret_cast<char *>(data_);
+
+    data_ = new_data;
+    capacity_ = new_cap;
+    size_ = ilist.size();
 
     return *this;
 }
@@ -305,7 +333,8 @@ typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, size_t count, const T &value) {
+typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
+                                               size_t count, const T &value) {
     size_t diff = 0;
     ConstIterator counter_pos = cbegin();
     while (counter_pos != pos) {
@@ -662,7 +691,8 @@ bool operator==(const s21::vector<T> &left, const s21::vector<T> &right) {
         ++right_it;
     }
 
-    if ((left.size() != right.size()) || (left.capacity() != right.capacity())) {
+    if ((left.size() != right.size()) ||
+        (left.capacity() != right.capacity())) {
         res = false;
     }
 

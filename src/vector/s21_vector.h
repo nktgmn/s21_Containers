@@ -21,6 +21,7 @@ class vector {
 
     vector &operator=(const vector &other);
     vector &operator=(vector &&other) noexcept;
+    vector &operator=(std::initializer_list<T> ilist);
 
     T &at(size_t pos);
     const T &at(size_t pos) const;

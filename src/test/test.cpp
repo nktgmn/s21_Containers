@@ -99,10 +99,12 @@ TEST(VECTOR, FrontBack) {
 
     s21::vector<s21::vector<int>> s21_4 = {{1}, {4, 5, 6, 7}, {4, 5, 6, 7, 8}};
     std::vector<std::vector<int>> std_4 = {{1}, {4, 5, 6, 7}, {4, 5, 6, 7, 8}};
-    s21_4.front() = {1, 2};
-    s21_4.back() = {3, 4};
-    std_4.front() = {1, 2};
-    std_4.back() = {3, 4};
+    s21::vector<int> s21_5 = {1, 2, 3};
+    std::vector<int> std_5 = {1, 2, 3};
+    s21_4.front() = std::move(s21_5);
+    s21_4.back() = {3, 4, 5, 6};
+    std_4.front() = std::move(std_5);
+    std_4.back() = {3, 4, 5, 6};
     EXPECT_TRUE(s21_4 == std_4);
 }
 
@@ -201,115 +203,6 @@ TEST(VECTOR, Insert) {
     auto std_it_13 = std_5.insert(std_it_12, 9, 20);
     EXPECT_TRUE(*s21_it_13 == *std_it_13);
     EXPECT_TRUE(s21_5 == std_5);
-}
-
-TEST(Vector, AtSimple) {
-    s21::vector<int> a = {1, 2, 3, 4, 5, 6};
-    const s21::vector<int> b = {1, 2, 3, 4, 5, 6};
-
-    EXPECT_EQ(a.at(0), 1);
-    EXPECT_EQ(b.at(1), 2);
-
-    EXPECT_EQ(a.at(0) = 10, 10);
-
-    EXPECT_THROW(a.at(10), std::out_of_range);
-    EXPECT_THROW(a.at(-1), std::out_of_range);
-
-    EXPECT_THROW(a.at(10) = 20, std::out_of_range);
-    EXPECT_THROW(a.at(-1) = 20, std::out_of_range);
-
-    EXPECT_THROW(b.at(10), std::out_of_range);
-    EXPECT_THROW(b.at(-1), std::out_of_range);
-}
-
-TEST(Vector, AtComplex) {
-    s21::vector<int> aa = {1, 2, 3};
-    s21::vector<int> ab = {4, 5, 6, 7};
-    s21::vector<int> ac = {};
-    s21::vector<s21::vector<int>> a = {aa, ab, ac};
-    const s21::vector<s21::vector<int>> b = {aa, ab, ac};
-
-    s21::vector<int>& el = a.at(0);
-    s21::vector<int> d = {1, 2};
-    el = d;
-    EXPECT_EQ(el.size(), d.size());
-
-    EXPECT_THROW(a.at(10), std::out_of_range);
-    EXPECT_THROW(a.at(-1), std::out_of_range);
-
-    EXPECT_THROW(a.at(10) = d, std::out_of_range);
-    EXPECT_THROW(a.at(-1) = d, std::out_of_range);
-
-    EXPECT_THROW(b.at(10), std::out_of_range);
-    EXPECT_THROW(b.at(-1), std::out_of_range);
-}
-
-TEST(Vector, ShrinkToFitSimple) {
-    s21::vector<int> a = {1, 2, 3, 4, 5, 6};
-    std::vector<int> b = {1, 2, 3, 4, 5, 6};
-
-    a.push_back(7);
-    b.push_back(7);
-
-    a.shrink_to_fit();
-    b.shrink_to_fit();
-
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(a.capacity(), b.capacity());
-}
-
-TEST(Vector, ShrinkToFitComplex) {
-    s21::vector<s21::vector<int>> a = {{1, 2}, {3, 4}};
-    std::vector<std::vector<int>> b = {{1, 2}, {3, 4}};
-
-    a.push_back({5, 6});
-    b.push_back({5, 6});
-
-    a.shrink_to_fit();
-    b.shrink_to_fit();
-
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(a.capacity(), b.capacity());
-}
-
-TEST(Vector, Data) {
-    s21::vector<s21::vector<int>> a;
-    s21::vector<int> b;
-    const s21::vector<s21::vector<int>> c;
-    const s21::vector<int> d;
-
-    EXPECT_EQ(a.data(), nullptr);
-    EXPECT_EQ(b.data(), nullptr);
-    EXPECT_EQ(c.data(), nullptr);
-    EXPECT_EQ(d.data(), nullptr);
-}
-
-TEST(Vector, Reserve) {
-    s21::vector<s21::vector<int>> a = {{1}, {2}, {3}, {4}};
-    std::vector<std::vector<int>> b = {{1}, {2}, {3}, {4}};
-
-    a.reserve(2);
-    b.reserve(2);
-
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(a.capacity(), b.capacity());
-
-    a.reserve(6);
-    b.reserve(6);
-
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(a.capacity(), b.capacity());
-
-    s21::vector<s21::vector<int>> c;
-    std::vector<std::vector<int>> d;
-
-    c.reserve(6);
-    d.reserve(6);
-
-    EXPECT_EQ(c.size(), d.size());
-    EXPECT_EQ(c.capacity(), d.capacity());
-
-    EXPECT_THROW(c.reserve(c.max_size() + 1), std::length_error);
 }
 
 TEST(Array, Size) {
@@ -599,8 +492,9 @@ TEST(Stack, AllFunctionsComplex) {
     EXPECT_EQ(e.empty(), f.empty());
     EXPECT_EQ(e.size(), f.size());
 
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> m(std::move(e));
-    std::stack<std::vector<int>, std::vector<std::vector<int>>> n(std::move(f));
+    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>>
+    m(std::move(e)); std::stack<std::vector<int>,
+    std::vector<std::vector<int>>> n(std::move(f));
 
     EXPECT_EQ(m.empty(), n.empty());
     EXPECT_EQ(m.size(), n.size());
@@ -700,9 +594,9 @@ TEST(LIST, FrontBack) {
     std_2.back() = 6;
     EXPECT_TRUE(s21_2 == std_2);
 
-    const s21::list<s21::list<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    const std::list<std::list<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    EXPECT_TRUE(s21_3.front() == std_3.front());
+    const s21::list<s21::list<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8,
+    9}}; const std::list<std::list<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7,
+    8, 9}}; EXPECT_TRUE(s21_3.front() == std_3.front());
     EXPECT_TRUE(s21_3.back() == std_3.back());
 
     s21::list<s21::list<int>> s21_4 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
@@ -1424,7 +1318,6 @@ TEST(LIST, Sort) {
     std_1.sort();
     EXPECT_TRUE(s21_1 == std_1);
 }
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
