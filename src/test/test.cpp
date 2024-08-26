@@ -205,6 +205,177 @@ TEST(VECTOR, Insert) {
     EXPECT_TRUE(s21_5 == std_5);
 }
 
+TEST(VECTOR, ElementAccess) {
+    s21::vector<int> s21_1 = {1, 2, 3, 4, 5};
+    const s21::vector<int> s21_2 = {1, 2, 3, 4, 5};
+    std::vector<int> std_1 = {1, 2, 3, 4, 5};
+    const std::vector<int> std_2 = {1, 2, 3, 4, 5};
+    EXPECT_THROW(s21_1.at(10), std::out_of_range);
+    EXPECT_THROW(s21_2.at(10), std::out_of_range);
+    s21_1.at(2) = 77;
+    std_1.at(2) = 77;
+    EXPECT_TRUE(s21_1.at(2) == std_1.at(2));
+    EXPECT_TRUE(s21_2.at(2) == std_2.at(2));
+    s21_1[3] = 88;
+    std_1[3] = 88;
+    EXPECT_TRUE(s21_1[3] == s21_1[3]);
+    EXPECT_TRUE(s21_2[3] == s21_2[3]);
+
+    s21::vector<s21::vector<int>> s21_3 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    const s21::vector<s21::vector<int>> s21_4 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    std::vector<std::vector<int>> std_3 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    const std::vector<std::vector<int>> std_4 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    s21_3.at(2) = {1, 2, 3};
+    std_3.at(2) = {1, 2, 3};
+    EXPECT_TRUE(s21_3.at(2) == std_3.at(2));
+    EXPECT_TRUE(s21_4.at(2) == std_4.at(2));
+    s21_3[3] = {1, 2};
+    std_3[3] = {1, 2};
+    EXPECT_TRUE(s21_3[3] == s21_3[3]);
+    EXPECT_TRUE(s21_4[3] == s21_4[3]);
+}
+
+TEST(VECTOR, Data) {
+    s21::vector<int> s21_1 = {1, 2, 3, 4, 5};
+    std::vector<int> std_1 = {1, 2, 3, 4, 5};
+    EXPECT_TRUE(s21_1.data()[0] == std_1.data()[0]);
+
+    s21::vector<s21::vector<int>> s21_2 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    std::vector<std::vector<int>> std_2 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    EXPECT_TRUE(s21_2.data()[0] == std_2.data()[0]);
+
+    const s21::vector<int> s21_3 = {1, 2, 3, 4, 5};
+    const std::vector<int> std_3 = {1, 2, 3, 4, 5};
+    EXPECT_TRUE(s21_3.data()[0] == std_3.data()[0]);
+
+    const s21::vector<s21::vector<int>> s21_4 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    const std::vector<std::vector<int>> std_4 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    EXPECT_TRUE(s21_4.data()[0] == std_4.data()[0]);
+}
+
+TEST(VECTOR, ReserveShrink) {
+    s21::vector<int> s21_1 = {};
+    std::vector<int> std_1 = {};
+    s21_1.reserve(2);
+    std_1.reserve(2);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1.shrink_to_fit();
+    std_1.shrink_to_fit();
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21::vector<int> s21_2 = {1, 2};
+    std::vector<int> std_2 = {1, 2};
+    EXPECT_THROW(s21_2.reserve(s21_2.max_size() + 1), std::length_error);
+
+    s21::vector<int> s21_3 = {1, 2};
+    std::vector<int> std_3 = {1, 2};
+    s21_3.reserve(3);
+    std_3.reserve(3);
+    EXPECT_TRUE(s21_3 == std_3);
+    s21_3.shrink_to_fit();
+    std_3.shrink_to_fit();
+    EXPECT_TRUE(s21_3 == std_3);
+
+    s21::vector<s21::vector<int>> s21_4 = {};
+    std::vector<std::vector<int>> std_4 = {};
+    s21_4.reserve(2);
+    std_4.reserve(2);
+    EXPECT_TRUE(s21_4 == std_4);
+    s21_4.shrink_to_fit();
+    std_4.shrink_to_fit();
+    EXPECT_TRUE(s21_4 == std_4);
+
+    s21::vector<s21::vector<int>> s21_5 = {{1}, {2}};
+    std::vector<std::vector<int>> std_5 = {{1}, {2}};
+    s21_5.reserve(2);
+    std_5.reserve(2);
+    EXPECT_TRUE(s21_5 == std_5);
+    s21_5.shrink_to_fit();
+    std_5.shrink_to_fit();
+    EXPECT_TRUE(s21_5 == std_5);
+
+    s21::vector<s21::vector<int>> s21_6 = {{1}, {2}};
+    std::vector<std::vector<int>> std_6 = {{1}, {2}};
+    s21_6.reserve(10);
+    std_6.reserve(10);
+    EXPECT_TRUE(s21_6 == std_6);
+    s21_6.shrink_to_fit();
+    std_6.shrink_to_fit();
+    EXPECT_TRUE(s21_6 == std_6);
+}
+
+TEST(VECTOR, OperatorDoubeEq) {
+    s21::vector<s21::vector<int>> s21_1 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    s21::vector<s21::vector<int>> s21_2 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    EXPECT_TRUE(s21_1 == s21_2);
+
+    s21::vector<s21::vector<int>> s21_3 = {
+        {1, 2, 3}, {1, 7, 5}, {1}, {1, 2, 3, 4, 5}};
+    s21::vector<s21::vector<int>> s21_4 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    EXPECT_FALSE(s21_3 == s21_4);
+
+    s21::vector<s21::vector<int>> s21_5 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}};
+    s21::vector<s21::vector<int>> s21_6 = {
+        {1, 2, 3}, {1, 4, 5}, {1}, {1, 2, 3, 4, 5}, {2}};
+    EXPECT_FALSE(s21_5 == s21_6);
+}
+
+TEST(VECTOR, Resize) {
+    s21::vector<int> s21_1 = {};
+    std::vector<int> std_1 = {};
+    s21_1.resize(0);
+    std_1.resize(0);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1.resize(10);
+    std_1.resize(10);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1.reserve(20);
+    std_1.reserve(20);
+    s21_1.resize(15, 3);
+    std_1.resize(15, 3);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1.resize(45, 1);
+    std_1.resize(45, 1);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1.resize(5, -1);
+    std_1.resize(5, -1);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_THROW(s21_1.resize(s21_1.max_size() + 1, -1), std::length_error);
+
+    s21::vector<s21::vector<int>> s21_2 = {};
+    std::vector<std::vector<int>> std_2 = {};
+    s21_2.resize(0);
+    std_2.resize(0);
+    EXPECT_TRUE(s21_2 == std_2);
+    s21_2.resize(10);
+    std_2.resize(10);
+    EXPECT_TRUE(s21_2 == std_2);
+    s21_2.reserve(20);
+    std_2.reserve(20);
+    s21_2.resize(15, {3});
+    std_2.resize(15, {3});
+    EXPECT_TRUE(s21_2 == std_2);
+    s21_2.resize(45, {1, 2});
+    std_2.resize(45, {1, 2});
+    EXPECT_TRUE(s21_2 == std_2);
+    s21_2.resize(5, {});
+    std_2.resize(5, {});
+    EXPECT_TRUE(s21_2 == std_2);
+    EXPECT_THROW(s21_2.resize(s21_2.max_size() + 1, {-10}), std::length_error);
+}
+
 TEST(Array, Size) {
     s21::array<int, 3> a = {1, 2, 3};
 
@@ -492,9 +663,8 @@ TEST(Stack, AllFunctionsComplex) {
     EXPECT_EQ(e.empty(), f.empty());
     EXPECT_EQ(e.size(), f.size());
 
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>>
-    m(std::move(e)); std::stack<std::vector<int>,
-    std::vector<std::vector<int>>> n(std::move(f));
+    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> m(std::move(e));
+    std::stack<std::vector<int>, std::vector<std::vector<int>>> n(std::move(f));
 
     EXPECT_EQ(m.empty(), n.empty());
     EXPECT_EQ(m.size(), n.size());
@@ -594,9 +764,9 @@ TEST(LIST, FrontBack) {
     std_2.back() = 6;
     EXPECT_TRUE(s21_2 == std_2);
 
-    const s21::list<s21::list<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8,
-    9}}; const std::list<std::list<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7,
-    8, 9}}; EXPECT_TRUE(s21_3.front() == std_3.front());
+    const s21::list<s21::list<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    const std::list<std::list<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    EXPECT_TRUE(s21_3.front() == std_3.front());
     EXPECT_TRUE(s21_3.back() == std_3.back());
 
     s21::list<s21::list<int>> s21_4 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};

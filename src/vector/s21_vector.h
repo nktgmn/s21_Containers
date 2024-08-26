@@ -68,6 +68,9 @@ class vector {
 template <typename T>
 bool operator==(const s21::vector<T> &left, const s21::vector<T> &right);
 
+template <typename T>
+bool operator!=(const s21::vector<T> &left, const s21::vector<T> &right);
+
 }  // namespace s21
 
 #include "s21_vector.tpp"

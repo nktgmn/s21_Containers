@@ -70,7 +70,8 @@ vector<T> &vector<T>::operator=(const vector &other) {
     if (this != &other) {
         size_t k = 0;
 
-        size_t new_cap = other.capacity_ > capacity_ ? other.capacity_ : capacity_;
+        size_t new_cap =
+            other.capacity_ > capacity_ ? other.capacity_ : capacity_;
 
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
@@ -178,34 +179,22 @@ const T &vector<T>::operator[](size_t pos) const {
 
 template <typename T>
 T &vector<T>::front() {
-    if (empty()) {
-        throw std::out_of_range("FrontError: vector is empty");
-    }
-    return data_[0];
+    return *begin();
 }
 
 template <typename T>
 const T &vector<T>::front() const {
-    if (empty()) {
-        throw std::out_of_range("FrontError: vector is empty");
-    }
-    return data_[0];
+    return *cbegin();
 }
 
 template <typename T>
 T &vector<T>::back() {
-    if (empty()) {
-        throw std::out_of_range("BackError: vector is empty");
-    }
-    return data_[size_ - 1];
+    return *(--end());
 }
 
 template <typename T>
 const T &vector<T>::back() const {
-    if (empty()) {
-        throw std::out_of_range("BackError: vector is empty");
-    }
-    return data_[size_ - 1];
+    return *(--cend());
 }
 
 template <typename T>
@@ -236,7 +225,7 @@ size_t vector<T>::max_size() const noexcept {
 template <typename T>
 void vector<T>::reserve(size_t new_cap) {
     if (new_cap > max_size()) {
-        throw std::length_error("ReserveError: Large size for a new capacity");
+        throw std::length_error("ReserveError: New capacity is too large");
     } else if (new_cap > capacity_) {
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
@@ -412,22 +401,7 @@ typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
 
 template <typename T>
 typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator pos) {
-    Iterator it = begin() + (pos - cbegin());
-
-    if ((it < begin()) || (it >= end())) {
-        throw std::out_of_range("EraseError: Iterator out of range");
-    }
-
-    if (it == end() - 1) {
-        (*it).~T();
-    }
-
-    for (; it != end() - 1; ++it) {
-        *it = std::move(*(it + 1));
-    }
-    --size_;
-
-    return it;
+    return Iterator(erase(pos, ++pos));
 }
 
 template <typename T>
@@ -437,12 +411,6 @@ typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator first,
     Iterator it_last = begin() + (last - cbegin());
 
     std::ptrdiff_t diff = last - first;
-
-    if ((first < cbegin()) || (last > cend())) {
-        throw std::out_of_range("EraseError: Iterators out of range");
-    } else if (last <= first) {
-        return it_last;
-    }
 
     if (it_first == end() - 1) {
         (*it_first).~T();
@@ -532,80 +500,24 @@ void vector<T>::pop_back() noexcept {
 
 template <typename T>
 void vector<T>::resize(size_t count) {
-    if (count > max_size()) {
-        throw std::length_error("ReserveError: Large size for a new capacity");
-    }
-
-    if (count > capacity_) {
-        size_t new_cap = capacity_ > 0 ? capacity_ * 2 : 1;
-
-        new_cap = count > new_cap ? count : new_cap;
-
-        T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
-
-        size_t k = 0;
-
-        try {
-            for (; k < count - capacity_; ++k) {
-                new (new_data + size_ + k) T();
-            }
-        } catch (...) {
-            for (size_t j = 0; j < k; ++j) {
-                new_data[size_ + j].~T();
-            }
-            delete[] reinterpret_cast<char *>(new_data);
-            throw;
-        }
-
-        for (size_t i = 0; i < size_; ++i) {
-            new (new_data + i) T(std::move(data_[i]));
-        }
-
-        delete[] reinterpret_cast<char *>(data_);
-
-        data_ = new_data;
-        capacity_ = new_cap;
-        size_ = count;
-    }
-
-    size_t i = 0;
-    try {
-        while (size_ < count) {
-            new (data_ + size_) T();
-            ++size_;
-            ++i;
-        }
-    } catch (...) {
-        for (size_t j = 0; j < i; ++j) {
-            data_[size_ - 1].~T();
-            --size_;
-        }
-        throw;
-    }
-
-    while (size_ > count) {
-        --size_;
-        data_[size_].~T();
-    }
+    resize(count, T());
 }
 
 template <typename T>
 void vector<T>::resize(size_t count, const T &value) {
     if (count > max_size()) {
-        throw std::length_error("ReserveError: Large size for a new capacity");
+        throw std::length_error("ResizeError: New capacity is too large");
     }
 
     if (count > capacity_) {
-        size_t new_cap = capacity_ > 0 ? capacity_ * 2 : 1;
-
-        new_cap = count > new_cap ? count : new_cap;
+        size_t new_cap = count > capacity_ * 2 ? count : capacity_ * 2;
 
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
         size_t k = 0;
 
         try {
-            for (; k < count - capacity_; ++k) {
+            for (; k < count - size_; ++k) {
                 new (new_data + size_ + k) T(value);
             }
         } catch (...) {
@@ -697,6 +609,11 @@ bool operator==(const s21::vector<T> &left, const s21::vector<T> &right) {
     }
 
     return res;
+}
+
+template <typename T>
+bool operator!=(const s21::vector<T> &left, const s21::vector<T> &right) {
+    return !(left == right);
 }
 
 }  // namespace s21
