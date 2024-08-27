@@ -407,22 +407,32 @@ typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator pos) {
 template <typename T>
 typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator first,
                                               vector<T>::ConstIterator last) {
-    Iterator it_first = begin() + (first - cbegin());
+    Iterator it_return;
     Iterator it_last = begin() + (last - cbegin());
 
-    std::ptrdiff_t diff = last - first;
+    if (first >= last) {
+        it_return = it_last;
+    } else {
+        Iterator it_first = begin() + (first - cbegin());
 
-    if (it_first == end() - 1) {
-        (*it_first).~T();
+        std::ptrdiff_t diff = last - first;
+
+        it_return = Iterator(it_first);
+
+        while ((it_first < it_last) && (it_last <= end())) {
+            (*it_first).~T();
+            ++it_first;
+        }
+
+        while (it_first < end()) {
+            *(it_first - diff) = std::move(*it_first);
+            ++it_first;
+        }
+
+        size_ -= diff;
     }
 
-    for (; ((it_first != end() - 1) && (it_first < it_last)); ++it_first) {
-        *it_first = std::move(*(it_first + diff));
-    }
-
-    size_ -= last - first;
-
-    return it_first;
+    return it_return;
 }
 
 template <typename T>

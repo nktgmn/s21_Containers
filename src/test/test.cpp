@@ -376,172 +376,185 @@ TEST(VECTOR, Resize) {
     EXPECT_THROW(s21_2.resize(s21_2.max_size() + 1, {-10}), std::length_error);
 }
 
-TEST(Array, Size) {
-    s21::array<int, 3> a = {1, 2, 3};
+TEST(VECTOR, Erase) {
+    s21::vector<int> s21_1 = {1, 2, 3, 4, 5, 6};
+    std::vector<int> std_1 = {1, 2, 3, 4, 5, 6};
+    auto s21_it_1 = s21_1.erase(s21_1.cbegin(), ++(++s21_1.cbegin()));
+    auto std_it_1 = std_1.erase(std_1.cbegin(), ++(++std_1.cbegin()));
+    EXPECT_TRUE(*s21_it_1 == *std_it_1);
+    EXPECT_TRUE(s21_1 == std_1);
 
-    size_t sz = 3;
+    s21::vector<int> s21_2 = {1, 2, 3, 4, 5, 6};
+    std::vector<int> std_2 = {1, 2, 3, 4, 5, 6};
+    auto s21_it_2 = s21_2.erase(s21_2.cbegin(), s21_2.cend());
+    std_2.erase(std_2.cbegin(), std_2.cend());
+    EXPECT_TRUE(s21_it_2 == s21_2.end());
+    EXPECT_TRUE(s21_2 == std_2);
 
-    EXPECT_EQ(a.size(), sz);
+    s21::vector<int> s21_3 = {1, 2, 3, 4, 5, 6};
+    std::vector<int> std_3 = {1, 2, 3, 4, 5, 6};
+    auto s21_it_3 = s21_1.erase(++s21_1.cbegin());
+    auto std_it_3 = std_1.erase(++std_1.cbegin());
+    EXPECT_TRUE(*s21_it_3 == *std_it_3);
+    EXPECT_TRUE(s21_3 == std_3);
+
+    s21::vector<int> s21_4 = {1, 2, 3, 4, 5, 6};
+    std::vector<int> std_4 = {1, 2, 3, 4, 5, 6};
+    auto s21_it_4 = s21_4.erase(s21_4.cbegin(), s21_4.cbegin());
+    auto std_it_4 = std_4.erase(std_4.cbegin(), std_4.cbegin());
+    EXPECT_TRUE(*s21_it_4 == *std_it_4);
+    EXPECT_TRUE(s21_4 == std_4);
 }
 
-TEST(Array, Empty) {
-    s21::array<int, 3> a = {1, 2, 3};
-    EXPECT_FALSE(a.empty());
+TEST(ARRAY, SizeMaxSizeEmpty) {
+    s21::array<int, 3> s21_1 = {1, 2, 3};
+    std::array<int, 3> std_1 = {1, 2, 5};
+    std::array<int, 4> std_2 = {1, 2, 5, 7};
+    s21::array<int, 0> s21_2;
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_FALSE(s21_1.size() == std_2.size());
+    EXPECT_TRUE(s21_2.empty());
+    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
-    s21::array<int, 0> b;
-
-    EXPECT_TRUE(b.empty());
+    s21::array<s21::array<int, 1>, 3> s21_3 = {{1}, {2}, {3}};
+    std::array<std::array<int, 1>, 3> std_3 = {{{1}, {2}, {3}}};
+    std::array<std::array<int, 1>, 4> std_4 = {{{1}, {2}, {5}, {7}}};
+    s21::array<s21::array<int, 1>, 0> s21_4;
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_FALSE(s21_3.size() == std_4.size());
+    EXPECT_TRUE(s21_4.empty());
+    EXPECT_TRUE(s21_3.max_size() == std_3.max_size());
 }
 
-TEST(Array, MaxSize) {
-    s21::array<int, 10> a;
-    std::array<int, 10> b;
+TEST(ARRAY, FrontBack) {
+    const s21::array<int, 2> s21_1 = {1, 2};
+    const std::array<int, 2> std_1 = {1, 2};
+    EXPECT_TRUE(s21_1.back() == std_1.back());
+    EXPECT_TRUE(s21_1.front() == std_1.front());
 
-    EXPECT_EQ(a.max_size(), b.max_size());
+    s21::array<int, 2> s21_2 = {1, 2};
+    std::array<int, 2> std_2 = {1, 2};
+    s21_2.front() = 5;
+    std_2.front() = 5;
+    s21_2.back() = 5;
+    std_2.back() = 5;
+    EXPECT_TRUE(s21_1.back() == std_1.back());
+    EXPECT_TRUE(s21_1.front() == std_1.front());
+
+    const s21::array<s21::array<int, 1>, 2> s21_3 = {{1}, {2}};
+    const std::array<std::array<int, 1>, 2> std_3 = {{{1}, {2}}};
+    EXPECT_TRUE(s21_3.back() == std_3.back());
+    EXPECT_TRUE(s21_3.front() == std_3.front());
+
+    s21::array<s21::array<int, 1>, 2> s21_4 = {{1}, {2}};
+    std::array<std::array<int, 1>, 2> std_4 = {{{1}, {2}}};
+    s21_4.front() = {5};
+    std_4.front() = {5};
+    s21_4.back() = {7};
+    std_4.back() = {7};
+    EXPECT_TRUE(s21_4.back() == std_4.back());
+    EXPECT_TRUE(s21_4.front() == std_4.front());
 }
 
-TEST(Array, Front) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
+TEST(ARRAY, AtBracketsData) {
+    const s21::array<int, 2> s21_1 = {1, 2};
+    const std::array<int, 2> std_1 = {1, 2};
+    EXPECT_TRUE(s21_1[1] == std_1[1]);
+    EXPECT_TRUE(s21_1.at(1) == std_1.at(1));
+    EXPECT_THROW(s21_1.at(5), std::out_of_range);
+    EXPECT_TRUE(*s21_1.data() == *std_1.data());
 
-    EXPECT_EQ(a.front(), b.front());
+    s21::array<int, 2> s21_2 = {1, 2};
+    std::array<int, 2> std_2 = {1, 2};
+    s21_2[1] = 4;
+    std_2[1] = 4;
+    s21_2.at(0) = 5;
+    std_2.at(0) = 5;
+    EXPECT_TRUE(s21_2[1] == std_2[1]);
+    EXPECT_TRUE(s21_2.at(0) == std_2.at(0));
+    EXPECT_THROW(s21_2.at(5), std::out_of_range);
+    EXPECT_TRUE(s21_2 == std_2);
+    s21_2.data()[0] = 5;
+    std_2.data()[0] = 5;
+    EXPECT_TRUE(s21_2 == std_2);
 
-    int& c = a.front();
-    c = 3;
-    int& d = b.front();
-    d = 3;
+    const s21::array<s21::array<int, 1>, 2> s21_3 = {{1}, {2}};
+    const std::array<std::array<int, 1>, 2> std_3 = {{{1}, {2}}};
+    EXPECT_TRUE(s21_3[1] == std_3[1]);
+    EXPECT_TRUE(s21_3.at(1) == std_3.at(1));
+    EXPECT_THROW(s21_3.at(5), std::out_of_range);
+    EXPECT_TRUE(*s21_3.data() == *std_3.data());
 
-    EXPECT_EQ(a.front(), b.front());
-
-    s21::array<s21::array<int, 3>, 2> e = {{{1, 2, 3}, {4, 5, 6}}};
-    std::array<std::array<int, 3>, 2> f = {{{1, 2, 3}, {4, 5, 6}}};
-
-    s21::array<int, 3> g = e.front();
-    std::array<int, 3> h = f.front();
-
-    g = {7, 8, 9};
-    h = {7, 8, 9};
-
-    EXPECT_EQ(g.front(), h.front());
-
-    const s21::array<int, 2> m = {1, 2};
-    const std::array<int, 2> n = {1, 2};
-
-    EXPECT_EQ(m.front(), n.front());
+    s21::array<s21::array<int, 1>, 2> s21_4 = {{1}, {2}};
+    std::array<std::array<int, 1>, 2> std_4 = {{{1}, {2}}};
+    s21_4[1] = {4};
+    std_4[1] = {4};
+    s21_4.at(0) = {5};
+    std_4.at(0) = {5};
+    EXPECT_TRUE(s21_4[1] == std_4[1]);
+    EXPECT_TRUE(s21_4.at(0) == std_4.at(0));
+    EXPECT_THROW(s21_4.at(5), std::out_of_range);
 }
 
-TEST(Array, OperatorBrackets) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
-    a[0] = 2;
-    b[0] = 2;
-    EXPECT_EQ(a[0], b[0]);
-
-    const s21::array<int, 2> e = {1, 2};
-    const std::array<int, 2> f = {1, 2};
-    const int& c = e[1];
-    const int& d = f[1];
-    EXPECT_EQ(c, d);
+TEST(ARRAY, Iterators) {
+    s21::array<int, 3> s21_1 = {1, 2, 3};
+    std::array<int, 3> std_1 = {1, 2, 3};
+    EXPECT_TRUE(*s21_1.begin() == *std_1.begin());
+    EXPECT_TRUE(*s21_1.end() == *std_1.end());
+    EXPECT_TRUE(*s21_1.cbegin() == *std_1.cbegin());
+    EXPECT_TRUE(*s21_1.cend() == *std_1.cend());
 }
 
-TEST(Array, At) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
-    a.at(0) = 2;
-    b.at(0) = 2;
-    EXPECT_EQ(a.at(0), b.at(0));
-    EXPECT_THROW(a.at(5), std::out_of_range);
+TEST(ARRAY, FillSwapEqual) {
+    s21::array<int, 3> s21_1 = {1, 2, 3};
+    std::array<int, 3> std_1 = {1, 2, 3};
+    s21_1.fill(65);
+    std_1.fill(65);
+    EXPECT_TRUE(s21_1 == std_1);
 
-    const s21::array<int, 2> e = {1, 2};
-    const std::array<int, 2> f = {1, 2};
-    const int& c = e.at(1);
-    const int& d = f.at(1);
-    EXPECT_EQ(c, d);
-    EXPECT_THROW(e.at(5), std::out_of_range);
+    s21::array<s21::array<int, 1>, 2> s21_2 = {{1}, {2}};
+    std::array<std::array<int, 1>, 2> std_2 = {{{1}, {2}}};
+    s21_2.fill({65});
+    std_2.fill({65});
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21::array<int, 3> s21_3 = {4, 5, 6};
+    std::array<int, 3> std_3 = {4, 5, 6};
+    s21_3.swap(s21_1);
+    std_3.swap(std_1);
+    EXPECT_TRUE(s21_3 == std_3);
+
+    s21::array<s21::array<int, 1>, 2> s21_4 = {{11}, {22}};
+    EXPECT_TRUE(s21_1 != s21_3);
+    EXPECT_FALSE(s21_1 == s21_3);
+    EXPECT_TRUE(s21_2 != s21_4);
+    EXPECT_FALSE(s21_2 == s21_4);
 }
 
-TEST(Array, Back) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
+TEST(ARRAY, ConstructorAssign) {
+    s21::array<int, 3> s21_1 = {1, 2, 3};
+    std::array<int, 3> std_1 = {1, 2, 3};
+    s21::array<int, 3> s21_2(s21_1);
+    std::array<int, 3> std_2(std_1);
+    EXPECT_TRUE(s21_2 == std_2);
 
-    EXPECT_EQ(a.back(), b.back());
+    s21::array<int, 3> s21_3 = {4, 5, 6};
+    std::array<int, 3> std_3 = {4, 5, 6};
+    s21::array<int, 3> s21_4(std::move(s21_3));
+    std::array<int, 3> std_4(std::move(std_3));
+    EXPECT_TRUE(s21_4 == std_4);
 
-    int& c = a.back();
-    c = 3;
-    int& d = b.back();
-    d = 3;
+    s21::array<s21::array<int, 1>, 3> s21_5 = {{1}, {2}, {3}};
+    std::array<std::array<int, 1>, 3> std_5 = {{{1}, {2}, {3}}};
+    s21::array<s21::array<int, 1>, 3> s21_6(s21_5);
+    std::array<std::array<int, 1>, 3> std_6(std_5);
+    EXPECT_TRUE(s21_6 == std_6);
 
-    EXPECT_EQ(a.back(), b.back());
-
-    s21::array<s21::array<int, 3>, 2> e = {{{1, 2, 3}, {4, 5, 6}}};
-    std::array<std::array<int, 3>, 2> f = {{{1, 2, 3}, {4, 5, 6}}};
-
-    s21::array<int, 3> g = e.back();
-    std::array<int, 3> h = f.back();
-
-    g = {7, 8, 9};
-    h = {7, 8, 9};
-
-    EXPECT_EQ(g.back(), h.back());
-
-    const s21::array<int, 2> m = {1, 2};
-    const std::array<int, 2> n = {1, 2};
-
-    EXPECT_EQ(m.back(), n.back());
-}
-
-TEST(Array, Data) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
-    EXPECT_EQ(*(a.data()), *(b.data()));
-
-    const s21::array<int, 2> c = {1, 2};
-    const std::array<int, 2> d = {1, 2};
-    EXPECT_EQ(*(c.data()), *(d.data()));
-}
-
-TEST(Array, Move) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
-    s21::array<int, 2> c = std::move(a);
-    std::array<int, 2> d = std::move(b);
-
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(c.size(), b.size());
-    EXPECT_EQ(c.size(), d.size());
-    EXPECT_EQ(a[0], b[0]);
-    EXPECT_EQ(c[0], b[0]);
-    EXPECT_EQ(c[0], d[0]);
-}
-
-TEST(Array, Fill) {
-    s21::array<int, 2> a = {1, 2};
-    std::array<int, 2> b = {1, 2};
-    a.fill(3);
-    b.fill(3);
-    EXPECT_EQ(a.size(), b.size());
-    EXPECT_EQ(a[1], b[1]);
-    EXPECT_EQ(a[1], 3);
-}
-
-TEST(Array, Swap) {
-    s21::array<int, 2> a = {1, 2};
-    s21::array<int, 2> b = {3, 4};
-    std::array<int, 2> c = {1, 2};
-    std::array<int, 2> d = {3, 4};
-    a.swap(b);
-    c.swap(d);
-    EXPECT_EQ(d[1], b[1]);
-    EXPECT_EQ(a[1], c[1]);
-}
-
-TEST(Array, Iterators) {
-    s21::array<int, 3> a = {1, 2, 3};
-    std::array<int, 3> b = {1, 2, 3};
-    EXPECT_EQ(*a.begin(), *b.begin());
-    EXPECT_EQ(*a.end(), *b.end());
-    EXPECT_EQ(*a.cbegin(), *b.cbegin());
-    EXPECT_EQ(*a.cend(), *b.cend());
+    s21::array<s21::array<int, 1>, 3> s21_7 = {{1}, {2}, {3}};
+    std::array<std::array<int, 1>, 3> std_7 = {{{1}, {2}, {3}}};
+    s21::array<s21::array<int, 1>, 3> s21_8(std::move(s21_7));
+    std::array<std::array<int, 1>, 3> std_8(std::move(std_7));
+    EXPECT_TRUE(s21_8 == std_8);
 }
 
 TEST(Stack, AllFunctionsSimple) {

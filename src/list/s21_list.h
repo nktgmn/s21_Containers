@@ -79,6 +79,7 @@ class list {
 
     list& operator=(const list& other);
     list& operator=(list&& other) noexcept;
+    list& operator=(std::initializer_list<T> ilist);
 
     T& front();
     const T& front() const;

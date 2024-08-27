@@ -60,12 +60,12 @@ list<T>::~list() noexcept {
 template <typename T>
 list<T>& list<T>::operator=(const list& other) {
     if (this != &other) {
-        clear();
-
         if (other.size() > 0) {
-            size_ = other.size();
-
             s21::list<T> new_list(other);
+
+            clear();
+
+            size_ = other.size();
 
             fake_node.next = new_list.begin().ptr_;
             new_list.begin().ptr_->prev = static_cast<Node*>(&fake_node);
@@ -76,6 +76,8 @@ list<T>& list<T>::operator=(const list& other) {
             new_list.fake_node.next = &(new_list.fake_node);
             new_list.fake_node.prev = &(new_list.fake_node);
             new_list.size_ = 0;
+        } else {
+            clear();
         }
     }
 
@@ -100,6 +102,31 @@ list<T>& list<T>::operator=(list&& other) noexcept {
             other.fake_node.prev = &(other.fake_node);
             other.size_ = 0;
         }
+    }
+
+    return *this;
+}
+
+template <typename T>
+list<T>& list<T>::operator=(std::initializer_list<T> ilist) {
+    if (ilist.size() > 0) {
+        s21::list<T> new_list(ilist);
+
+        clear();
+
+        size_ = ilist.size();
+
+        fake_node.next = new_list.begin().ptr_;
+        new_list.begin().ptr_->prev = static_cast<Node*>(&fake_node);
+
+        fake_node.prev = (--new_list.end()).ptr_;
+        (--new_list.end()).ptr_->next = static_cast<Node*>(&fake_node);
+
+        new_list.fake_node.next = &(new_list.fake_node);
+        new_list.fake_node.prev = &(new_list.fake_node);
+        new_list.size_ = 0;
+    } else {
+        clear();
     }
 
     return *this;

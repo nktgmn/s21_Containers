@@ -25,6 +25,14 @@ bool operator==(const s21::vector<T>& s21_vec, const std::vector<N>& vec);
 template <typename T, typename N>
 bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec);
 
+template <typename T, typename S, size_t N>
+bool operator==(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array);
+
+template <typename T, typename S, size_t N>
+bool operator!=(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array);
+
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst) {
     bool res = true;
@@ -88,6 +96,26 @@ bool operator==(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
 template <typename T, typename N>
 bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
     return !(s21_vec == vec);
+}
+
+template <typename T, typename S, size_t N>
+bool operator==(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array) {
+    bool res = true;
+
+    for (size_t i = 0; i < N; ++i) {
+        if (s21_array[i] != array[i]) {
+            res = false;
+        }
+    }
+
+    return res;
+}
+
+template <typename T, typename S, size_t N>
+bool operator!=(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array) {
+    return !(s21_array == array);
 }
 
 #endif  // S21_TEST_H_

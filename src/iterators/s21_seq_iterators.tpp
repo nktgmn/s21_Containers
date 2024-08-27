@@ -19,6 +19,15 @@ ConstSequenceIterator<T>::ConstSequenceIterator(const T* ptr) noexcept
     : ptr_(ptr) {}
 
 template <typename T>
+SequenceIterator<T>::SequenceIterator(const SequenceIterator& other) noexcept
+    : ptr_(other.ptr_) {}
+
+template <typename T>
+ConstSequenceIterator<T>::ConstSequenceIterator(
+    const ConstSequenceIterator& other) noexcept
+    : ptr_(other.ptr_) {}
+
+template <typename T>
 SequenceIterator<T>::~SequenceIterator() noexcept {}
 
 template <typename T>

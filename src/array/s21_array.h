@@ -18,7 +18,9 @@ class array {
     using Iterator = SequenceIterator<T>;
     using ConstIterator = ConstSequenceIterator<T>;
 
-    array& operator=(const array& other) noexcept;
+    array& operator=(const array& other);
+    array& operator=(array&& other) noexcept;
+    array& operator=(std::initializer_list<T> ilist);
 
     T& at(size_t pos);
     const T& at(size_t pos) const;
@@ -47,6 +49,12 @@ class array {
     T data_[N];
     size_t size_ = N;
 };
+
+template <typename T, std::size_t N>
+bool operator==(const array<T, N>& left, const array<T, N>& right);
+
+template <typename T, std::size_t N>
+bool operator!=(const array<T, N>& left, const array<T, N>& right);
 
 }  // namespace s21
 
