@@ -1,1 +1,0 @@
-genhtml -o test/gcov/report test/gcov/coverage.info --ignore-errors inconsistent

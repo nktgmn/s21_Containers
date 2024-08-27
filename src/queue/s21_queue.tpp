@@ -49,12 +49,12 @@ const T& queue<T, Container>::back() const {
 
 template <typename T, typename Container>
 T& queue<T, Container>::front() {
-    return c_.back();
+    return c_.front();
 }
 
 template <typename T, typename Container>
 const T& queue<T, Container>::front() const {
-    return c_.back();
+    return c_.front();
 }
 
 template <typename T, typename Container>

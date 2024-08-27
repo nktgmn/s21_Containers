@@ -631,6 +631,92 @@ TEST(STACK, All) {
     EXPECT_TRUE(s21_3.empty() == std_3.empty());
 }
 
+TEST(QUEUE, All) {
+    s21::queue<int, s21::list<int>> s21_0 = {1, 2};
+    EXPECT_TRUE(s21_0.size() == 2);
+    EXPECT_FALSE(s21_0.empty());
+    EXPECT_TRUE(s21_0.front() == 1);
+    EXPECT_TRUE(s21_0.back() == 2);
+
+    s21::queue<int, s21::list<int>> s21_1;
+    std::queue<int, std::list<int>> std_1;
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+    for (int k = 0; k < 3; ++k) {
+        s21_1.push(k);
+        std_1.push(k);
+    }
+    for (int k = 0; k < 3; ++k) {
+        s21_1.push(std::move(k));
+        std_1.push(std::move(k));
+    }
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.front() == std_1.front());
+    EXPECT_TRUE(s21_1.back() == std_1.back());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+    for (int k = 0; k < 3; ++k) {
+        s21_1.pop();
+        std_1.pop();
+    }
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.front() == std_1.front());
+    EXPECT_TRUE(s21_1.back() == std_1.back());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+
+    const s21::queue<int, s21::list<int>> s21_2(s21_1);
+    const std::queue<int, std::list<int>> std_2(std_1);
+    EXPECT_TRUE(s21_2.size() == std_2.size());
+    EXPECT_TRUE(s21_2.front() == std_2.front());
+    EXPECT_TRUE(s21_2.back() == std_2.back());
+    EXPECT_TRUE(s21_2.empty() == std_2.empty());
+
+    s21::queue<int, s21::list<int>> s21_3;
+    std::queue<int, std::list<int>> std_3;
+    s21_3 = s21_1;
+    std_3 = std_1;
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.back() == std_3.back());
+    EXPECT_TRUE(s21_3.front() == std_3.front());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
+    s21_3.front() = 10;
+    std_3.front() = 10;
+    s21_3.back() = 20;
+    std_3.back() = 20;
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.front() == std_3.front());
+    EXPECT_TRUE(s21_3.back() == std_3.back());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
+
+    s21::queue<int, s21::list<int>> s21_4;
+    std::queue<int, std::list<int>> std_4;
+    s21_4 = std::move(s21_1);
+    std_4 = std::move(std_1);
+    EXPECT_TRUE(s21_4.size() == std_4.size());
+    EXPECT_TRUE(s21_4.front() == std_4.front());
+    EXPECT_TRUE(s21_4.back() == std_4.back());
+    EXPECT_TRUE(s21_4.empty() == std_4.empty());
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+
+    s21::queue<int, s21::list<int>> s21_5(std::move(s21_4));
+    std::queue<int, std::list<int>> std_5(std::move(std_4));
+    EXPECT_TRUE(s21_5.size() == std_5.size());
+    EXPECT_TRUE(s21_5.front() == std_5.front());
+    EXPECT_TRUE(s21_5.back() == std_5.back());
+    EXPECT_TRUE(s21_5.empty() == std_5.empty());
+
+    s21_5.swap(s21_3);
+    std_5.swap(std_3);
+    EXPECT_TRUE(s21_5.size() == std_5.size());
+    EXPECT_TRUE(s21_5.front() == std_5.front());
+    EXPECT_TRUE(s21_5.back() == std_5.back());
+    EXPECT_TRUE(s21_5.empty() == std_5.empty());
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.front() == std_3.front());
+    EXPECT_TRUE(s21_3.back() == std_3.back());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
+}
+
 TEST(LIST, Constructors) {
     s21::list<int> s21_1;
     std::list<int> std_1;

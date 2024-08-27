@@ -35,7 +35,7 @@ class queue {
     void swap(queue& other) noexcept;
 
    private:
-    Container c;
+    Container c_;
 };
 
 }  // namespace s21
