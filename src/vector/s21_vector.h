@@ -66,10 +66,10 @@ class vector {
 };
 
 template <typename T>
-bool operator==(const s21::vector<T> &left, const s21::vector<T> &right);
+bool operator==(const vector<T> &left, const vector<T> &right);
 
 template <typename T>
-bool operator!=(const s21::vector<T> &left, const s21::vector<T> &right);
+bool operator!=(const vector<T> &left, const vector<T> &right);
 
 }  // namespace s21
 

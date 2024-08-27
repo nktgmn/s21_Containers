@@ -770,7 +770,7 @@ void list<T>::sort() {
 }
 
 template <typename T>
-bool operator==(const s21::list<T>& left, const s21::list<T>& right) {
+bool operator==(const list<T>& left, const list<T>& right) {
     bool res = true;
 
     auto left_it = left.cbegin();
@@ -790,6 +790,11 @@ bool operator==(const s21::list<T>& left, const s21::list<T>& right) {
     }
 
     return res;
+}
+
+template <typename T>
+bool operator!=(const list<T>& left, const list<T>& right) {
+    return !(left == right);
 }
 
 }  // namespace s21

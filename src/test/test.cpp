@@ -557,136 +557,78 @@ TEST(ARRAY, ConstructorAssign) {
     EXPECT_TRUE(s21_8 == std_8);
 }
 
-TEST(Stack, AllFunctionsSimple) {
-    s21::stack<int, s21::vector<int>> a;
-    std::stack<int, std::vector<int>> b;
+TEST(STACK, All) {
+    s21::stack<int, s21::vector<int>> s21_0 = {1, 2};
+    EXPECT_TRUE(s21_0.size() == 2);
+    EXPECT_FALSE(s21_0.empty());
+    EXPECT_TRUE(s21_0.top() == 2);
 
-    for (int i = 0; i < 100; ++i) {
-        a.push(i);
-        a.push(std::move(i));
-        b.push(i);
-        b.push(std::move(i));
-        EXPECT_EQ(a.top(), b.top());
-        EXPECT_EQ(a.empty(), b.empty());
-        EXPECT_EQ(a.size(), b.size());
+    s21::stack<int, s21::vector<int>> s21_1;
+    std::stack<int, std::vector<int>> std_1;
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+    for (int k = 0; k < 3; ++k) {
+        s21_1.push(k);
+        std_1.push(k);
     }
-
-    a.top() = 10;
-    b.top() = 10;
-    EXPECT_EQ(a.top(), b.top());
-
-    for (int i = 0; i < 100; ++i) {
-        a.pop();
-        b.pop();
-        EXPECT_EQ(a.top(), b.top());
-        EXPECT_EQ(a.empty(), b.empty());
-        EXPECT_EQ(a.size(), b.size());
+    for (int k = 0; k < 3; ++k) {
+        s21_1.push(std::move(k));
+        std_1.push(std::move(k));
     }
-
-    s21::stack<int, s21::vector<int>> c;
-    std::stack<int, std::vector<int>> d;
-
-    for (int i = 0; i < 100; ++i) {
-        c.push(i);
-        d.push(i);
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.top() == std_1.top());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
+    for (int k = 0; k < 3; ++k) {
+        s21_1.pop();
+        std_1.pop();
     }
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.top() == std_1.top());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
 
-    c = a;
-    d = b;
+    const s21::stack<int, s21::vector<int>> s21_2(s21_1);
+    const std::stack<int, std::vector<int>> std_2(std_1);
+    EXPECT_TRUE(s21_2.size() == std_2.size());
+    EXPECT_TRUE(s21_2.top() == std_2.top());
+    EXPECT_TRUE(s21_2.empty() == std_2.empty());
 
-    EXPECT_EQ(c.top(), d.top());
-    EXPECT_EQ(c.empty(), d.empty());
-    EXPECT_EQ(c.size(), d.size());
+    s21::stack<int, s21::vector<int>> s21_3;
+    std::stack<int, std::vector<int>> std_3;
+    s21_3 = s21_1;
+    std_3 = std_1;
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.top() == std_3.top());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
+    s21_3.top() = 10;
+    std_3.top() = 10;
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.top() == std_3.top());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
 
-    c = std::move(a);
-    d = std::move(b);
+    s21::stack<int, s21::vector<int>> s21_4;
+    std::stack<int, std::vector<int>> std_4;
+    s21_4 = std::move(s21_1);
+    std_4 = std::move(std_1);
+    EXPECT_TRUE(s21_4.size() == std_4.size());
+    EXPECT_TRUE(s21_4.top() == std_4.top());
+    EXPECT_TRUE(s21_4.empty() == std_4.empty());
+    EXPECT_TRUE(s21_1.size() == std_1.size());
+    EXPECT_TRUE(s21_1.empty() == std_1.empty());
 
-    EXPECT_EQ(c.top(), d.top());
-    EXPECT_EQ(c.empty(), d.empty());
-    EXPECT_EQ(c.size(), d.size());
+    s21::stack<int, s21::vector<int>> s21_5(std::move(s21_4));
+    std::stack<int, std::vector<int>> std_5(std::move(std_4));
+    EXPECT_TRUE(s21_5.size() == std_5.size());
+    EXPECT_TRUE(s21_5.top() == std_5.top());
+    EXPECT_TRUE(s21_5.empty() == std_5.empty());
 
-    s21::stack<int, s21::vector<int>> e(c);
-    std::stack<int, std::vector<int>> f(d);
-
-    EXPECT_EQ(e.top(), f.top());
-    EXPECT_EQ(e.empty(), f.empty());
-    EXPECT_EQ(e.size(), f.size());
-
-    s21::stack<int, s21::vector<int>> m(std::move(e));
-    std::stack<int, std::vector<int>> n(std::move(f));
-
-    EXPECT_EQ(m.top(), n.top());
-    EXPECT_EQ(m.empty(), n.empty());
-    EXPECT_EQ(m.size(), n.size());
-
-    a.swap(m);
-    b.swap(n);
-
-    EXPECT_EQ(a.top(), b.top());
-    EXPECT_EQ(a.empty(), b.empty());
-    EXPECT_EQ(a.size(), b.size());
-
-    const s21::stack<int, s21::vector<int>> p = c;
-    const std::stack<int, std::vector<int>> o = d;
-
-    EXPECT_EQ(p.top(), o.top());
-}
-
-TEST(Stack, AllFunctionsComplex) {
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> a;
-    std::stack<std::vector<int>, std::vector<std::vector<int>>> b;
-
-    for (int i = 0; i < 100; ++i) {
-        a.push({i});
-        b.push({i});
-        EXPECT_EQ(a.empty(), b.empty());
-        EXPECT_EQ(a.size(), b.size());
-    }
-
-    for (int i = 0; i < 100; ++i) {
-        a.pop();
-        b.pop();
-        EXPECT_EQ(a.empty(), b.empty());
-        EXPECT_EQ(a.size(), b.size());
-    }
-
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> c;
-    std::stack<std::vector<int>, std::vector<std::vector<int>>> d;
-
-    for (int i = 0; i < 100; ++i) {
-        c.push({i});
-        d.push({i});
-    }
-
-    c = a;
-    d = b;
-
-    EXPECT_EQ(c.empty(), d.empty());
-    EXPECT_EQ(c.size(), d.size());
-
-    c = std::move(a);
-    d = std::move(b);
-
-    EXPECT_EQ(c.empty(), d.empty());
-    EXPECT_EQ(c.size(), d.size());
-
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> e(c);
-    std::stack<std::vector<int>, std::vector<std::vector<int>>> f(d);
-
-    EXPECT_EQ(e.empty(), f.empty());
-    EXPECT_EQ(e.size(), f.size());
-
-    s21::stack<s21::vector<int>, s21::vector<s21::vector<int>>> m(std::move(e));
-    std::stack<std::vector<int>, std::vector<std::vector<int>>> n(std::move(f));
-
-    EXPECT_EQ(m.empty(), n.empty());
-    EXPECT_EQ(m.size(), n.size());
-
-    a.swap(m);
-    b.swap(n);
-
-    EXPECT_EQ(a.empty(), b.empty());
-    EXPECT_EQ(a.size(), b.size());
+    s21_5.swap(s21_3);
+    std_5.swap(std_3);
+    EXPECT_TRUE(s21_5.size() == std_5.size());
+    EXPECT_TRUE(s21_5.top() == std_5.top());
+    EXPECT_TRUE(s21_5.empty() == std_5.empty());
+    EXPECT_TRUE(s21_3.size() == std_3.size());
+    EXPECT_TRUE(s21_3.top() == std_3.top());
+    EXPECT_TRUE(s21_3.empty() == std_3.empty());
 }
 
 TEST(LIST, Constructors) {

@@ -128,7 +128,10 @@ class list {
 };
 
 template <typename T>
-bool operator==(const s21::list<T>& left, const s21::list<T>& right);
+bool operator==(const list<T>& left, const list<T>& right);
+
+template <typename T>
+bool operator!=(const list<T>& left, const list<T>& right);
 
 };  // namespace s21
 
