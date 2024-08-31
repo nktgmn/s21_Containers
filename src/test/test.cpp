@@ -1530,6 +1530,16 @@ TEST(LIST, Sort) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
+TEST(AVL, All) {
+    s21::AVL<int> s21_1;
+    for (int i = 0; i < 100; ++i) {
+        s21_1.insert(i);
+    }
+
+    s21_1.erase(20);
+    // std::cout << *s21_1.search(20) << std::endl;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

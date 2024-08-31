@@ -15,8 +15,7 @@ template <typename T, typename Container>
 queue<T, Container>::queue(std::initializer_list<T> init) : c_(init) {}
 
 template <typename T, typename Container>
-queue<T, Container>::queue(queue&& other) noexcept
-    : c_(std::move(other.c_)) {}
+queue<T, Container>::queue(queue&& other) noexcept : c_(std::move(other.c_)) {}
 
 template <typename T, typename Container>
 queue<T, Container>::~queue() {}

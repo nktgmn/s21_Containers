@@ -5,15 +5,16 @@
 
 #include <array>
 #include <list>
+#include <queue>
 #include <stack>
 #include <vector>
-#include <queue>
 
+#include "../AVLtree/s21_avl.tpp"
 #include "../array/s21_array.tpp"
 #include "../list/s21_list.tpp"
+#include "../queue/s21_queue.tpp"
 #include "../stack/s21_stack.tpp"
 #include "../vector/s21_vector.tpp"
-#include "../queue/s21_queue.tpp"
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst);
