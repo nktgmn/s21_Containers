@@ -1,0 +1,185 @@
+#include <iostream>
+
+template<typename Key, typename Value>
+class AVLNode {
+public:
+    Key key;
+    Value value;
+    AVLNode* left;
+    AVLNode* right;
+    int height;
+
+    AVLNode(const Key& k, const Value& v)
+        : key(k), value(v), left(nullptr), right(nullptr), height(1) {}
+};
+
+template<typename Key, typename Value>
+class AVLTree {
+private:
+    AVLNode<Key, Value>* root;
+
+    int height(AVLNode<Key, Value>* node) {
+        return node ? node->height : 0;
+    }
+
+    int balanceFactor(AVLNode<Key, Value>* node) {
+        return node ? height(node->left) - height(node->right) : 0;
+    }
+
+    AVLNode<Key, Value>* rotateRight(AVLNode<Key, Value>* y) {
+        AVLNode<Key, Value>* x = y->left;
+        AVLNode<Key, Value>* T2 = x->right;
+        
+        // Perform rotation
+        x->right = y;
+        y->left = T2;
+        
+        // Update heights
+        y->height = std::max(height(y->left), height(y->right)) + 1;
+        x->height = std::max(height(x->left), height(x->right)) + 1;
+        
+        // Return new root
+        return x;
+    }
+
+    AVLNode<Key, Value>* rotateLeft(AVLNode<Key, Value>* x) {
+        AVLNode<Key, Value>* y = x->right;
+        AVLNode<Key, Value>* T2 = y->left;
+        
+        // Perform rotation
+        y->left = x;
+        x->right = T2;
+        
+        // Update heights
+        x->height = std::max(height(x->left), height(x->right)) + 1;
+        y->height = std::max(height(y->left), height(y->right)) + 1;
+        
+        // Return new root
+        return y;
+    }
+
+    AVLNode<Key, Value>* insert(AVLNode<Key, Value>* node, const Key& key, const Value& value) {
+        // 1. Perform the normal BST insertion
+        if (!node) return new AVLNode<Key, Value>(key, value);
+        
+        if (key < node->key)
+            node->left = insert(node->left, key, value);
+        else if (key > node->key)
+            node->right = insert(node->right, key, value);
+        else
+            return node; // Duplicate keys are not allowed in this map implementation
+        
+        // 2. Update the height of this ancestor node
+        node->height = 1 + std::max(height(node->left), height(node->right));
+        
+        // 3. Get the balance factor of this ancestor node to check whether this node became unbalanced
+        int balance = balanceFactor(node);
+        
+        // 4. If the node becomes unbalanced, then there are 4 cases
+        
+        // Left Left Case
+        if (balance > 1 && key < node->left->key)
+            return rotateRight(node);
+        
+        // Right Right Case
+        if (balance < -1 && key > node->right->key)
+            return rotateLeft(node);
+        
+        // Left Right Case
+        if (balance > 1 && key > node->left->key) {
+            node->left = rotateLeft(node->left);
+            return rotateRight(node);
+        }
+        
+        // Right Left Case
+        if (balance < -1 && key < node->right->key) {
+            node->right = rotateRight(node->right);
+            return rotateLeft(node);
+        }
+        
+        // return the (unchanged) node pointer
+        return node;
+    }
+
+    AVLNode<Key, Value>* minValueNode(AVLNode<Key, Value>* node) {
+        AVLNode<Key, Value>* current = node;
+        
+        while (current->left)
+            current = current->left;
+        
+        return current;
+    }
+
+    AVLNode<Key, Value>* deleteNode(AVLNode<Key, Value>* root, const Key& key) {
+        // STEP 1: PERFORM STANDARD BST DELETE
+        if (!root) return root;
+        
+        if (key < root->key)
+            root->left = deleteNode(root->left, key);
+        else if (key > root->key)
+            root->right = deleteNode(root->right, key);
+        else {
+            if ((!root->left) || (!root->right)) {
+                AVLNode<Key, Value>* temp = root->left ? root->left : root->right;
+                
+                if (!temp) {
+                    temp = root;
+                    root = nullptr;
+                } else
+                    *root = *temp;
+                
+                delete temp;
+            } else {
+                AVLNode<Key, Value>* temp = minValueNode(root->right);
+                root->key = temp->key;
+                root->right = deleteNode(root->right, temp->key);
+            }
+        }
+        
+        if (!root) return root;
+        
+        // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+        root->height = std::max(height(root->left), height(root->right)) + 1;
+        
+        // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (TO CHECK WHETHER THIS NODE BECAME UNBALANCED)
+        int balance = balanceFactor(root);
+        
+        // Left Left Case
+        if (balance > 1 && balanceFactor(root->left) >= 0)
+            return rotateRight(root);
+        
+        // Left Right Case
+        if (balance > 1 && balanceFactor(root->left) < 0) {
+            root->left = rotateLeft(root->left);
+            return rotateRight(root);
+        }
+        
+        // Right Right Case
+        if (balance < -1 && balanceFactor(root->right) <= 0)
+            return rotateLeft(root);
+        
+        // Right Left Case
+        if (balance < -1 && balanceFactor(root->right) > 0) {
+            root->right = rotateRight(root->right);
+            return rotateLeft(root);
+        }
+        
+        return root;
+    }
+
+    Value* search(AVLNode<Key, Value>* node, const Key& key) const {
+        if (!node)
+            return nullptr;
+
+        if (key < node->key)
+            return search(node->left, key);
+        else if (key > node->key)
+            return search(node->right, key);
+        else
+            return &node->value;
+    }
+
+public:
+    AVLTree() : root(nullptr) {}
+
+    void insert(const Key& key, const Value&
