@@ -21,13 +21,53 @@ struct map<Key, Value>::Node : BaseNode {
 };
 
 template <typename Key, typename Value>
-map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
+map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {
+    std::cout << "base node crated" << std::endl;
+}
 
 template <typename Key, typename Value>
 map<Key, Value>::Node::Node(const pair& value) : BaseNode(), kv(value) {}
 
 template <typename Key, typename Value>
 map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+
+template <typename Key, typename Value>
+map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+    try {
+        for (auto it = other.cbegin(); it != other.cend(); ++it) {
+            insert(*it);
+        }
+    } catch(...) {
+        delete_node(static_cast<Node*>(fake_node));
+        throw;
+    }
+}
+
+template <typename Key, typename Value>
+map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+    try {
+        for (const auto& elem : init) {
+            insert(elem);
+            // std::cout << "insert " << elem.first << std::endl;
+        }
+    } catch (...) {
+        delete_node(static_cast<Node*>(fake_node));
+        throw;
+    }
+}
+
+template <typename Key, typename Value>
+map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
+    if (other.size() > 0) {
+        fake_node->left = other.fake_node->left;
+        fake_node->left->parent = fake_node;
+        leftmost = other.leftmost;
+
+        other.fake_node->left = nullptr;
+        other.leftmost = other.fake_node;
+        other.size_ = 0;
+    }
+}
 
 template <typename Key, typename Value>
 map<Key, Value>::~map() noexcept {
@@ -46,11 +86,13 @@ typename map<Key, Value>::iter map<Key, Value>::end() noexcept {
 
 template <typename Key, typename Value>
 typename map<Key, Value>::c_iter map<Key, Value>::cbegin() const noexcept {
+    std::cout << "cbegin " << leftmost << std::endl;
     return c_iter(leftmost);
 }
 
 template <typename Key, typename Value>
 typename map<Key, Value>::c_iter map<Key, Value>::cend() const noexcept {
+    std::cout << "cend " << fake_node << std::endl;
     return c_iter(fake_node);
 }
 
@@ -84,6 +126,7 @@ void map<Key, Value>::delete_node(Node* node) {
     if (node) {
         delete_node(static_cast<Node*>(node->left));
         delete_node(static_cast<Node*>(node->right));
+        // std::cout << "deleted " << static_cast<Node*>(node)->kv.first << std::endl;
         delete node;
         --size_;
     }
@@ -117,7 +160,7 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(
     }
 
     node->parent = new_root;
-    if (right != nullptr) {
+    if (right) {
         right->parent = node;
     }
 
@@ -138,7 +181,7 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(
 
     new_root->parent = node->parent;
     node->parent = new_root;
-    if (left != nullptr) {
+    if (left) {
         left->parent = node;
     }
 
@@ -174,8 +217,7 @@ map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
         return {node, false};
     }
 
-    node->height =
-        std::max(get_height(node->left), get_height(node->right)) + 1;
+    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
 
     int balance_factor = get_balance_factor(node);
 
@@ -199,6 +241,10 @@ map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
         value.first < static_cast<Node*>(node->right)->kv.first) {
         node->right = rotate_right(node->right);
         node = rotate_left(node);
+    }
+
+    if (node->parent == fake_node && fake_node->left != node) {
+        fake_node->left = node;
     }
 
     return {node, inserted};
@@ -265,18 +311,20 @@ map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
 // }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(
-    const pair& value) {
+void map<Key, Value>::clear() noexcept {
+    delete_node(fake_node->left);
+}
+
+template <typename Key, typename Value>
+std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pair& value) {
     auto insert_res = insert_private(fake_node->left, value);
-    if (fake_node->left == nullptr) {
+    if (!fake_node->left) {
         fake_node->left = insert_res.first;
         fake_node->left->parent = fake_node;
         leftmost = fake_node->left;
     }
 
-    std::pair<typename map<Key, Value>::iter, bool> res = {
-        MapIterator(insert_res.first), insert_res.second};
-    return res;
+    return {MapIterator(insert_res.first), insert_res.second};
 }
 
 // template <typename Key, typename Value>

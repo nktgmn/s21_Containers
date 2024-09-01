@@ -59,6 +59,8 @@ const typename map<Key, Value>::pair& map<Key, Value>::c_iter::operator*() noexc
 
 template <typename Key, typename Value>
 typename map<Key, Value>::iter& map<Key, Value>::iter::operator++() noexcept {
+    std::cout << static_cast<Node*>(node)->kv.first << ": " << node << std::endl;
+    std::cout << "left = " << node->left << " right = " << node->right << " parent = " << node->parent << std::endl;
     if (node->right) {
         node = node->right;
         while (node->left) {
@@ -73,6 +75,10 @@ typename map<Key, Value>::iter& map<Key, Value>::iter::operator++() noexcept {
         node = parent;
     }
 
+    std::cout << "->" << std::endl;
+
+    std::cout << static_cast<Node*>(node)->kv.first << ": " << node << std::endl;
+    std::cout << "left = " << node->left << " right = " << node->right << " parent = " << node->parent << std::endl;
     return *this;
 }
 

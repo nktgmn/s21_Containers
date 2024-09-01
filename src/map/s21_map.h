@@ -2,6 +2,7 @@
 #define S21_MAP_H_
 
 #include <initializer_list>
+#include <utility>
 
 namespace s21 {
 
@@ -14,8 +15,11 @@ class map {
     using pair = std::pair<const Key, Value>;
     using iter = typename map<Key, Value>::MapIterator;
     using c_iter = typename map<Key, Value>::ConstMapIterator;
-    
+
     map() noexcept;
+    map(const map& other);
+    map(std::initializer_list<pair> init);
+    map(map&& other);
     ~map() noexcept;
 
     iter begin() noexcept;
@@ -27,6 +31,7 @@ class map {
     size_t size() const noexcept;
     size_t max_size() const noexcept;
 
+    void clear() noexcept;
     std::pair<iter, bool> insert(const pair& value);
 
    private:
