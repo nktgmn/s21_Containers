@@ -9,9 +9,9 @@
 #include <stack>
 #include <vector>
 
-#include "../AVLtree/s21_avl.tpp"
 #include "../array/s21_array.tpp"
 #include "../list/s21_list.tpp"
+#include "../map/s21_map.tpp"
 #include "../queue/s21_queue.tpp"
 #include "../stack/s21_stack.tpp"
 #include "../vector/s21_vector.tpp"
@@ -35,6 +35,13 @@ bool operator==(const s21::array<T, N>& s21_array,
 template <typename T, typename S, size_t N>
 bool operator!=(const s21::array<T, N>& s21_array,
                 const std::array<S, N>& array);
+
+template <typename K, typename V>
+bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map);
+
+template <typename K, typename V>
+bool operator!=(const s21::map<K, V>& s21_map, const std::map<K, V>& map);
+
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst) {
@@ -119,6 +126,42 @@ template <typename T, typename S, size_t N>
 bool operator!=(const s21::array<T, N>& s21_array,
                 const std::array<S, N>& array) {
     return !(s21_array == array);
+}
+
+template <typename K, typename V>
+bool operator==(s21::map<K, V>& s21_map, std::map<K, V>& map) {
+    bool res = true;
+
+    auto s21_it_beg = s21_map.begin();
+    auto s21_it_end = s21_map.end();
+    auto it_beg = map.begin();
+    auto it_end = map.end();
+
+    while (s21_it_beg != s21_it_end) {
+        if (((*s21_it_beg).first != (*it_beg).first) || ((*s21_it_beg).second != (*it_beg).second)) {
+            res = false;
+            break;
+        }
+        ++s21_it_beg;
+        ++it_beg;
+    }
+
+    if (it_beg != it_end) {
+        res = false;
+    }
+    
+    // TODO эту херню + константность
+    // if ((s21_vec.size() != vec.size()) ||
+    //     (s21_vec.capacity() != vec.capacity())) {
+    //     res = false;
+    // }
+
+    return res;
+}
+
+template <typename K, typename V>
+bool operator!=(const s21::map<K, V>& s21_map, const std::map<K, V>& map) {
+    return !(s21_map == map);
 }
 
 #endif  // S21_TEST_H_

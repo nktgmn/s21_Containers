@@ -1530,14 +1530,20 @@ TEST(LIST, Sort) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
-TEST(AVL, All) {
-    s21::AVL<int> s21_1;
-    for (int i = 0; i < 100; ++i) {
-        s21_1.insert(i);
-    }
+TEST(MAP, All) {
+    s21::map<int, int> s21_1;
+    std::map<int, int> std_1;
 
-    s21_1.erase(20);
-    // std::cout << *s21_1.search(20) << std::endl;
+    std::vector<int> v = {20, 4, 26, 3, 9, 15, 30, 2, 7, 8};
+
+    for (auto it = v.begin(); it != v.end(); ++it) {
+        s21_1.insert({*it, *it + 1});
+        std_1.insert({*it, *it + 1});
+    } 
+
+    EXPECT_TRUE(s21_1 == std_1);
+
+
 }
 
 int main(int argc, char** argv) {
