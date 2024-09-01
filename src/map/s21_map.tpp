@@ -22,14 +22,16 @@ struct map<Key, Value>::Node : BaseNode {
 
 template <typename Key, typename Value>
 map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {
-    std::cout << "base node crated" << std::endl;
+    std::cout << "base node created" << std::endl;
 }
 
 template <typename Key, typename Value>
 map<Key, Value>::Node::Node(const pair& value) : BaseNode(), kv(value) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+    std::cout << "map created" << std::endl;
+}
 
 template <typename Key, typename Value>
 map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
@@ -126,9 +128,12 @@ void map<Key, Value>::delete_node(Node* node) {
     if (node) {
         delete_node(static_cast<Node*>(node->left));
         delete_node(static_cast<Node*>(node->right));
-        // std::cout << "deleted " << static_cast<Node*>(node)->kv.first << std::endl;
-        delete node;
-        --size_;
+        if (node == fake_node) {
+            delete static_cast<BaseNode*>(node);
+        } else {
+            --size_;
+            delete node;
+        }
     }
 }
 
