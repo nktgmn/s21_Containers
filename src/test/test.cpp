@@ -991,10 +991,8 @@ TEST(LIST, Erase) {
     EXPECT_TRUE(*s21_it_4 == *std_it_4);
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21::list<s21::list<int>> s21_2 = {{1, 2}, {3, 4},  {5, 6},
-                                       {7, 8}, {9, 10}, {11, 12}};
-    std::list<std::list<int>> std_2 = {{1, 2}, {3, 4},  {5, 6},
-                                       {7, 8}, {9, 10}, {11, 12}};
+    s21::list<s21::list<int>> s21_2 = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}};
+    std::list<std::list<int>> std_2 = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}};
     auto s21_it_5 = s21_2.cbegin();
     auto std_it_5 = std_2.cbegin();
     auto s21_it_6 = s21_2.erase(s21_it_5);
@@ -1056,10 +1054,8 @@ TEST(LIST, PushPop) {
     }
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21::list<s21::list<int>> s21_2 = {{1}, {2, 3}, {3, 4, 5},
-                                       {0}, {-2},   {2, 55}};
-    std::list<std::list<int>> std_2 = {{1}, {2, 3}, {3, 4, 5},
-                                       {0}, {-2},   {2, 55}};
+    s21::list<s21::list<int>> s21_2 = {{1}, {2, 3}, {3, 4, 5}, {0}, {-2}, {2, 55}};
+    std::list<std::list<int>> std_2 = {{1}, {2, 3}, {3, 4, 5}, {0}, {-2}, {2, 55}};
     s21_2.push_front({1, 2});
     std_2.push_front({1, 2});
     EXPECT_TRUE(s21_2 == std_2);
@@ -1539,11 +1535,9 @@ TEST(MAP, All) {
     for (auto it = v.begin(); it != v.end(); ++it) {
         s21_1.insert({*it, *it + 1});
         std_1.insert({*it, *it + 1});
-    } 
+    }
 
     EXPECT_TRUE(s21_1 == std_1);
-
-
 }
 
 int main(int argc, char** argv) {

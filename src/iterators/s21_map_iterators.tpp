@@ -6,21 +6,31 @@
 namespace s21 {
 
 template <typename Key, typename Value>
-map<Key, Value>::iterator::MapIterator() noexcept : node(nullptr) {}
+map<Key, Value>::iter::MapIterator() noexcept : node(nullptr) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::iterator::MapIterator(BaseNode* ptr) noexcept : node(ptr) {}
+map<Key, Value>::c_iter::ConstMapIterator() noexcept : node(nullptr) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::iterator::MapIterator(Node* ptr) noexcept : node(ptr) {}
+map<Key, Value>::iter::MapIterator(BaseNode* ptr) noexcept : node(ptr) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::iterator::MapIterator(const iterator& other) noexcept
-    : node(other.node) {}
+map<Key, Value>::c_iter::ConstMapIterator(BaseNode* ptr) noexcept : node(ptr) {}
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iterator& map<Key, Value>::iterator::operator=(
-    const iterator& other) noexcept {
+map<Key, Value>::iter::MapIterator(Node* ptr) noexcept : node(ptr) {}
+
+template <typename Key, typename Value>
+map<Key, Value>::c_iter::ConstMapIterator(Node* ptr) noexcept : node(ptr) {}
+
+template <typename Key, typename Value>
+map<Key, Value>::iter::MapIterator(const iter& other) noexcept : node(other.node) {}
+
+template <typename Key, typename Value>
+map<Key, Value>::c_iter::ConstMapIterator(const c_iter& other) noexcept : node(other.node) {}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter& map<Key, Value>::iter::operator=(const iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }
@@ -29,14 +39,26 @@ typename map<Key, Value>::iterator& map<Key, Value>::iterator::operator=(
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::pair&
-map<Key, Value>::iterator::operator*() noexcept {
+typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator=(const c_iter& other) noexcept {
+    if (this != &other) {
+        node = other.node;
+    }
+
+    return *this;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::pair& map<Key, Value>::iter::operator*() noexcept {
     return static_cast<Node*>(node)->kv;
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iterator&
-map<Key, Value>::iterator::operator++() noexcept {
+const typename map<Key, Value>::pair& map<Key, Value>::c_iter::operator*() noexcept {
+    return static_cast<Node*>(node)->kv;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter& map<Key, Value>::iter::operator++() noexcept {
     if (node->right) {
         node = node->right;
         while (node->left) {
@@ -55,8 +77,26 @@ map<Key, Value>::iterator::operator++() noexcept {
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iterator&
-map<Key, Value>::iterator::operator--() noexcept {
+typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator++() noexcept {
+    if (node->right) {
+        node = node->right;
+        while (node->left) {
+            node = node->left;
+        }
+    } else {
+        BaseNode* parent = node->parent;
+        while (parent && node == parent->right) {
+            node = parent;
+            parent = parent->parent;
+        }
+        node = parent;
+    }
+
+    return *this;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter& map<Key, Value>::iter::operator--() noexcept {
     if (node->left) {
         node = node->left;
         while (node->right) {
@@ -75,14 +115,41 @@ map<Key, Value>::iterator::operator--() noexcept {
 }
 
 template <typename Key, typename Value>
-bool map<Key, Value>::iterator::operator==(
-    const iterator& other) const noexcept {
+typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator--() noexcept {
+    if (node->left) {
+        node = node->left;
+        while (node->right) {
+            node = node->right;
+        }
+    } else {
+        BaseNode* parent = node->parent;
+        while (parent && node == parent->left) {
+            node = parent;
+            parent = parent->parent;
+        }
+        node = parent;
+    }
+
+    return *this;
+}
+
+template <typename Key, typename Value>
+bool map<Key, Value>::iter::operator==(const iter& other) const noexcept {
     return node == other.node;
 }
 
 template <typename Key, typename Value>
-bool map<Key, Value>::iterator::operator!=(
-    const iterator& other) const noexcept {
+bool map<Key, Value>::c_iter::operator==(const c_iter& other) const noexcept {
+    return node == other.node;
+}
+
+template <typename Key, typename Value>
+bool map<Key, Value>::iter::operator!=(const iter& other) const noexcept {
+    return node != other.node;
+}
+
+template <typename Key, typename Value>
+bool map<Key, Value>::c_iter::operator!=(const c_iter& other) const noexcept {
     return node != other.node;
 }
 

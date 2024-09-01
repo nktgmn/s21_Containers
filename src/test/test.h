@@ -29,19 +29,16 @@ template <typename T, typename N>
 bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec);
 
 template <typename T, typename S, size_t N>
-bool operator==(const s21::array<T, N>& s21_array,
-                const std::array<S, N>& array);
+bool operator==(const s21::array<T, N>& s21_array, const std::array<S, N>& array);
 
 template <typename T, typename S, size_t N>
-bool operator!=(const s21::array<T, N>& s21_array,
-                const std::array<S, N>& array);
+bool operator!=(const s21::array<T, N>& s21_array, const std::array<S, N>& array);
 
 template <typename K, typename V>
 bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map);
 
 template <typename K, typename V>
 bool operator!=(const s21::map<K, V>& s21_map, const std::map<K, V>& map);
-
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst) {
@@ -109,8 +106,7 @@ bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
 }
 
 template <typename T, typename S, size_t N>
-bool operator==(const s21::array<T, N>& s21_array,
-                const std::array<S, N>& array) {
+bool operator==(const s21::array<T, N>& s21_array, const std::array<S, N>& array) {
     bool res = true;
 
     for (size_t i = 0; i < N; ++i) {
@@ -123,19 +119,18 @@ bool operator==(const s21::array<T, N>& s21_array,
 }
 
 template <typename T, typename S, size_t N>
-bool operator!=(const s21::array<T, N>& s21_array,
-                const std::array<S, N>& array) {
+bool operator!=(const s21::array<T, N>& s21_array, const std::array<S, N>& array) {
     return !(s21_array == array);
 }
 
 template <typename K, typename V>
-bool operator==(s21::map<K, V>& s21_map, std::map<K, V>& map) {
+bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map) {
     bool res = true;
 
-    auto s21_it_beg = s21_map.begin();
-    auto s21_it_end = s21_map.end();
-    auto it_beg = map.begin();
-    auto it_end = map.end();
+    auto s21_it_beg = s21_map.cbegin();
+    auto s21_it_end = s21_map.cend();
+    auto it_beg = map.cbegin();
+    auto it_end = map.cend();
 
     while (s21_it_beg != s21_it_end) {
         if (((*s21_it_beg).first != (*it_beg).first) || ((*s21_it_beg).second != (*it_beg).second)) {
@@ -149,12 +144,10 @@ bool operator==(s21::map<K, V>& s21_map, std::map<K, V>& map) {
     if (it_beg != it_end) {
         res = false;
     }
-    
-    // TODO эту херню + константность
-    // if ((s21_vec.size() != vec.size()) ||
-    //     (s21_vec.capacity() != vec.capacity())) {
-    //     res = false;
-    // }
+
+    if ((s21_map.size() != map.size()) || (s21_map.max_size() != map.max_size()) || (s21_map.empty() != map.empty())) {
+        res = false;
+    }
 
     return res;
 }

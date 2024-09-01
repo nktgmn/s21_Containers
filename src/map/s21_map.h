@@ -7,89 +7,35 @@ namespace s21 {
 
 template <typename Key, typename Value>
 class map {
+   public:
+    class MapIterator;
+    class ConstMapIterator;
+
+    using pair = std::pair<const Key, Value>;
+    using iter = typename map<Key, Value>::MapIterator;
+    using c_iter = typename map<Key, Value>::ConstMapIterator;
+    
+    map() noexcept;
+    ~map() noexcept;
+
+    iter begin() noexcept;
+    iter end() noexcept;
+    c_iter cbegin() const noexcept;
+    c_iter cend() const noexcept;
+
+    bool empty() const noexcept;
+    size_t size() const noexcept;
+    size_t max_size() const noexcept;
+
+    std::pair<iter, bool> insert(const pair& value);
+
    private:
     struct BaseNode;
     struct Node;
 
-   public:
-    class MapIterator;
-
-    using pair = std::pair<const Key, Value>;
-    using iterator = typename map<Key, Value>::MapIterator;
-    using const_iterator = typename map<Key, Value>::ConstMapIterator;
-
-   private:
-    struct BaseNode {
-        BaseNode* left;
-        BaseNode* right;
-        BaseNode* parent;
-        int height;
-        BaseNode();
-    };
-
-    struct Node : BaseNode {
-        pair kv;
-        Node(const pair& value);
-    };
-
-   public:
-    class MapIterator {
-       public:
-        MapIterator() noexcept;
-        MapIterator(BaseNode* ptr) noexcept;
-        MapIterator(Node* ptr) noexcept;
-        MapIterator(const iterator& other) noexcept;
-
-        iterator& operator=(const iterator& other) noexcept;
-
-        pair& operator*() noexcept;
-
-        iterator& operator++() noexcept;
-        iterator& operator--() noexcept;
-
-        bool operator==(const iterator& other) const noexcept;
-        bool operator!=(const iterator& other) const noexcept;
-
-       private:
-        BaseNode* node;
-
-        friend class map;
-    };
-
-    class ConstMapIterator {
-       public:
-        MapIterator() noexcept;
-        MapIterator(BaseNode* ptr) noexcept;
-        MapIterator(Node* ptr) noexcept;
-        MapIterator(const iterator& other) noexcept;
-
-        iterator& operator=(const iterator& other) noexcept;
-
-        pair& operator*() noexcept;
-
-        iterator& operator++() noexcept;
-        iterator& operator--() noexcept;
-
-        bool operator==(const iterator& other) const noexcept;
-        bool operator!=(const iterator& other) const noexcept;
-
-       private:
-        BaseNode* node;
-
-        friend class map;
-    };
-
-    map() noexcept;
-    ~map() noexcept;
-
-    iterator begin() noexcept;
-    iterator end() noexcept;
-
-    std::pair<iterator, bool> insert(const pair& value);
-
-   private:
     BaseNode* fake_node;
     BaseNode* leftmost;
+    size_t size_;
 
     int get_height(BaseNode* node);
     int get_balance_factor(BaseNode* node);
@@ -104,6 +50,7 @@ class map {
 
 }  // namespace s21
 
+#include "../iterators/s21_map_iterators.h"
 #include "../iterators/s21_map_iterators.tpp"
 #include "s21_map.tpp"
 
