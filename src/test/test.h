@@ -7,8 +7,8 @@
 #include <list>
 #include <queue>
 #include <stack>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "../array/s21_array.tpp"
 #include "../list/s21_list.tpp"

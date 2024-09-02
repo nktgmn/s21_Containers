@@ -22,6 +22,10 @@ class map {
     map(map&& other);
     ~map() noexcept;
 
+    map& operator=(const map& other);
+    map& operator=(map&& other) noexcept;
+    // map& operator=(std::initializer_list<pair> ilist);
+
     iter begin() noexcept;
     iter end() noexcept;
     c_iter cbegin() const noexcept;

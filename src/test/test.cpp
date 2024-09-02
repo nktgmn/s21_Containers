@@ -1600,6 +1600,99 @@ TEST(MAP, Constructors) {
     EXPECT_TRUE(s21_18 == std_18);
 }
 
+TEST(MAP, OperatorEq) {
+    s21::map<int, int> s21_1 = {{1, 1}, {2, 2}, {3, 3}};
+    std::map<int, int> std_1 = {{1, 1}, {2, 2}, {3, 3}};
+    s21::map<int, int> s21_2 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
+    std::map<int, int> std_2 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
+    s21_1 = s21_2;
+    std_1 = std_2;
+    EXPECT_TRUE(s21_1 == std_1);
+    s21::map<int, int>& s21_1_1 = s21_1;
+    std::map<int, int>& std_1_1 = std_1;
+    s21_1_1 = s21_1;
+    std_1_1 = std_1;
+    EXPECT_TRUE(s21_1_1 == std_1_1);
+
+    s21::map<int, int> s21_3 = {{1, 1}, {2, 2}, {3, 3}};
+    std::map<int, int> std_3 = {{1, 1}, {2, 2}, {3, 3}};
+    s21::map<int, int> s21_4 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
+    std::map<int, int> std_4 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
+    s21_3 = std::move(s21_4);
+    std_3 = std::move(std_4);
+    EXPECT_TRUE(s21_3 == std_3);
+    EXPECT_TRUE(s21_4 == std_4);
+    s21::map<int, int>& s21_3_1 = s21_3;
+    std::map<int, int>& std_3_1 = std_3;
+    s21_3_1 = s21_3;
+    std_3_1 = std_3;
+    EXPECT_TRUE(s21_3_1 == std_3_1);
+    // s21::map<int, int>& s21_3_2 = s21_3_1;
+    // std::map<int, int>& std_3_2 = std_3_1;
+    // s21_3_2 = std::move(s21_3_1);
+    // std_3_2 = std::move(std_3_1);
+    // EXPECT_TRUE(s21_3_2 == std_3_2);
+
+    s21::map<int, int> s21_5 = {{1, 1}, {2, 2}, {3, 3}};
+    std::map<int, int> std_5 = {{1, 1}, {2, 2}, {3, 3}};
+    s21::map<int, int> s21_6 = {};
+    std::map<int, int> std_6 = {};
+    s21_5 = s21_6;
+    std_5 = std_6;
+    EXPECT_TRUE(s21_5 == std_5);
+
+    // s21::list<int> s21_7 = {1, 2, 3};
+    // std::list<int> std_7 = {1, 2, 3};
+    // s21::list<int> s21_8 = {};
+    // std::list<int> std_8 = {};
+    // s21_7 = std::move(s21_8);
+    // std_7 = std::move(std_8);
+    // EXPECT_TRUE(s21_7 == std_7);
+    // EXPECT_TRUE(s21_8 == std_8);
+
+    // s21::list<int> s21_9 = {};
+    // std::list<int> std_9 = {};
+    // s21::list<int> s21_10 = {4, 5, 6, 7};
+    // std::list<int> std_10 = {4, 5, 6, 7};
+    // s21_9 = s21_10;
+    // std_9 = std_10;
+    // EXPECT_TRUE(s21_9 == std_9);
+
+    // s21::list<int> s21_11 = {};
+    // std::list<int> std_11 = {};
+    // s21::list<int> s21_12 = {4, 5, 6, 7};
+    // std::list<int> std_12 = {4, 5, 6, 7};
+    // s21_11 = std::move(s21_12);
+    // std_11 = std::move(std_12);
+    // EXPECT_TRUE(s21_11 == std_11);
+    // EXPECT_TRUE(s21_12 == std_12);
+
+    // s21::list<int> s21_13 = {};
+    // std::list<int> std_13 = {};
+    // s21::list<int> s21_14 = {};
+    // std::list<int> std_14 = {};
+    // s21_13 = s21_14;
+    // std_13 = std_14;
+    // EXPECT_TRUE(s21_13 == std_13);
+
+    // s21::list<int> s21_15 = {};
+    // std::list<int> std_15 = {};
+    // s21::list<int> s21_16 = {};
+    // std::list<int> std_16 = {};
+    // s21_15 = std::move(s21_16);
+    // std_15 = std::move(std_16);
+    // EXPECT_TRUE(s21_15 == std_15);
+    // EXPECT_TRUE(s21_16 == std_16);
+
+    // s21::list<s21::list<int>> s21_17 = {{1}, {2}, {3}};
+    // std::list<std::list<int>> std_17 = {{1}, {2}, {3}};
+    // s21::list<s21::list<int>> s21_18 = {{1}, {2}, {3}, {4}};
+    // std::list<std::list<int>> std_18 = {{1}, {2}, {3}, {4}};
+    // s21_17 = s21_18;
+    // std_17 = std_18;
+    // EXPECT_TRUE(s21_17 == std_17);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
