@@ -98,22 +98,20 @@ map<Key, Value>& map<Key, Value>::operator=(const map& other) {
 
 template <typename Key, typename Value>
 map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
-    if (this == &other) {
-        return *this;
-    }
-
     clear();
-
-    if (other.size() > 0) {
-        fake_node->left = other.fake_node->left;
-        fake_node->left->parent = fake_node;
-        leftmost = other.leftmost;
-        size_ = other.size();
-
-        other.fake_node->left = nullptr;
-        other.leftmost = other.fake_node;
-        other.size_ = 0;
+    
+    if (this != &other) {
+        if (other.size() > 0) {
+            fake_node->left = other.fake_node->left;
+            fake_node->left->parent = fake_node;
+            leftmost = other.leftmost;
+            size_ = other.size();
+        }
     }
+
+    other.fake_node->left = nullptr;
+    other.leftmost = other.fake_node;
+    other.size_ = 0;
 
     return *this;
 }

@@ -1627,11 +1627,12 @@ TEST(MAP, OperatorEq) {
     s21_3_1 = s21_3;
     std_3_1 = std_3;
     EXPECT_TRUE(s21_3_1 == std_3_1);
-    // s21::map<int, int>& s21_3_2 = s21_3_1;
-    // std::map<int, int>& std_3_2 = std_3_1;
-    // s21_3_2 = std::move(s21_3_1);
-    // std_3_2 = std::move(std_3_1);
-    // EXPECT_TRUE(s21_3_2 == std_3_2);
+
+    s21::map<int, int>& s21_3_2 = s21_3_1;
+    std::map<int, int>& std_3_2 = std_3_1;
+    s21_3_2 = std::move(s21_3_1);
+    std_3_2 = std::move(std_3_1);
+    EXPECT_TRUE(s21_3_2 == std_3_2);
 
     s21::map<int, int> s21_5 = {{1, 1}, {2, 2}, {3, 3}};
     std::map<int, int> std_5 = {{1, 1}, {2, 2}, {3, 3}};
@@ -1641,56 +1642,56 @@ TEST(MAP, OperatorEq) {
     std_5 = std_6;
     EXPECT_TRUE(s21_5 == std_5);
 
-    // s21::list<int> s21_7 = {1, 2, 3};
-    // std::list<int> std_7 = {1, 2, 3};
-    // s21::list<int> s21_8 = {};
-    // std::list<int> std_8 = {};
-    // s21_7 = std::move(s21_8);
-    // std_7 = std::move(std_8);
-    // EXPECT_TRUE(s21_7 == std_7);
-    // EXPECT_TRUE(s21_8 == std_8);
+    s21::map<int, int> s21_7 = {{1, 1}, {2, 2}, {3, 3}};
+    std::map<int, int> std_7 = {{1, 1}, {2, 2}, {3, 3}};
+    s21::map<int, int> s21_8 = {};
+    std::map<int, int> std_8 = {};
+    s21_7 = std::move(s21_8);
+    std_7 = std::move(std_8);
+    EXPECT_TRUE(s21_7 == std_7);
+    EXPECT_TRUE(s21_8 == std_8);
 
-    // s21::list<int> s21_9 = {};
-    // std::list<int> std_9 = {};
-    // s21::list<int> s21_10 = {4, 5, 6, 7};
-    // std::list<int> std_10 = {4, 5, 6, 7};
-    // s21_9 = s21_10;
-    // std_9 = std_10;
-    // EXPECT_TRUE(s21_9 == std_9);
+    s21::map<int, int> s21_9 = {};
+    std::map<int, int> std_9 = {};
+    s21::map<int, int> s21_10 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    std::map<int, int> std_10 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    s21_9 = s21_10;
+    std_9 = std_10;
+    EXPECT_TRUE(s21_9 == std_9);
 
-    // s21::list<int> s21_11 = {};
-    // std::list<int> std_11 = {};
-    // s21::list<int> s21_12 = {4, 5, 6, 7};
-    // std::list<int> std_12 = {4, 5, 6, 7};
-    // s21_11 = std::move(s21_12);
-    // std_11 = std::move(std_12);
-    // EXPECT_TRUE(s21_11 == std_11);
-    // EXPECT_TRUE(s21_12 == std_12);
+    s21::map<int, int> s21_11 = {};
+    std::map<int, int> std_11 = {};
+    s21::map<int, int> s21_12 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    std::map<int, int> std_12 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    s21_11 = std::move(s21_12);
+    std_11 = std::move(std_12);
+    EXPECT_TRUE(s21_11 == std_11);
+    EXPECT_TRUE(s21_12 == std_12);
 
-    // s21::list<int> s21_13 = {};
-    // std::list<int> std_13 = {};
-    // s21::list<int> s21_14 = {};
-    // std::list<int> std_14 = {};
-    // s21_13 = s21_14;
-    // std_13 = std_14;
-    // EXPECT_TRUE(s21_13 == std_13);
+    s21::map<int, int> s21_13 = {};
+    std::map<int, int> std_13 = {};
+    s21::map<int, int> s21_14 = {};
+    std::map<int, int> std_14 = {};
+    s21_13 = s21_14;
+    std_13 = std_14;
+    EXPECT_TRUE(s21_13 == std_13);
 
-    // s21::list<int> s21_15 = {};
-    // std::list<int> std_15 = {};
-    // s21::list<int> s21_16 = {};
-    // std::list<int> std_16 = {};
-    // s21_15 = std::move(s21_16);
-    // std_15 = std::move(std_16);
-    // EXPECT_TRUE(s21_15 == std_15);
-    // EXPECT_TRUE(s21_16 == std_16);
+    s21::map<int, int> s21_15 = {};
+    std::map<int, int> std_15 = {};
+    s21::map<int, int> s21_16 = {};
+    std::map<int, int> std_16 = {};
+    s21_15 = std::move(s21_16);
+    std_15 = std::move(std_16);
+    EXPECT_TRUE(s21_15 == std_15);
+    EXPECT_TRUE(s21_16 == std_16);
 
-    // s21::list<s21::list<int>> s21_17 = {{1}, {2}, {3}};
-    // std::list<std::list<int>> std_17 = {{1}, {2}, {3}};
-    // s21::list<s21::list<int>> s21_18 = {{1}, {2}, {3}, {4}};
-    // std::list<std::list<int>> std_18 = {{1}, {2}, {3}, {4}};
-    // s21_17 = s21_18;
-    // std_17 = std_18;
-    // EXPECT_TRUE(s21_17 == std_17);
+    s21::map<std::string, std::list<int>> s21_17({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_17({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
+    std::map<std::string, std::list<int>> std_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
+    s21_17 = s21_18;
+    std_17 = std_18;
+    EXPECT_TRUE(s21_17 == std_17);
 }
 
 int main(int argc, char** argv) {
