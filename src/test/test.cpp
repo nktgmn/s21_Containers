@@ -1,5 +1,6 @@
 #include "test.h"
-
+// TODO: проверить для operrator=move что он обнуляет если совпадают объекты
+// TODO: в map если загружаем уже существующий ключ
 #include <gtest/gtest.h>
 
 TEST(VECTOR, Constructors) {
@@ -1692,6 +1693,64 @@ TEST(MAP, OperatorEq) {
     s21_17 = s21_18;
     std_17 = std_18;
     EXPECT_TRUE(s21_17 == std_17);
+
+    s21::map<int, int> s21_19;
+    std::map<int, int> std_19;
+    s21_19 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    std_19 = {{4, 4}, {5, 5}, {6, 6}, {7, 7}};
+    EXPECT_TRUE(s21_19 == std_19);
+    s21_19 = {};
+    std_19 = {};
+    EXPECT_TRUE(s21_19 == std_19);
+}
+
+TEST(MAP, AtOperatorBrackets) {
+    s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}};
+    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}};
+    EXPECT_TRUE(s21_1.at(1) == std_1.at(1));
+    EXPECT_THROW(s21_1.at(-2), std::out_of_range);
+    s21_1.at(2) = 55;
+    std_1.at(2) = 55;
+    EXPECT_TRUE(s21_1 == std_1);
+
+    const s21::map<int, int> s21_2 = {{1, 11}, {2, 22}, {3, 33}};
+    const std::map<int, int> std_2 = {{1, 11}, {2, 22}, {3, 33}};
+    EXPECT_TRUE(s21_2.at(1) == std_2.at(1));
+    EXPECT_THROW(s21_2.at(-2), std::out_of_range);
+
+    s21::map<std::string, std::list<int>> s21_3({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_3({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    EXPECT_TRUE(s21_3.at("bb") == std_3.at("bb"));
+    EXPECT_THROW(s21_3.at("accc"), std::out_of_range);
+    s21_3.at("ba") = {1};
+    std_3.at("ba") = {1};
+    EXPECT_TRUE(s21_3 == std_3);
+
+    const s21::map<std::string, std::list<int>> s21_4({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    const std::map<std::string, std::list<int>> std_4({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    EXPECT_TRUE(s21_4.at("aa") == std_4.at("aa"));
+    EXPECT_THROW(s21_4.at("z"), std::out_of_range);
+
+    s21::map<int, int> s21_5 = {{0, 11}, {2, 22}, {3, 33}};
+    std::map<int, int> std_5 = {{0, 11}, {2, 22}, {3, 33}};
+    EXPECT_TRUE(s21_5[0] == std_5[0]);
+    EXPECT_TRUE(s21_5[1] == std_5[1]);
+    EXPECT_TRUE(s21_5[7] == std_5[7]);
+    EXPECT_TRUE(s21_5 == std_5);
+    s21_5.clear();
+    std_5.clear();
+    EXPECT_TRUE(s21_5[1] == std_5[1]);
+    EXPECT_TRUE(s21_5 == std_5);
+
+    // for (auto it = s21_5.cbegin(); it != s21_5.cend(); ++it) {
+    //     std::cout << (*it).first << "," << (*it).second << " ";
+    // }
+    // std::cout << std::endl;
+
+    // for (auto it = std_5.cbegin(); it != std_5.cend(); ++it) {
+    //     std::cout << (*it).first << "," << (*it).second << " ";
+    // }
+    // std::cout << std::endl;
 }
 
 int main(int argc, char** argv) {

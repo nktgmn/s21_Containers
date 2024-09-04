@@ -99,7 +99,7 @@ map<Key, Value>& map<Key, Value>::operator=(const map& other) {
 template <typename Key, typename Value>
 map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
     clear();
-    
+
     if (this != &other) {
         if (other.size() > 0) {
             fake_node->left = other.fake_node->left;
@@ -114,6 +114,75 @@ map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
     other.size_ = 0;
 
     return *this;
+}
+
+template <typename Key, typename Value>
+map<Key, Value>& map<Key, Value>::operator=(std::initializer_list<pair> ilist) {
+    if (ilist.size() > 0) {
+        map<Key, Value> new_map(ilist);
+
+        clear();
+
+        fake_node->left = new_map.fake_node->left;
+        fake_node->left->parent = fake_node;
+        leftmost = new_map.leftmost;
+        size_ = new_map.size();
+
+        new_map.fake_node->left = nullptr;
+        new_map.leftmost = new_map.fake_node;
+        new_map.size_ = 0;
+
+    } else {
+        clear();
+    }
+
+    return *this;
+}
+
+template <typename Key, typename Value>
+Value& map<Key, Value>::at(const Key& key) {
+    for (auto it = begin(); it != end(); ++it) {
+        if ((*it).first == key) {
+            return (*it).second;
+        }
+    }
+
+    throw std::out_of_range("AtError: No key found");
+}
+
+template <typename Key, typename Value>
+const Value& map<Key, Value>::at(const Key& key) const {
+    for (auto it = cbegin(); it != cend(); ++it) {
+        if ((*it).first == key) {
+            return (*it).second;
+        }
+    }
+
+    throw std::out_of_range("AtError: No key found");
+}
+
+template <typename Key, typename Value>
+Value& map<Key, Value>::operator[](const Key& key) {
+    for (auto it = begin(); it != end(); ++it) {
+        if ((*it).first == key) {
+            return (*it).second;
+        } else if ((*it).first > key) {
+            BaseNode* node = static_cast<Node*>(insert_private(it.node, {key, Value()}).first);
+            auto iterator = iter(node);
+            return static_cast<Node*>((--iterator).node)->kv.second;
+        }
+    }
+
+    BaseNode* node;
+    if (size() > 0) {
+        node = static_cast<Node*>(insert_private((--end()).node, {key, Value()}).first);
+    } else {
+        node = static_cast<Node*>(insert_private(nullptr, {key, Value()}).first);
+        fake_node->left = node;
+        fake_node->left->parent = fake_node;
+        leftmost = fake_node->left;
+    }
+    return static_cast<Node*>((--end()).node)->kv.second;
 }
 
 template <typename Key, typename Value>
@@ -235,8 +304,7 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::BaseNode*, bool>
-map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
+std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
     bool inserted = false;
 
     if (node == nullptr) {

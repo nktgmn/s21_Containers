@@ -24,7 +24,11 @@ class map {
 
     map& operator=(const map& other);
     map& operator=(map&& other) noexcept;
-    // map& operator=(std::initializer_list<pair> ilist);
+    map& operator=(std::initializer_list<pair> ilist);
+
+    Value& at(const Key& key);
+    const Value& at(const Key& key) const;
+    Value& operator[](const Key& key);
 
     iter begin() noexcept;
     iter end() noexcept;
