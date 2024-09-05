@@ -440,6 +440,40 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pa
     return {MapIterator(insert_res.first), insert_res.second};
 }
 
+template <typename Key, typename Value>
+size_t map<Key, Value>::count(const Key& key) const {
+    size_t res = 0;
+    for (auto it = cbegin(); it != cend(); ++it) {
+        if ((*it).first == key) {
+            res = 1;
+            break;
+        }
+    }
+    return res;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter map<Key, Value>::find(const Key& key) {
+    auto it = begin();
+    for (; it != end(); ++it) {
+        if ((*it).first == key) {
+            return it;
+        }
+    }
+    return it;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::c_iter map<Key, Value>::find(const Key& key) const {
+    auto it = cbegin();
+    for (; it != cend(); ++it) {
+        if ((*it).first == key) {
+            return it;
+        }
+    }
+    return it;
+}
+
 // template <typename Key, typename Value>
 // void AVL<T>::erase(const T& value) {
 //     head = erase_private(head, value);

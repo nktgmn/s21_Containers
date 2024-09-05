@@ -41,6 +41,11 @@ class map {
 
     void clear() noexcept;
     std::pair<iter, bool> insert(const pair& value);
+    // много других insert
+
+    size_t count(const Key& key) const;
+    iter find(const Key& key);
+    c_iter find(const Key& key) const;
 
    private:
     struct BaseNode;

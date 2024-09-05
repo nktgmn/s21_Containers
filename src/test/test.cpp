@@ -1733,6 +1733,8 @@ TEST(MAP, AtOperatorBrackets) {
 
     s21::map<int, int> s21_5 = {{0, 11}, {2, 22}, {3, 33}};
     std::map<int, int> std_5 = {{0, 11}, {2, 22}, {3, 33}};
+    s21_5[0] = 12;
+    std_5[0] = 12;
     EXPECT_TRUE(s21_5[0] == std_5[0]);
     EXPECT_TRUE(s21_5[1] == std_5[1]);
     EXPECT_TRUE(s21_5[7] == std_5[7]);
@@ -1741,16 +1743,40 @@ TEST(MAP, AtOperatorBrackets) {
     std_5.clear();
     EXPECT_TRUE(s21_5[1] == std_5[1]);
     EXPECT_TRUE(s21_5 == std_5);
+}
 
-    // for (auto it = s21_5.cbegin(); it != s21_5.cend(); ++it) {
-    //     std::cout << (*it).first << "," << (*it).second << " ";
-    // }
-    // std::cout << std::endl;
+TEST(MAP, CountFind) {
+    s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}};
+    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}};
+    EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
+    EXPECT_TRUE(s21_1.count(5) == std_1.count(5));
+    s21_1.clear();
+    std_1.clear();
+    EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
 
-    // for (auto it = std_5.cbegin(); it != std_5.cend(); ++it) {
-    //     std::cout << (*it).first << "," << (*it).second << " ";
-    // }
-    // std::cout << std::endl;
+    s21::map<std::string, std::list<int>> s21_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    EXPECT_TRUE(s21_2.count("bb") == std_2.count("bb"));
+    EXPECT_TRUE(s21_2.count("qq") == std_2.count("qq"));
+    s21_2.clear();
+    std_2.clear();
+    EXPECT_TRUE(s21_2.count("ba") == std_2.count("ba"));
+
+    s21::map<int, int> s21_3 = {{1, 11}, {2, 22}, {3, 33}};
+    std::map<int, int> std_3 = {{1, 11}, {2, 22}, {3, 33}};
+    auto s21_it = s21_3.find(1);
+    auto it = std_3.find(1);
+    EXPECT_TRUE(*s21_it == *it);
+    s21_it = s21_3.find(10);
+    EXPECT_TRUE((*(--s21_it)) == (*(--s21_3.end())));
+
+    const s21::map<int, int> s21_4 = {{1, 11}, {2, 22}, {3, 33}};
+    const std::map<int, int> std_4 = {{1, 11}, {2, 22}, {3, 33}};
+    auto s21_cit = s21_4.find(1);
+    auto cit = std_4.find(1);
+    EXPECT_TRUE(*s21_cit == *cit);
+    s21_cit = s21_4.find(10);
+    EXPECT_TRUE((*(--s21_cit)) == (*(--s21_4.cend())));
 }
 
 int main(int argc, char** argv) {
