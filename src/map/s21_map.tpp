@@ -18,6 +18,7 @@ template <typename Key, typename Value>
 struct map<Key, Value>::Node : BaseNode {
     pair kv;
     Node(const pair& value);
+    Node(pair&& value);
 };
 
 template <typename Key, typename Value>
@@ -25,6 +26,9 @@ map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(th
 
 template <typename Key, typename Value>
 map<Key, Value>::Node::Node(const pair& value) : BaseNode(), kv(value) {}
+
+template <typename Key, typename Value>
+map<Key, Value>::Node::Node(pair&& value) : BaseNode(), kv(value) {}
 
 template <typename Key, typename Value>
 map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
@@ -36,7 +40,8 @@ map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fak
             insert(*it);
         }
     } catch (...) {
-        delete_node(static_cast<Node*>(fake_node));
+        delete_node(static_cast<Node*>(fake_node->left));
+        delete fake_node;
         throw;
     }
 }
@@ -48,7 +53,8 @@ map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode(
             insert(elem);
         }
     } catch (...) {
-        delete_node(static_cast<Node*>(fake_node));
+        delete_node(static_cast<Node*>(fake_node->left));
+        delete fake_node;
         throw;
     }
 }
@@ -68,7 +74,8 @@ map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_nod
 
 template <typename Key, typename Value>
 map<Key, Value>::~map() noexcept {
-    delete_node(static_cast<Node*>(fake_node));
+    delete_node(static_cast<Node*>(fake_node->left));
+    delete fake_node;
 }
 
 template <typename Key, typename Value>
@@ -227,7 +234,7 @@ int map<Key, Value>::get_height(BaseNode* node) {
 
 template <typename Key, typename Value>
 int map<Key, Value>::get_balance_factor(BaseNode* node) {
-    return node ? get_height(node->left) - get_height(node->right) : 0;
+    return node != nullptr ? get_height(node->left) - get_height(node->right) : 0;
 }
 
 template <typename Key, typename Value>
@@ -235,21 +242,43 @@ void map<Key, Value>::delete_node(Node* node) {
     if (node) {
         delete_node(static_cast<Node*>(node->left));
         delete_node(static_cast<Node*>(node->right));
-        if (node == fake_node) {
-            delete static_cast<BaseNode*>(node);
-        } else {
-            --size_;
-            delete node;
-        }
+        --size_;
+        delete node;
     }
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(
-    BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(BaseNode* node) {
+    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
+
+    int balance_factor = get_balance_factor(node);
+
+    if (balance_factor > 1 && get_balance_factor(node->left) >= 0) {
+        node = rotate_right(node);
+    }
+
+    if (balance_factor < -1 && get_balance_factor(node->right) <= 0) {
+        node = rotate_left(node);
+    }
+
+    if (balance_factor > 1 && get_balance_factor(node->left) < 0) {
+        node->left = rotate_left(node->left);
+        node = rotate_right(node);
+    }
+
+    if (balance_factor < -1 && get_balance_factor(node->right) > 0) {
+        node->right = rotate_right(node->right);
+        node = rotate_left(node);
+    }
+
+    return node;
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(BaseNode* node) {
     BaseNode* current = node;
 
-    while (current->left) {
+    while (current->left != nullptr) {
         current = current->left;
     }
 
@@ -257,8 +286,7 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(
-    BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(BaseNode* node) {
     BaseNode* new_root = node->left;
     BaseNode* right = new_root->right;
 
@@ -267,8 +295,12 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(
 
     new_root->parent = node->parent;
 
-    if (new_root->parent == fake_node) {
-        fake_node->left = new_root;
+    if (node->parent->left == node) {
+        node->parent->left = new_root;
+    }
+
+    if (node->parent->right == node) {
+        node->parent->right = new_root;
     }
 
     node->parent = new_root;
@@ -283,16 +315,26 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(
-    BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node) {
     BaseNode* new_root = node->right;
     BaseNode* left = new_root->left;
 
     new_root->left = node;
+
     node->right = left;
 
     new_root->parent = node->parent;
+
+    if (node->parent->left == node) {
+        node->parent->left = new_root;
+    }
+
+    if (node->parent->right == node) {
+        node->parent->right = new_root;
+    }
+
     node->parent = new_root;
+
     if (left) {
         left->parent = node;
     }
@@ -328,98 +370,40 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
         return {node, false};
     }
 
-    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
-
-    int balance_factor = get_balance_factor(node);
-
-    if (balance_factor > 1 &&
-        value.first < static_cast<Node*>(node->left)->kv.first) {
-        node = rotate_right(node);
-    }
-
-    if (balance_factor < -1 &&
-        value.first > static_cast<Node*>(node->right)->kv.first) {
-        node = rotate_left(node);
-    }
-
-    if (balance_factor > 1 &&
-        value.first > static_cast<Node*>(node->left)->kv.first) {
-        node->left = rotate_left(node->left);
-        node = rotate_right(node);
-    }
-
-    if (balance_factor < -1 &&
-        value.first < static_cast<Node*>(node->right)->kv.first) {
-        node->right = rotate_right(node->right);
-        node = rotate_left(node);
-    }
-
-    if (node->parent == fake_node && fake_node->left != node) {
-        fake_node->left = node;
-    }
+    node = rebalance_node(node);
 
     return {node, inserted};
 }
 
-// template <typename Key, typename Value>
-// typename AVL<T>::Node* AVL<T>::erase_private(Node* node, const T& value) {
-//     if (!node) {
-//         return node;
-//     }
+template <typename Key, typename Value>
+std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, pair&& value) {
+    bool inserted = false;
 
-//     if (value < node->data) {
-//         node->left = erase_private(node->left, value);
-//     } else if (value > node->data) {
-//         node->right = erase_private(node->right, value);
-//     } else {
-//         if (!node->left || !node->right) {
-//             Node* tmp = node->left ? node->left : node->right;
-//             delete node;
-//             return tmp;
-//         } else {
-//             Node* tmp = min_value_node(node->right);
-//             node->data = tmp->data;
-//             node->right = erase_private(node->right, node->data);
-//         }
-//     }
+    if (node == nullptr) {
+        node = new Node(std::move(value));
+        ++size_;
+        if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
+            leftmost = node;
+        }
+        return {node, true};
+    } else if (value.first < static_cast<Node*>(node)->kv.first) {
+        auto insert_res = insert_private(node->left, value);
+        node->left = insert_res.first;
+        inserted = insert_res.second;
+        node->left->parent = node;
+    } else if (value.first > static_cast<Node*>(node)->kv.first) {
+        auto insert_res = insert_private(node->right, value);
+        node->right = insert_res.first;
+        inserted = insert_res.second;
+        node->right->parent = node;
+    } else {
+        return {node, false};
+    }
 
-//     node->height =
-//         std::max(get_height(node->left), get_height(node->right)) + 1;
+    node = rebalance_node(node);
 
-//     int balance_factor = get_balance_factor(node);
-
-//     if (balance_factor > 1 && value < node->left->data) {
-//         return rotate_right(node);
-//     }
-
-//     if (balance_factor < -1 && value > node->right->data) {
-//         return rotate_left(node);
-//     }
-
-//     if (balance_factor > 1 && value > node->left->data) {
-//         node->left = rotate_left(node->left);
-//         return rotate_right(node);
-//     }
-
-//     if (balance_factor < -1 && value < node->right->data) {
-//         node->right = rotate_right(node->right);
-//         return rotate_left(node);
-//     }
-
-//     return node;
-// }
-
-// template <typename Key, typename Value>
-// T* AVL<T>::search_private(Node* node, const T& value) const {
-//     if (!node) return nullptr;
-
-//     if (value < node->data)
-//         return search_private(node->left, value);
-//     else if (value > node->data)
-//         return search_private(node->right, value);
-//     else
-//         return &node->data;
-// }
+    return {node, inserted};
+}
 
 template <typename Key, typename Value>
 void map<Key, Value>::clear() noexcept {
@@ -438,6 +422,150 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pa
     }
 
     return {MapIterator(insert_res.first), insert_res.second};
+}
+
+template <typename Key, typename Value>
+std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& value) {
+    auto insert_res = insert_private(fake_node->left, std::move(value));
+    if (!fake_node->left) {
+        fake_node->left = insert_res.first;
+        fake_node->left->parent = fake_node;
+        leftmost = fake_node->left;
+    }
+
+    return {MapIterator(insert_res.first), insert_res.second};
+}
+
+template <typename Key, typename Value>
+std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert_or_assign(const Key& k, Value&& obj) {
+    auto iter = find(k);
+    if (iter == end()) {
+        return insert({k, std::forward<Value>(obj)});
+    } else {
+        (*iter).second = std::forward<Value>(obj);
+        return {iter, false};
+    }
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
+    auto next = pos;
+    ++next;
+
+    Node* node = static_cast<Node*>(pos.node);
+    BaseNode* tmp;
+
+    if (node->left == nullptr || node->right == nullptr) {
+        tmp = node->left ? node->left : node->right;
+
+        if (node == leftmost) {
+            leftmost = next.node;
+        }
+
+        if (tmp != nullptr) {
+            tmp->parent = node->parent;
+        }
+
+        if (node->parent->left == node) {
+            node->parent->left = tmp;
+        }
+
+        if (node->parent->right == node) {
+            node->parent->right = tmp;
+        }
+
+        if (tmp == nullptr) {
+            tmp = node->parent;
+        }
+
+    } else {
+        tmp = min_value_node(node->right);
+        BaseNode* reb_node = tmp->parent;
+
+        if (tmp->right != nullptr && tmp->parent != node) {
+            tmp->right->parent = tmp->parent;
+            tmp->parent->left = tmp->right;
+        } else if (tmp->parent != node) {
+            tmp->parent->left = tmp->right;
+        }
+
+        tmp->parent = node->parent;
+
+        if (node->parent->left == node) {
+            node->parent->left = tmp;
+        }
+
+        if (node->parent->right == node) {
+            node->parent->right = tmp;
+        }
+
+        tmp->left = node->left;
+        node->left->parent = tmp;
+        if (node->right != tmp) {
+            tmp->right = node->right;
+            node->right->parent = tmp;
+        }
+
+        while (reb_node != tmp && reb_node != node) {
+            reb_node = rebalance_node(reb_node);
+            reb_node = reb_node->parent;
+        }
+    }
+
+    --size_;
+    delete node;
+
+    while (tmp != fake_node) {
+        tmp = rebalance_node(tmp);
+        tmp = tmp->parent;
+    }
+
+    return iter(next);
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter map<Key, Value>::erase(c_iter pos) {
+    return erase(iter(pos.node));
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter map<Key, Value>::erase(c_iter first, c_iter last) {
+    iter it_first(first.node);
+    iter it_last(last.node);
+
+    while (it_first != it_last) {
+        it_first = erase(it_first);
+    }
+
+    return it_first;
+}
+
+template <typename Key, typename Value>
+size_t map<Key, Value>::erase(const Key& key) {
+    size_t res = 0;
+    for (auto it = begin(); it != end(); ++it) {
+        if ((*it).first == key) {
+            erase(it);
+            ++res;
+            break;
+        }
+    }
+    return res;
+}
+
+template <typename Key, typename Value>
+void map<Key, Value>::swap(map& other) noexcept {
+    BaseNode* fake_node_tmp = other.fake_node;
+    BaseNode* leftmost_tmp = other.leftmost;
+    size_t size_tmp = other.size_;
+
+    other.fake_node = fake_node;
+    other.leftmost = leftmost;
+    other.size_ = size_;
+
+    fake_node = fake_node_tmp;
+    leftmost = leftmost_tmp;
+    size_ = size_tmp;
 }
 
 template <typename Key, typename Value>
@@ -473,16 +601,6 @@ typename map<Key, Value>::c_iter map<Key, Value>::find(const Key& key) const {
     }
     return it;
 }
-
-// template <typename Key, typename Value>
-// void AVL<T>::erase(const T& value) {
-//     head = erase_private(head, value);
-// }
-
-// template <typename Key, typename Value>
-// T* AVL<T>::search(const T& value) const {
-//     return search_private(head, value);
-// }
 
 }  // namespace s21
 

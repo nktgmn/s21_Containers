@@ -1635,8 +1635,8 @@ TEST(MAP, OperatorEq) {
     std_3_2 = std::move(std_3_1);
     EXPECT_TRUE(s21_3_2 == std_3_2);
 
-    s21::map<int, int> s21_5 = {{1, 1}, {2, 2}, {3, 3}};
-    std::map<int, int> std_5 = {{1, 1}, {2, 2}, {3, 3}};
+    s21::map<int, int> s21_5 = {{1, 1}, {2, 2}, {3, 3}, {3, 3}};
+    std::map<int, int> std_5 = {{1, 1}, {2, 2}, {3, 3}, {3, 3}};
     s21::map<int, int> s21_6 = {};
     std::map<int, int> std_6 = {};
     s21_5 = s21_6;
@@ -1704,7 +1704,7 @@ TEST(MAP, OperatorEq) {
     EXPECT_TRUE(s21_19 == std_19);
 }
 
-TEST(MAP, AtOperatorBrackets) {
+TEST(MAP, AtOperatorBracketsInsertOrAssign) {
     s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}};
     std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}};
     EXPECT_TRUE(s21_1.at(1) == std_1.at(1));
@@ -1743,9 +1743,25 @@ TEST(MAP, AtOperatorBrackets) {
     std_5.clear();
     EXPECT_TRUE(s21_5[1] == std_5[1]);
     EXPECT_TRUE(s21_5 == std_5);
+
+    s21_5 = {{0, 11}, {2, 22}, {3, 33}};
+    std_5 = {{0, 11}, {2, 22}, {3, 33}};
+    s21_5.insert_or_assign(3, 44);
+    std_5.insert_or_assign(3, 44);
+    EXPECT_TRUE(s21_5 == std_5);
+
+    s21_5.insert_or_assign(-2, 44);
+    std_5.insert_or_assign(-2, 44);
+    EXPECT_TRUE(s21_5 == std_5);
+
+    s21_5.clear();
+    std_5.clear();
+    s21_5.insert_or_assign(-2, 44);
+    std_5.insert_or_assign(-2, 44);
+    EXPECT_TRUE(s21_5 == std_5);
 }
 
-TEST(MAP, CountFind) {
+TEST(MAP, CountFindSwap) {
     s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}};
     std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}};
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
@@ -1777,6 +1793,95 @@ TEST(MAP, CountFind) {
     EXPECT_TRUE(*s21_cit == *cit);
     s21_cit = s21_4.find(10);
     EXPECT_TRUE((*(--s21_cit)) == (*(--s21_4.cend())));
+
+    s21_1 = {{10, 110}, {20, 220}, {30, 330}};
+    std_1 = {{10, 110}, {20, 220}, {30, 330}};
+    s21_3 = {{1, 11}, {2, 22}, {3, 33}};
+    std_3 = {{1, 11}, {2, 22}, {3, 33}};
+    s21_1.swap(s21_3);
+    std_1.swap(std_3);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_3 == std_3);
+}
+
+TEST(MAP, Erase) {
+    s21::map<int, int> s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {90, 90}};
+    std::map<int, int> std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {90, 90}};
+    auto sit_1 = s21_1.erase(s21_1.begin());
+    auto it_1 = std_1.erase(std_1.begin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(-- --s21_1.end());
+    it_1 = std_1.erase(-- --std_1.end());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(++ ++s21_1.begin());
+    it_1 = std_1.erase(++ ++std_1.begin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1 = {{50, 50}};
+    std_1 = {{50, 50}};
+    sit_1 = s21_1.erase(s21_1.cbegin());
+    it_1 = std_1.erase(std_1.cbegin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    sit_1 = s21_1.erase(++ ++ ++s21_1.cbegin());
+    it_1 = std_1.erase(++ ++ ++std_1.cbegin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(-- --s21_1.end());
+    it_1 = std_1.erase(-- --std_1.end());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    s21_1.erase(s21_1.cbegin(), s21_1.cend());
+    std_1.erase(std_1.cbegin(), std_1.cend());
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    size_t s_res = s21_1.erase(99);
+    size_t res = std_1.erase(99);
+    EXPECT_TRUE(s_res == res);
+    EXPECT_TRUE(s21_1 == std_1);
+    s_res = s21_1.erase(50);
+    res = std_1.erase(50);
+    EXPECT_TRUE(s_res == res);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{20, 20}, {10, 10}, {30, 30}, {25, 25}, {40, 40}, {22, 22}};
+    std_1 = {{20, 20}, {10, 10}, {30, 30}, {25, 25}, {40, 40}, {22, 22}};
+    sit_1 = s21_1.erase(--s21_1.end());
+    it_1 = std_1.erase(--std_1.end());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{10, 10}, {5, 5}, {20, 20}, {15, 15}, {30, 30}, {25, 25}};
+    std_1 = {{10, 10}, {5, 5}, {20, 20}, {15, 15}, {30, 30}, {25, 25}};
+    sit_1 = s21_1.erase(s21_1.begin());
+    it_1 = std_1.erase(std_1.begin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {65, 65}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {65, 65}};
+    sit_1 = s21_1.erase(++ ++ ++s21_1.begin());
+    it_1 = std_1.erase(++ ++ ++std_1.begin());
+    EXPECT_TRUE((*sit_1).first == (*it_1).first);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}};
+    std_1 = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}};
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {{12, 12}, {14, 14}, {15, 15}, {13, 13}, {11, 11}, {10, 10}};
+    std_1 = {{12, 12}, {14, 14}, {15, 15}, {13, 13}, {11, 11}, {10, 10}};
+    EXPECT_TRUE(s21_1 == std_1);
 }
 
 int main(int argc, char** argv) {

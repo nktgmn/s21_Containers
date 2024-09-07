@@ -1,6 +1,7 @@
 #ifndef S21_MAP_H_
 #define S21_MAP_H_
 
+#include <algorithm>
 #include <initializer_list>
 #include <utility>
 
@@ -41,7 +42,14 @@ class map {
 
     void clear() noexcept;
     std::pair<iter, bool> insert(const pair& value);
+    std::pair<iter, bool> insert(pair&& value);
     // много других insert
+    std::pair<iter, bool> insert_or_assign(const Key& k, Value&& obj);
+    iter erase(iter pos);
+    iter erase(c_iter pos);
+    iter erase(c_iter first, c_iter last);
+    size_t erase(const Key& key);
+    void swap(map& other) noexcept;
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
@@ -58,12 +66,12 @@ class map {
     int get_height(BaseNode* node);
     int get_balance_factor(BaseNode* node);
     void delete_node(Node* node);
+    BaseNode* rebalance_node(BaseNode* node);
     BaseNode* min_value_node(BaseNode* node);
     BaseNode* rotate_right(BaseNode* node);
     BaseNode* rotate_left(BaseNode* node);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, const pair& value);
-    // Node* erase_private(Node* node, const T& value);
-    // std::pair<Key, Value>* search_private(Node* node, const T& value) const;
+    std::pair<BaseNode*, bool> insert_private(BaseNode* node, pair&& value);
 };
 
 }  // namespace s21
