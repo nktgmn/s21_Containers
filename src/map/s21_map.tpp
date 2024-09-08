@@ -349,6 +349,8 @@ template <typename Key, typename Value>
 std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
     bool inserted = false;
 
+    
+
     if (node == nullptr) {
         node = new Node(value);
         ++size_;
@@ -568,6 +570,11 @@ void map<Key, Value>::swap(map& other) noexcept {
     size_ = size_tmp;
 }
 
+// template <typename Key, typename Value>
+// void map<Key, Value>::merge(map& other) {
+    
+// }
+
 template <typename Key, typename Value>
 size_t map<Key, Value>::count(const Key& key) const {
     size_t res = 0;
@@ -600,6 +607,17 @@ typename map<Key, Value>::c_iter map<Key, Value>::find(const Key& key) const {
         }
     }
     return it;
+}
+
+template <typename Key, typename Value>
+bool map<Key, Value>::contains(const Key& key) const {
+    auto it = cbegin();
+    for (; it != cend(); ++it) {
+        if ((*it).first == key) {
+            return true;
+        }
+    }
+    return false;
 }
 
 }  // namespace s21

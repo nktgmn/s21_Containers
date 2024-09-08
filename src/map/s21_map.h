@@ -50,10 +50,12 @@ class map {
     iter erase(c_iter first, c_iter last);
     size_t erase(const Key& key);
     void swap(map& other) noexcept;
+    // void merge(map& other);
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
     c_iter find(const Key& key) const;
+    bool contains(const Key& key) const;
 
    private:
     struct BaseNode;

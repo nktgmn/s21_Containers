@@ -1761,7 +1761,7 @@ TEST(MAP, AtOperatorBracketsInsertOrAssign) {
     EXPECT_TRUE(s21_5 == std_5);
 }
 
-TEST(MAP, CountFindSwap) {
+TEST(MAP, CountFindSwapContains) {
     s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}};
     std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}};
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
@@ -1769,11 +1769,13 @@ TEST(MAP, CountFindSwap) {
     s21_1.clear();
     std_1.clear();
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
+    EXPECT_FALSE(s21_1.contains(1));
 
     s21::map<std::string, std::list<int>> s21_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     std::map<std::string, std::list<int>> std_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     EXPECT_TRUE(s21_2.count("bb") == std_2.count("bb"));
     EXPECT_TRUE(s21_2.count("qq") == std_2.count("qq"));
+    EXPECT_TRUE(s21_2.contains("bb"));
     s21_2.clear();
     std_2.clear();
     EXPECT_TRUE(s21_2.count("ba") == std_2.count("ba"));
