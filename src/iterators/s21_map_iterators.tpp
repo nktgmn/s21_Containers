@@ -1,5 +1,5 @@
-#ifndef S21_MAP_ITERATORS_TPP
-#define S21_MAP_ITERATORS_TPP
+#ifndef S21_MAP_ITERATORS_TPP_
+#define S21_MAP_ITERATORS_TPP_
 
 #include "../map/s21_map.h"
 
@@ -155,4 +155,4 @@ bool map<Key, Value>::c_iter::operator!=(const c_iter& other) const noexcept {
 
 }  // namespace s21
 
-#endif  // S21_MAP_ITERATORS_TPP
+#endif  // S21_MAP_ITERATORS_TPP_

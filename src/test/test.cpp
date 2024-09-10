@@ -1886,6 +1886,12 @@ TEST(MAP, Erase) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
+TEST(SET, Constructors) {
+    s21::set<int> s21_1;
+    std::set<int> std_1;
+    EXPECT_TRUE(s21_1 == std_1);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

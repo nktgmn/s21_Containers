@@ -1,12 +1,12 @@
-#ifndef S21_MAP_TPP_
-#define S21_MAP_TPP_
+#ifndef S21_SET_TPP_
+#define S21_SET_TPP_
 
-#include "s21_map.h"
+#include "s21_set.h"
 
 namespace s21 {
 
-template <typename Key, typename Value>
-struct map<Key, Value>::BaseNode {
+template <typename Key>
+struct set<Key>::BaseNode {
     BaseNode* left;
     BaseNode* right;
     BaseNode* parent;
@@ -14,27 +14,27 @@ struct map<Key, Value>::BaseNode {
     BaseNode();
 };
 
-template <typename Key, typename Value>
-struct map<Key, Value>::Node : BaseNode {
-    pair kv;
-    Node(const pair& value);
-    Node(pair&& value);
+template <typename Key>
+struct set<Key>::Node : BaseNode {
+    key data;
+    Node(const key& value);
+    Node(key&& value);
 };
 
-template <typename Key, typename Value>
-map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
+template <typename Key>
+set<Key>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
 
-template <typename Key, typename Value>
-map<Key, Value>::Node::Node(const pair& value) : BaseNode(), kv(value) {}
+template <typename Key>
+set<Key>::Node::Node(const key& value) : BaseNode(), data(value) {}
 
-template <typename Key, typename Value>
-map<Key, Value>::Node::Node(pair&& value) : BaseNode(), kv(value) {}
+template <typename Key>
+set<Key>::Node::Node(key&& value) : BaseNode(), data(value) {}
 
-template <typename Key, typename Value>
-map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+template <typename Key>
+set<Key>::set() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
 
-template <typename Key, typename Value>
-map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+template <typename Key>
+set<Key>::set(const set& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
             insert(*it);
@@ -46,8 +46,8 @@ map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fak
     }
 }
 
-template <typename Key, typename Value>
-map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+template <typename Key>
+set<Key>::set(std::initializer_list<key> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (const auto& elem : init) {
             insert(elem);
@@ -59,8 +59,8 @@ map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode(
     }
 }
 
-template <typename Key, typename Value>
-map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
+template <typename Key>
+set<Key>::set(set&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
     if (other.size() > 0) {
         fake_node->left = other.fake_node->left;
         fake_node->left->parent = fake_node;
@@ -72,14 +72,14 @@ map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_nod
     }
 }
 
-template <typename Key, typename Value>
-map<Key, Value>::~map() noexcept {
+template <typename Key>
+set<Key>::~set() noexcept {
     delete_node(static_cast<Node*>(fake_node->left));
     delete fake_node;
 }
 
-template <typename Key, typename Value>
-map<Key, Value>& map<Key, Value>::operator=(const map& other) {
+template <typename Key>
+set<Key>& set<Key>::operator=(const set& other) {
     if (this == &other) {
         return *this;
     }
@@ -87,24 +87,24 @@ map<Key, Value>& map<Key, Value>::operator=(const map& other) {
     if (other.size() == 0) {
         clear();
     } else {
-        map<Key, Value> new_map(other);
+        set<Key> new_set(other);
         clear();
 
-        fake_node->left = new_map.fake_node->left;
+        fake_node->left = new_set.fake_node->left;
         fake_node->left->parent = fake_node;
-        leftmost = new_map.leftmost;
-        size_ = new_map.size();
+        leftmost = new_set.leftmost;
+        size_ = new_set.size();
 
-        new_map.fake_node->left = nullptr;
-        new_map.leftmost = new_map.fake_node;
-        new_map.size_ = 0;
+        new_set.fake_node->left = nullptr;
+        new_set.leftmost = new_set.fake_node;
+        new_set.size_ = 0;
     }
 
     return *this;
 }
 
-template <typename Key, typename Value>
-map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
+template <typename Key>
+set<Key>& set<Key>::operator=(set&& other) noexcept {
     clear();
 
     if (this != &other) {
@@ -123,21 +123,21 @@ map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
     return *this;
 }
 
-template <typename Key, typename Value>
-map<Key, Value>& map<Key, Value>::operator=(std::initializer_list<pair> ilist) {
+template <typename Key>
+set<Key>& set<Key>::operator=(std::initializer_list<key> ilist) {
     if (ilist.size() > 0) {
-        map<Key, Value> new_map(ilist);
+        set<Key> new_set(ilist);
 
         clear();
 
-        fake_node->left = new_map.fake_node->left;
+        fake_node->left = new_set.fake_node->left;
         fake_node->left->parent = fake_node;
-        leftmost = new_map.leftmost;
-        size_ = new_map.size();
+        leftmost = new_set.leftmost;
+        size_ = new_set.size();
 
-        new_map.fake_node->left = nullptr;
-        new_map.leftmost = new_map.fake_node;
-        new_map.size_ = 0;
+        new_set.fake_node->left = nullptr;
+        new_set.leftmost = new_set.fake_node;
+        new_set.size_ = 0;
 
     } else {
         clear();
@@ -146,99 +146,53 @@ map<Key, Value>& map<Key, Value>::operator=(std::initializer_list<pair> ilist) {
     return *this;
 }
 
-template <typename Key, typename Value>
-Value& map<Key, Value>::at(const Key& key) {
-    for (auto it = begin(); it != end(); ++it) {
-        if ((*it).first == key) {
-            return (*it).second;
-        }
-    }
-
-    throw std::out_of_range("AtError: No key found");
-}
-
-template <typename Key, typename Value>
-const Value& map<Key, Value>::at(const Key& key) const {
-    for (auto it = cbegin(); it != cend(); ++it) {
-        if ((*it).first == key) {
-            return (*it).second;
-        }
-    }
-
-    throw std::out_of_range("AtError: No key found");
-}
-
-template <typename Key, typename Value>
-Value& map<Key, Value>::operator[](const Key& key) {
-    for (auto it = begin(); it != end(); ++it) {
-        if ((*it).first == key) {
-            return (*it).second;
-        } else if ((*it).first > key) {
-            BaseNode* node = static_cast<Node*>(insert_private(it.node, {key, Value()}).first);
-            auto iterator = iter(node);
-            return static_cast<Node*>((--iterator).node)->kv.second;
-        }
-    }
-
-    BaseNode* node;
-    if (size() > 0) {
-        node = static_cast<Node*>(insert_private((--end()).node, {key, Value()}).first);
-    } else {
-        node = static_cast<Node*>(insert_private(nullptr, {key, Value()}).first);
-        fake_node->left = node;
-        fake_node->left->parent = fake_node;
-        leftmost = fake_node->left;
-    }
-    return static_cast<Node*>((--end()).node)->kv.second;
-}
-
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::begin() noexcept {
+template <typename Key>
+typename set<Key>::iter set<Key>::begin() noexcept {
     return iter(leftmost);
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::end() noexcept {
+template <typename Key>
+typename set<Key>::iter set<Key>::end() noexcept {
     return iter(fake_node);
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::c_iter map<Key, Value>::cbegin() const noexcept {
+template <typename Key>
+typename set<Key>::c_iter set<Key>::cbegin() const noexcept {
     return c_iter(leftmost);
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::c_iter map<Key, Value>::cend() const noexcept {
+template <typename Key>
+typename set<Key>::c_iter set<Key>::cend() const noexcept {
     return c_iter(fake_node);
 }
 
-template <typename Key, typename Value>
-bool map<Key, Value>::empty() const noexcept {
+template <typename Key>
+bool set<Key>::empty() const noexcept {
     return size() == 0;
 }
 
-template <typename Key, typename Value>
-size_t map<Key, Value>::size() const noexcept {
+template <typename Key>
+size_t set<Key>::size() const noexcept {
     return size_;
 }
 
-template <typename Key, typename Value>
-size_t map<Key, Value>::max_size() const noexcept {
+template <typename Key>
+size_t set<Key>::max_size() const noexcept {
     return std::numeric_limits<size_t>::max() / sizeof(Node);
 }
 
-template <typename Key, typename Value>
-int map<Key, Value>::get_height(BaseNode* node) {
+template <typename Key>
+int set<Key>::get_height(BaseNode* node) {
     return node ? node->height : 0;
 }
 
-template <typename Key, typename Value>
-int map<Key, Value>::get_balance_factor(BaseNode* node) {
+template <typename Key>
+int set<Key>::get_balance_factor(BaseNode* node) {
     return node != nullptr ? get_height(node->left) - get_height(node->right) : 0;
 }
 
-template <typename Key, typename Value>
-void map<Key, Value>::delete_node(Node* node) {
+template <typename Key>
+void set<Key>::delete_node(Node* node) {
     if (node) {
         delete_node(static_cast<Node*>(node->left));
         delete_node(static_cast<Node*>(node->right));
@@ -247,8 +201,8 @@ void map<Key, Value>::delete_node(Node* node) {
     }
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(BaseNode* node) {
+template <typename Key>
+typename set<Key>::BaseNode* set<Key>::rebalance_node(BaseNode* node) {
     node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
 
     int balance_factor = get_balance_factor(node);
@@ -274,8 +228,8 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(BaseNode* no
     return node;
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(BaseNode* node) {
+template <typename Key>
+typename set<Key>::BaseNode* set<Key>::min_value_node(BaseNode* node) {
     BaseNode* current = node;
 
     while (current->left != nullptr) {
@@ -285,8 +239,8 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(BaseNode* no
     return current;
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(BaseNode* node) {
+template <typename Key>
+typename set<Key>::BaseNode* set<Key>::rotate_right(BaseNode* node) {
     BaseNode* new_root = node->left;
     BaseNode* right = new_root->right;
 
@@ -314,8 +268,8 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(BaseNode* node
     return new_root;
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node) {
+template <typename Key>
+typename set<Key>::BaseNode* set<Key>::rotate_left(BaseNode* node) {
     BaseNode* new_root = node->right;
     BaseNode* left = new_root->left;
 
@@ -345,23 +299,23 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node)
     return new_root;
 }
 
-template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
+template <typename Key>
+std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode* node, const key& value) {
     bool inserted = false;
 
     if (node == nullptr) {
         node = new Node(value);
         ++size_;
-        if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
-    } else if (value.first < static_cast<Node*>(node)->kv.first) {
+    } else if (value < static_cast<Node*>(node)->data) {
         auto insert_res = insert_private(node->left, value);
         node->left = insert_res.first;
         inserted = insert_res.second;
         node->left->parent = node;
-    } else if (value.first > static_cast<Node*>(node)->kv.first) {
+    } else if (value > static_cast<Node*>(node)->data) {
         auto insert_res = insert_private(node->right, value);
         node->right = insert_res.first;
         inserted = insert_res.second;
@@ -375,23 +329,23 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     return {node, inserted};
 }
 
-template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, pair&& value) {
+template <typename Key>
+std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode* node, key&& value) {
     bool inserted = false;
 
     if (node == nullptr) {
         node = new Node(std::move(value));
         ++size_;
-        if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
-    } else if (value.first < static_cast<Node*>(node)->kv.first) {
+    } else if (value < static_cast<Node*>(node)->data) {
         auto insert_res = insert_private(node->left, value);
         node->left = insert_res.first;
         inserted = insert_res.second;
         node->left->parent = node;
-    } else if (value.first > static_cast<Node*>(node)->kv.first) {
+    } else if (value > static_cast<Node*>(node)->data) {
         auto insert_res = insert_private(node->right, value);
         node->right = insert_res.first;
         inserted = insert_res.second;
@@ -405,15 +359,15 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     return {node, inserted};
 }
 
-template <typename Key, typename Value>
-void map<Key, Value>::clear() noexcept {
+template <typename Key>
+void set<Key>::clear() noexcept {
     delete_node(static_cast<Node*>(fake_node->left));
     leftmost = fake_node;
     fake_node->left = nullptr;
 }
 
-template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pair& value) {
+template <typename Key>
+std::pair<typename set<Key>::iter, bool> set<Key>::insert(const key& value) {
     auto insert_res = insert_private(fake_node->left, value);
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -421,11 +375,11 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pa
         leftmost = fake_node->left;
     }
 
-    return {MapIterator(insert_res.first), insert_res.second};
+    return {setIterator(insert_res.first), insert_res.second};
 }
 
-template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& value) {
+template <typename Key>
+std::pair<typename set<Key>::iter, bool> set<Key>::insert(key&& value) {
     auto insert_res = insert_private(fake_node->left, std::move(value));
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -433,22 +387,11 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& v
         leftmost = fake_node->left;
     }
 
-    return {MapIterator(insert_res.first), insert_res.second};
+    return {setIterator(insert_res.first), insert_res.second};
 }
 
-template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert_or_assign(const Key& k, Value&& obj) {
-    auto iter = find(k);
-    if (iter == end()) {
-        return insert({k, std::forward<Value>(obj)});
-    } else {
-        (*iter).second = std::forward<Value>(obj);
-        return {iter, false};
-    }
-}
-
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
+template <typename Key>
+typename set<Key>::iter set<Key>::erase(iter pos) {
     auto next = pos;
     ++next;
 
@@ -523,13 +466,13 @@ typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
     return iter(next);
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase(c_iter pos) {
+template <typename Key>
+typename set<Key>::iter set<Key>::erase(c_iter pos) {
     return erase(iter(pos.node));
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase(c_iter first, c_iter last) {
+template <typename Key>
+typename set<Key>::iter set<Key>::erase(c_iter first, c_iter last) {
     iter it_first(first.node);
     iter it_last(last.node);
 
@@ -540,11 +483,11 @@ typename map<Key, Value>::iter map<Key, Value>::erase(c_iter first, c_iter last)
     return it_first;
 }
 
-template <typename Key, typename Value>
-size_t map<Key, Value>::erase(const Key& key) {
+template <typename Key>
+size_t set<Key>::erase(const Key& key) {
     size_t res = 0;
     for (auto it = begin(); it != end(); ++it) {
-        if ((*it).first == key) {
+        if (*it == key) {
             erase(it);
             ++res;
             break;
@@ -553,8 +496,8 @@ size_t map<Key, Value>::erase(const Key& key) {
     return res;
 }
 
-template <typename Key, typename Value>
-void map<Key, Value>::swap(map& other) noexcept {
+template <typename Key>
+void set<Key>::swap(set& other) noexcept {
     BaseNode* fake_node_tmp = other.fake_node;
     BaseNode* leftmost_tmp = other.leftmost;
     size_t size_tmp = other.size_;
@@ -568,16 +511,16 @@ void map<Key, Value>::swap(map& other) noexcept {
     size_ = size_tmp;
 }
 
-// template <typename Key, typename Value>
-// void map<Key, Value>::merge(map& other) {
+// template <typename Key>
+// void set<Key>::merge(set& other) {
     
 // }
 
-template <typename Key, typename Value>
-size_t map<Key, Value>::count(const Key& key) const {
+template <typename Key>
+size_t set<Key>::count(const Key& key) const {
     size_t res = 0;
     for (auto it = cbegin(); it != cend(); ++it) {
-        if ((*it).first == key) {
+        if (*it == key) {
             res = 1;
             break;
         }
@@ -585,33 +528,33 @@ size_t map<Key, Value>::count(const Key& key) const {
     return res;
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::find(const Key& key) {
+template <typename Key>
+typename set<Key>::iter set<Key>::find(const Key& key) {
     auto it = begin();
     for (; it != end(); ++it) {
-        if ((*it).first == key) {
+        if (*it == key) {
             return it;
         }
     }
     return it;
 }
 
-template <typename Key, typename Value>
-typename map<Key, Value>::c_iter map<Key, Value>::find(const Key& key) const {
+template <typename Key>
+typename set<Key>::c_iter set<Key>::find(const Key& key) const {
     auto it = cbegin();
     for (; it != cend(); ++it) {
-        if ((*it).first == key) {
+        if (*it == key) {
             return it;
         }
     }
     return it;
 }
 
-template <typename Key, typename Value>
-bool map<Key, Value>::contains(const Key& key) const {
+template <typename Key>
+bool set<Key>::contains(const Key& key) const {
     auto it = cbegin();
     for (; it != cend(); ++it) {
-        if ((*it).first == key) {
+        if (*it == key) {
             return true;
         }
     }
@@ -620,4 +563,4 @@ bool map<Key, Value>::contains(const Key& key) const {
 
 }  // namespace s21
 
-#endif  // S21_MAP_TPP_
+#endif  // S21_SET_TPP_
