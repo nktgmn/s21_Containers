@@ -350,7 +350,17 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     bool inserted = false;
 
     if (node == nullptr) {
-        node = new Node(value);
+        Node* new_node = reinterpret_cast<Node*>(new char[sizeof(Node)]);
+
+        try {
+            new (new_node) Node(value);
+        } catch(...) {
+            delete[] reinterpret_cast<char *>(new_node);
+            throw;
+        }
+
+        node = new_node;
+
         ++size_;
         if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
@@ -380,7 +390,17 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     bool inserted = false;
 
     if (node == nullptr) {
-        node = new Node(std::move(value));
+        Node* new_node = reinterpret_cast<Node*>(new char[sizeof(Node)]);
+
+        try {
+            new (new_node) Node(std::move(value));
+        } catch(...) {
+            delete[] reinterpret_cast<char *>(new_node);
+            throw;
+        }
+
+        node = new_node;
+
         ++size_;
         if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
@@ -421,7 +441,7 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pa
         leftmost = fake_node->left;
     }
 
-    return {MapIterator(insert_res.first), insert_res.second};
+    return {iter(insert_res.first), insert_res.second};
 }
 
 template <typename Key, typename Value>
@@ -433,7 +453,7 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& v
         leftmost = fake_node->left;
     }
 
-    return {MapIterator(insert_res.first), insert_res.second};
+    return {iter(insert_res.first), insert_res.second};
 }
 
 template <typename Key, typename Value>

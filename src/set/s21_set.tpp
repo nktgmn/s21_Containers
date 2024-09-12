@@ -304,7 +304,17 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
     bool inserted = false;
 
     if (node == nullptr) {
-        node = new Node(value);
+        Node* new_node = reinterpret_cast<Node*>(new char[sizeof(Node)]);
+
+        try {
+            new (new_node) Node(value);
+        } catch(...) {
+            delete[] reinterpret_cast<char *>(new_node);
+            throw;
+        }
+
+        node = new_node;
+
         ++size_;
         if (leftmost && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
@@ -334,7 +344,16 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
     bool inserted = false;
 
     if (node == nullptr) {
-        node = new Node(std::move(value));
+        Node* new_node = reinterpret_cast<Node*>(new char[sizeof(Node)]);
+
+        try {
+            new (new_node) Node(std::move(value));
+        } catch(...) {
+            delete[] reinterpret_cast<char *>(new_node);
+            throw;
+        }
+
+        node = new_node;
         ++size_;
         if (leftmost && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
@@ -375,7 +394,7 @@ std::pair<typename set<Key>::iter, bool> set<Key>::insert(const key& value) {
         leftmost = fake_node->left;
     }
 
-    return {setIterator(insert_res.first), insert_res.second};
+    return {iter(insert_res.first), insert_res.second};
 }
 
 template <typename Key>
@@ -387,7 +406,7 @@ std::pair<typename set<Key>::iter, bool> set<Key>::insert(key&& value) {
         leftmost = fake_node->left;
     }
 
-    return {setIterator(insert_res.first), insert_res.second};
+    return {iter(insert_res.first), insert_res.second};
 }
 
 template <typename Key>
