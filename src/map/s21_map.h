@@ -43,19 +43,21 @@ class map {
     void clear() noexcept;
     std::pair<iter, bool> insert(const pair& value);
     std::pair<iter, bool> insert(pair&& value);
-    // много других insert
     std::pair<iter, bool> insert_or_assign(const Key& k, Value&& obj);
     iter erase(iter pos);
     iter erase(c_iter pos);
     iter erase(c_iter first, c_iter last);
     size_t erase(const Key& key);
     void swap(map& other) noexcept;
-    // void merge(map& other);
+    void merge(map& source);
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
     c_iter find(const Key& key) const;
     bool contains(const Key& key) const;
+
+    template <typename... Args>
+    std::vector<std::pair<iter, bool>> insert_many(Args&&... args);
 
    private:
     struct BaseNode;
@@ -72,8 +74,10 @@ class map {
     BaseNode* min_value_node(BaseNode* node);
     BaseNode* rotate_right(BaseNode* node);
     BaseNode* rotate_left(BaseNode* node);
+    iter erase_private(iter pos, bool del);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, const pair& value);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, pair&& value);
+    BaseNode* merge_insert(BaseNode* node, BaseNode* src, map& source);
 };
 
 }  // namespace s21

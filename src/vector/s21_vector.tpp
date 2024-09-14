@@ -264,14 +264,12 @@ void vector<T>::shrink_to_fit() {
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
-                                               const T &value) {
+typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, const T &value) {
     return insert(pos, 1, value);
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
-                                               T &&value) {
+typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, T &&value) {
     size_t diff = 0;
     ConstIterator counter_pos = cbegin();
     while (counter_pos != pos) {
@@ -322,8 +320,7 @@ typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos,
-                                               size_t count, const T &value) {
+typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, size_t count, const T &value) {
     size_t diff = 0;
     ConstIterator counter_pos = cbegin();
     while (counter_pos != pos) {
@@ -624,6 +621,12 @@ bool operator==(const s21::vector<T> &left, const s21::vector<T> &right) {
 template <typename T>
 bool operator!=(const vector<T> &left, const vector<T> &right) {
     return !(left == right);
+}
+
+template <typename T>
+template <typename... Args>
+void vector<T>::insert_many_back(Args&&... args) {
+    (push_back(std::forward<Args>(args)), ...);
 }
 
 }  // namespace s21

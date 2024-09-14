@@ -379,6 +379,38 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 }
 
 template <typename Key>
+typename set<Key>::BaseNode* set<Key>::merge_insert(BaseNode* node, BaseNode* src_node, set& source) {
+    if (node == nullptr) {
+        source.erase_private(iter(src_node), false);
+
+        node = src_node;
+        node->left = nullptr;
+        node->right = nullptr;
+        node->height = 1;
+
+        ++size_;
+        if (leftmost && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
+            leftmost = node;
+        }
+        return node;
+    } else if (static_cast<Node*>(src_node)->data < static_cast<Node*>(node)->data) {
+        BaseNode* insert_res = merge_insert(node->left, src_node, source);
+        node->left = insert_res;
+        node->left->parent = node;
+    } else if (static_cast<Node*>(src_node)->data > static_cast<Node*>(node)->data) {
+        BaseNode* insert_res = merge_insert(node->right, src_node, source);
+        node->right = insert_res;
+        node->right->parent = node;
+    } else {
+        return node;
+    }
+
+    node = rebalance_node(node);
+
+    return node;
+}
+
+template <typename Key>
 void set<Key>::clear() noexcept {
     delete_node(static_cast<Node*>(fake_node->left));
     leftmost = fake_node;
@@ -388,7 +420,7 @@ void set<Key>::clear() noexcept {
 template <typename Key>
 std::pair<typename set<Key>::iter, bool> set<Key>::insert(const key& value) {
     auto insert_res = insert_private(fake_node->left, value);
-    if (!fake_node->left) {
+    if (fake_node->left == nullptr) {
         fake_node->left = insert_res.first;
         fake_node->left->parent = fake_node;
         leftmost = fake_node->left;
@@ -410,7 +442,7 @@ std::pair<typename set<Key>::iter, bool> set<Key>::insert(key&& value) {
 }
 
 template <typename Key>
-typename set<Key>::iter set<Key>::erase(iter pos) {
+typename set<Key>::iter set<Key>::erase_private(iter pos, bool del) {
     auto next = pos;
     ++next;
 
@@ -475,7 +507,10 @@ typename set<Key>::iter set<Key>::erase(iter pos) {
     }
 
     --size_;
-    delete node;
+
+    if (del == true) {
+        delete node;
+    }
 
     while (tmp != fake_node) {
         tmp = rebalance_node(tmp);
@@ -483,6 +518,11 @@ typename set<Key>::iter set<Key>::erase(iter pos) {
     }
 
     return iter(next);
+}
+
+template <typename Key>
+typename set<Key>::iter set<Key>::erase(iter pos) {
+    return erase_private(pos, true);
 }
 
 template <typename Key>
@@ -530,10 +570,28 @@ void set<Key>::swap(set& other) noexcept {
     size_ = size_tmp;
 }
 
-// template <typename Key>
-// void set<Key>::merge(set& other) {
+template <typename Key>
+void set<Key>::merge(set& source) {
+    if (this == &source) {
+        return;
+    }
 
-// }
+    auto it = source.begin();
+    auto next = source.begin();
+
+    while (it != source.end()) {
+        ++next;
+        BaseNode* insert_res = merge_insert(fake_node->left, it.node, source);
+
+        if (fake_node->left == nullptr) {
+            fake_node->left = insert_res;
+            fake_node->left->parent = fake_node;
+            leftmost = fake_node->left;
+        }
+
+        it = next;
+    }
+}
 
 template <typename Key>
 size_t set<Key>::count(const Key& key) const {
@@ -578,6 +636,18 @@ bool set<Key>::contains(const Key& key) const {
         }
     }
     return false;
+}
+
+template <typename Key>
+template <typename... Args>
+std::vector<std::pair<typename set<Key>::iter, bool>> set<Key>::insert_many(Args&&... args) {
+    std::vector<std::pair<iter, bool>> res;
+    size_t args_count = sizeof...(Args);
+    res.reserve(args_count);
+
+    (res.push_back(insert(std::forward<Args>(args))), ...);
+
+    return res;
 }
 
 }  // namespace s21

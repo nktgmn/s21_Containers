@@ -1,7 +1,6 @@
-#include "test.h"
-// TODO: проверить для operrator=move что он обнуляет если совпадают объекты
-// TODO: в map если загружаем уже существующий ключ
 #include <gtest/gtest.h>
+
+#include "test.h"
 
 TEST(VECTOR, Constructors) {
     s21::vector<int> s21_1;
@@ -405,6 +404,15 @@ TEST(VECTOR, Erase) {
     auto std_it_4 = std_4.erase(std_4.cbegin(), std_4.cbegin());
     EXPECT_TRUE(*s21_it_4 == *std_it_4);
     EXPECT_TRUE(s21_4 == std_4);
+}
+
+TEST(VECTOR, InsertMany) {
+    s21::vector<int> s21_1 = {1, 2, 3, 0, 1, 2};
+    std::vector<int> std_1 = {1, 2, 3, 0, 1, 2, 4, 5, 5};
+    s21_1.insert_many_back(4, 5, 5);
+    s21_1.shrink_to_fit();
+    std_1.shrink_to_fit();
+    EXPECT_TRUE(s21_1 == std_1);
 }
 
 TEST(ARRAY, SizeMaxSizeEmpty) {
@@ -1886,6 +1894,65 @@ TEST(MAP, Erase) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
+TEST(MAP, Merge) {
+    s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
+    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
+    s21::map<int, int> s21_2 = {{-1, 4}, {5, 5}, {6, 6}, {0, 0}};
+    std::map<int, int> std_2 = {{-1, 4}, {5, 5}, {6, 6}, {0, 0}};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    std_2 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
+    std_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    std_1 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    s21_2 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    std_2 = {{4, 4}, {5, 5}, {6, 6}, {0, 0}};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1.merge(s21_1);
+    std_1.merge(std_1);
+    EXPECT_TRUE(s21_1 == std_1);
+}
+
+TEST(MAP, InsertMany) {
+    s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
+    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}, {-1, 4}, {5, 5}};
+    s21_1.insert_many(std::make_pair(-1, 4), std::make_pair(5, 5));
+    EXPECT_TRUE(s21_1 == std_1);
+
+}
+
 TEST(SET, Constructors) {
     s21::set<int> s21_1;
     std::set<int> std_1;
@@ -2188,6 +2255,14 @@ TEST(SET, Erase) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
+TEST(SET, InsertMany) {
+    s21::set<int> s21_1 = {1, 2, 3, 0};
+    std::set<int> std_1 = {1, 2, 3, 0, 4, 5};
+    s21_1.insert_many(4, 5);
+    EXPECT_TRUE(s21_1 == std_1);
+
+}
+
 TEST(MULTISET, Constructors) {
     s21::multiset<int> s21_1;
     std::multiset<int> std_1;
@@ -2260,6 +2335,57 @@ TEST(MULTISET, Constructors) {
     s21::multiset<std::string> s21_18({"bb", "ba", "aa", "ba"});
     std::multiset<std::string> std_18({"bb", "ba", "aa", "ba"});
     EXPECT_TRUE(s21_18 == std_18);
+}
+
+TEST(SET, Merge) {
+    s21::set<int> s21_1 = {1, 2, 3, 0};
+    std::set<int> std_1 = {1, 2, 3, 0};
+    s21::set<int> s21_2 = {-1, 5, 6, 0};
+    std::set<int> std_2 = {-1, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {4, 5, 6, 0};
+    std_2 = {4, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {1, 2, 3, 0};
+    std_1 = {1, 2, 3, 0};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {4, 5, 6, 0};
+    std_1 = {4, 5, 6, 0};
+    s21_2 = {4, 5, 6, 0};
+    std_2 = {4, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1.merge(s21_1);
+    std_1.merge(std_1);
+    EXPECT_TRUE(s21_1 == std_1);
 }
 
 TEST(MULTISET, OperatorEq) {
@@ -2365,7 +2491,7 @@ TEST(MULTISET, OperatorEq) {
     EXPECT_TRUE(s21_19 == std_19);
 }
 
-TEST(MULTISET, CountFindSwapContains) {
+TEST(MULTISET, CountFindSwapContainsEqualRange) {
     s21::multiset<int> s21_1 = {1, 2, 3, 1, 2, 3};
     std::multiset<int> std_1 = {1, 2, 3, 1, 2, 3};
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
@@ -2408,6 +2534,16 @@ TEST(MULTISET, CountFindSwapContains) {
     std_1.swap(std_3);
     EXPECT_TRUE(s21_1 == std_1);
     EXPECT_TRUE(s21_3 == std_3);
+
+    s21_1 = {9, 10, 10, 10, 30, 10};
+    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> res = {++s21_1.begin(), --s21_1.end()};
+    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> eq = s21_1.equal_range(10);
+    EXPECT_TRUE(res == eq);
+
+    const s21::multiset<int> s21_5 = {9, 10, 10, 10, 30, 10};
+    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_res = {++s21_5.cbegin(), --s21_5.cend()};
+    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_eq = s21_5.equal_range(10);
+    EXPECT_TRUE(c_res == c_eq);
 }
 
 TEST(MULTISET, Erase) {
@@ -2487,6 +2623,62 @@ TEST(MULTISET, Erase) {
 
     s21_1 = {12, 14, 15, 13, 11, 10};
     std_1 = {12, 14, 15, 13, 11, 10};
+    EXPECT_TRUE(s21_1 == std_1);
+}
+
+TEST(MULTISET, Merge) {
+    s21::multiset<int> s21_1 = {1, 2, 3, 0};
+    std::multiset<int> std_1 = {1, 2, 3, 0};
+    s21::multiset<int> s21_2 = {-1, 5, 6, 0};
+    std::multiset<int> std_2 = {-1, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {4, 5, 6, 0};
+    std_2 = {4, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {1, 2, 3, 0};
+    std_1 = {1, 2, 3, 0};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {};
+    std_1 = {};
+    s21_2 = {};
+    std_2 = {};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1 = {4, 5, 6, 0};
+    std_1 = {4, 5, 6, 0};
+    s21_2 = {4, 5, 6, 0};
+    std_2 = {4, 5, 6, 0};
+    s21_1.merge(s21_2);
+    std_1.merge(std_2);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21_1.merge(s21_1);
+}
+
+TEST(MULTISET, InsertMany) {
+    s21::multiset<int> s21_1 = {1, 2, 3, 0, 1, 2};
+    std::multiset<int> std_1 = {1, 2, 3, 0, 4, 5, 1, 2, 5};
+    s21_1.insert_many(4, 5, 5);
     EXPECT_TRUE(s21_1 == std_1);
 }
 

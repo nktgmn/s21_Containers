@@ -375,6 +375,36 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
 }
 
 template <typename Key>
+typename multiset<Key>::BaseNode* multiset<Key>::merge_insert(BaseNode* node, BaseNode* src_node, multiset& source) {
+    if (node == nullptr) {
+        source.erase_private(iter(src_node), false);
+
+        node = src_node;
+        node->left = nullptr;
+        node->right = nullptr;
+        node->height = 1;
+
+        ++size_;
+        if (leftmost && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
+            leftmost = node;
+        }
+        return node;
+    } else if (static_cast<Node*>(src_node)->data >= static_cast<Node*>(node)->data) {
+        BaseNode* insert_res = merge_insert(node->right, src_node, source);
+        node->right = insert_res;
+        node->right->parent = node;
+    } else {
+        BaseNode* insert_res = merge_insert(node->left, src_node, source);
+        node->left = insert_res;
+        node->left->parent = node;
+    }
+
+    node = rebalance_node(node);
+
+    return node;
+}
+
+template <typename Key>
 void multiset<Key>::clear() noexcept {
     delete_node(static_cast<Node*>(fake_node->left));
     leftmost = fake_node;
@@ -406,7 +436,7 @@ std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(key&& value)
 }
 
 template <typename Key>
-typename multiset<Key>::iter multiset<Key>::erase(iter pos) {
+typename multiset<Key>::iter multiset<Key>::erase_private(iter pos, bool del) {
     auto next = pos;
     ++next;
 
@@ -471,7 +501,10 @@ typename multiset<Key>::iter multiset<Key>::erase(iter pos) {
     }
 
     --size_;
-    delete node;
+
+    if (del == true) {
+        delete node;
+    }
 
     while (tmp != fake_node) {
         tmp = rebalance_node(tmp);
@@ -479,6 +512,11 @@ typename multiset<Key>::iter multiset<Key>::erase(iter pos) {
     }
 
     return iter(next);
+}
+
+template <typename Key>
+typename multiset<Key>::iter multiset<Key>::erase(iter pos) {
+    return erase_private(pos, true);
 }
 
 template <typename Key>
@@ -530,10 +568,28 @@ void multiset<Key>::swap(multiset& other) noexcept {
     size_ = size_tmp;
 }
 
-// template <typename Key>
-// void multiset<Key>::merge(multiset& other) {
+template <typename Key>
+void multiset<Key>::merge(multiset& source) {
+    if (this == &source) {
+        return;
+    }
 
-// }
+    auto it = source.begin();
+    auto next = source.begin();
+
+    while (it != source.end()) {
+        ++next;
+        BaseNode* insert_res = merge_insert(fake_node->left, it.node, source);
+
+        if (fake_node->left == nullptr) {
+            fake_node->left = insert_res;
+            fake_node->left->parent = fake_node;
+            leftmost = fake_node->left;
+        }
+
+        it = next;
+    }
+}
 
 template <typename Key>
 size_t multiset<Key>::count(const Key& key) const {
@@ -577,6 +633,76 @@ bool multiset<Key>::contains(const Key& key) const {
         }
     }
     return false;
+}
+
+template <typename Key>
+std::pair<typename multiset<Key>::iter, typename multiset<Key>::iter> multiset<Key>::equal_range(const Key& key) {
+    iter lower = lower_bound(key);
+    iter upper = upper_bound(key);
+    return {lower, upper};
+}
+
+template <typename Key>
+std::pair<typename multiset<Key>::c_iter, typename multiset<Key>::c_iter> multiset<Key>::equal_range(const Key& key) const {
+    c_iter lower = lower_bound(key);
+    c_iter upper = upper_bound(key);
+    return {lower, upper};
+}
+
+template <typename Key>
+typename multiset<Key>::iter multiset<Key>::lower_bound(const Key& key) {
+    auto it = begin();
+
+    while ((*it < key) && (it != end())) {
+        ++it;
+    }
+
+    return it;
+}
+
+template <typename Key>
+typename multiset<Key>::c_iter multiset<Key>::lower_bound(const Key& key) const {
+    auto it = cbegin();
+
+    while ((*it < key) && (it != cend())) {
+        ++it;
+    }
+
+    return it;
+}
+
+template <typename Key>
+typename multiset<Key>::iter multiset<Key>::upper_bound(const Key& key) {
+    auto it = begin();
+
+    while ((*it <= key) && (it != end())) {
+        ++it;
+    }
+
+    return it;
+}
+
+template <typename Key>
+typename multiset<Key>::c_iter multiset<Key>::upper_bound(const Key& key) const {
+    auto it = cbegin();
+
+    while ((*it <= key) && (it != cend())) {
+        ++it;
+    }
+
+    return it;
+}
+
+template <typename Key>
+template <typename... Args>
+std::vector<std::pair<typename multiset<Key>::iter, bool>> multiset<Key>::insert_many(Args&&... args) {
+    std::vector<std::pair<iter, bool>> res;
+    size_t args_count = sizeof...(Args);
+    res.reserve(args_count);
+
+    (res.push_back(insert(std::forward<Args>(args))), ...);
+
+    return res;
 }
 
 }  // namespace s21

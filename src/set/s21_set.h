@@ -45,14 +45,17 @@ class set {
     iter erase(c_iter first, c_iter last);
     size_t erase(const Key& key);
     void swap(set& other) noexcept;
-    // void merge(set& other);
+    void merge(set& source);
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
     c_iter find(const Key& key) const;
     bool contains(const Key& key) const;
+    
+    template <typename... Args>
+    std::vector<std::pair<iter, bool>> insert_many(Args&&... args);
 
-   protected:
+   private:
     struct BaseNode;
     struct Node;
 
@@ -67,8 +70,10 @@ class set {
     BaseNode* min_value_node(BaseNode* node);
     BaseNode* rotate_right(BaseNode* node);
     BaseNode* rotate_left(BaseNode* node);
+    iter erase_private(iter pos, bool del);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, const key& value);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, key&& value);
+    BaseNode* merge_insert(BaseNode* node, BaseNode* src, set& source);
 };
 
 }  // namespace s21

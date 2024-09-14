@@ -45,14 +45,23 @@ class multiset {
     iter erase(c_iter first, c_iter last);
     size_t erase(const Key& key);
     void swap(multiset& other) noexcept;
-    // void merge(multiset& other);
+    void merge(multiset& source);
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
     c_iter find(const Key& key) const;
     bool contains(const Key& key) const;
+    std::pair<iter, iter> equal_range(const Key& key);
+    std::pair<c_iter, c_iter> equal_range(const Key& key) const;
+    iter lower_bound(const Key& key);
+    c_iter lower_bound(const Key& key) const;
+    iter upper_bound(const Key& key);
+    c_iter upper_bound(const Key& key) const;
 
-   protected:
+    template <typename... Args>
+    std::vector<std::pair<iter, bool>> insert_many(Args&&... args);
+
+   private:
     struct BaseNode;
     struct Node;
 
@@ -67,8 +76,10 @@ class multiset {
     BaseNode* min_value_node(BaseNode* node);
     BaseNode* rotate_right(BaseNode* node);
     BaseNode* rotate_left(BaseNode* node);
+    iter erase_private(iter pos, bool del);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, const key& value);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, key&& value);
+    BaseNode* merge_insert(BaseNode* node, BaseNode* src, multiset& source);
 };
 
 }  // namespace s21

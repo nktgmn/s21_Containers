@@ -392,12 +392,7 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     if (node == nullptr) {
         Node* new_node = reinterpret_cast<Node*>(new char[sizeof(Node)]);
 
-        try {
-            new (new_node) Node(std::move(value));
-        } catch (...) {
-            delete[] reinterpret_cast<char*>(new_node);
-            throw;
-        }
+        new (new_node) Node(std::move(value));
 
         node = new_node;
 
@@ -423,6 +418,38 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     node = rebalance_node(node);
 
     return {node, inserted};
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::BaseNode* map<Key, Value>::merge_insert(BaseNode* node, BaseNode* src_node, map& source) {
+    if (node == nullptr) {
+        source.erase_private(iter(src_node), false);
+
+        node = src_node;
+        node->left = nullptr;
+        node->right = nullptr;
+        node->height = 1;
+
+        ++size_;
+        if (leftmost && static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(leftmost)->kv.first) {
+            leftmost = node;
+        }
+        return node;
+    } else if (static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(node)->kv.first) {
+        BaseNode* insert_res = merge_insert(node->left, src_node, source);
+        node->left = insert_res;
+        node->left->parent = node;
+    } else if (static_cast<Node*>(src_node)->kv.first > static_cast<Node*>(node)->kv.first) {
+        BaseNode* insert_res = merge_insert(node->right, src_node, source);
+        node->right = insert_res;
+        node->right->parent = node;
+    } else {
+        return node;
+    }
+
+    node = rebalance_node(node);
+
+    return node;
 }
 
 template <typename Key, typename Value>
@@ -468,7 +495,7 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert_or_assig
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
+typename map<Key, Value>::iter map<Key, Value>::erase_private(iter pos, bool del) {
     auto next = pos;
     ++next;
 
@@ -533,7 +560,10 @@ typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
     }
 
     --size_;
-    delete node;
+
+    if (del == true) {
+        delete node;
+    }
 
     while (tmp != fake_node) {
         tmp = rebalance_node(tmp);
@@ -541,6 +571,11 @@ typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
     }
 
     return iter(next);
+}
+
+template <typename Key, typename Value>
+typename map<Key, Value>::iter map<Key, Value>::erase(iter pos) {
+    return erase_private(pos, true);
 }
 
 template <typename Key, typename Value>
@@ -588,10 +623,28 @@ void map<Key, Value>::swap(map& other) noexcept {
     size_ = size_tmp;
 }
 
-// template <typename Key, typename Value>
-// void map<Key, Value>::merge(map& other) {
+template <typename Key, typename Value>
+void map<Key, Value>::merge(map& source) {
+    if (this == &source) {
+        return;
+    }
 
-// }
+    auto it = source.begin();
+    auto next = source.begin();
+
+    while (it != source.end()) {
+        ++next;
+        BaseNode* insert_res = merge_insert(fake_node->left, it.node, source);
+
+        if (fake_node->left == nullptr) {
+            fake_node->left = insert_res;
+            fake_node->left->parent = fake_node;
+            leftmost = fake_node->left;
+        }
+
+        it = next;
+    }
+}
 
 template <typename Key, typename Value>
 size_t map<Key, Value>::count(const Key& key) const {
@@ -636,6 +689,18 @@ bool map<Key, Value>::contains(const Key& key) const {
         }
     }
     return false;
+}
+
+template <typename Key, typename Value>
+template <typename... Args>
+std::vector<std::pair<typename map<Key, Value>::iter, bool>> map<Key, Value>::insert_many(Args&&... args) {
+    std::vector<std::pair<iter, bool>> res;
+    size_t args_count = sizeof...(Args);
+    res.reserve(args_count);
+
+    (res.push_back(insert(std::forward<Args>(args))), ...);
+
+    return res;
 }
 
 }  // namespace s21

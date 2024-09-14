@@ -59,6 +59,9 @@ class vector {
     ConstIterator cbegin() const noexcept;
     ConstIterator cend() const noexcept;
 
+    template <typename... Args>
+    void insert_many_back(Args&&... args);
+
    private:
     T *data_;
     size_t size_;
