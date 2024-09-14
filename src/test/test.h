@@ -6,18 +6,19 @@
 #include <array>
 #include <list>
 #include <queue>
+#include <set>
 #include <stack>
 #include <string>
 #include <vector>
-#include <set>
 
 #include "../array/s21_array.tpp"
 #include "../list/s21_list.tpp"
 #include "../map/s21_map.tpp"
+#include "../multiset/s21_multiset.tpp"
 #include "../queue/s21_queue.tpp"
+#include "../set/s21_set.tpp"
 #include "../stack/s21_stack.tpp"
 #include "../vector/s21_vector.tpp"
-#include "../set/s21_set.tpp"
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst);
@@ -48,6 +49,12 @@ bool operator==(const s21::set<K>& s21_set, const std::set<K>& set);
 
 template <typename K>
 bool operator!=(const s21::set<K>& s21_set, const std::set<K>& set);
+
+template <typename K>
+bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset);
+
+template <typename K>
+bool operator!=(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset);
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst) {
@@ -198,6 +205,40 @@ bool operator==(const s21::set<K>& s21_set, const std::set<K>& set) {
 template <typename K>
 bool operator!=(const s21::set<K>& s21_set, const std::set<K>& set) {
     return !(s21_set == set);
+}
+
+template <typename K>
+bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset) {
+    bool res = true;
+
+    auto s21_it_beg = s21_multiset.cbegin();
+    auto s21_it_end = s21_multiset.cend();
+    auto it_beg = multiset.cbegin();
+    auto it_end = multiset.cend();
+
+    while (s21_it_beg != s21_it_end) {
+        if (*s21_it_beg != *it_beg) {
+            res = false;
+            break;
+        }
+        ++s21_it_beg;
+        ++it_beg;
+    }
+
+    if (it_beg != it_end) {
+        res = false;
+    }
+
+    if ((s21_multiset.size() != multiset.size()) || (s21_multiset.max_size() != multiset.max_size()) || (s21_multiset.empty() != multiset.empty())) {
+        res = false;
+    }
+
+    return res;
+}
+
+template <typename K>
+bool operator!=(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset) {
+    return !(s21_multiset == multiset);
 }
 
 #endif  // S21_TEST_H_

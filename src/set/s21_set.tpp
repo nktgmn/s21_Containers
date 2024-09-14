@@ -308,8 +308,8 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 
         try {
             new (new_node) Node(value);
-        } catch(...) {
-            delete[] reinterpret_cast<char *>(new_node);
+        } catch (...) {
+            delete[] reinterpret_cast<char*>(new_node);
             throw;
         }
 
@@ -348,8 +348,8 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 
         try {
             new (new_node) Node(std::move(value));
-        } catch(...) {
-            delete[] reinterpret_cast<char *>(new_node);
+        } catch (...) {
+            delete[] reinterpret_cast<char*>(new_node);
             throw;
         }
 
@@ -532,7 +532,7 @@ void set<Key>::swap(set& other) noexcept {
 
 // template <typename Key>
 // void set<Key>::merge(set& other) {
-    
+
 // }
 
 template <typename Key>

@@ -1895,8 +1895,8 @@ TEST(SET, Constructors) {
     std::set<int> std_2 = {};
     EXPECT_TRUE(s21_2 == std_2);
 
-    s21::set<int> s21_3 = {1, 2, 3};
-    std::set<int> std_3 = {1, 2, 3};
+    s21::set<int> s21_3 = {1, 2, 3, 3};
+    std::set<int> std_3 = {1, 2, 3, 3};
     EXPECT_TRUE(s21_3 == std_3);
 
     s21::set<int> s21_4(s21_3);
@@ -2149,6 +2149,308 @@ TEST(SET, Erase) {
 
     s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
     std_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
+    size_t s_res = s21_1.erase(99);
+    size_t res = std_1.erase(99);
+    EXPECT_TRUE(s_res == res);
+    EXPECT_TRUE(s21_1 == std_1);
+    s_res = s21_1.erase(50);
+    res = std_1.erase(50);
+    EXPECT_TRUE(s_res == res);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {20, 10, 30, 25, 40, 22};
+    std_1 = {20, 10, 30, 25, 40, 22};
+    sit_1 = s21_1.erase(--s21_1.end());
+    it_1 = std_1.erase(--std_1.end());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {10, 5, 20, 15, 30, 25};
+    std_1 = {10, 5, 20, 15, 30, 25};
+    sit_1 = s21_1.erase(s21_1.begin());
+    it_1 = std_1.erase(std_1.begin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {50, 30, 70, 20, 40, 60, 80, 65};
+    std_1 = {50, 30, 70, 20, 40, 60, 80, 65};
+    sit_1 = s21_1.erase(++ ++ ++s21_1.begin());
+    it_1 = std_1.erase(++ ++ ++std_1.begin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {1, 2, 3, 4, 5};
+    std_1 = {1, 2, 3, 4, 5};
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {12, 14, 15, 13, 11, 10};
+    std_1 = {12, 14, 15, 13, 11, 10};
+    EXPECT_TRUE(s21_1 == std_1);
+}
+
+TEST(MULTISET, Constructors) {
+    s21::multiset<int> s21_1;
+    std::multiset<int> std_1;
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21::multiset<int> s21_2 = {};
+    std::multiset<int> std_2 = {};
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21::multiset<int> s21_3 = {1, 2, 3, 3, 1, 1};
+    std::multiset<int> std_3 = {1, 2, 3, 3, 1, 1};
+    EXPECT_TRUE(s21_3 == std_3);
+
+    s21::multiset<int> s21_4(s21_3);
+    std::multiset<int> std_4(std_3);
+    EXPECT_TRUE(s21_4 == std_4);
+
+    s21::multiset<int> s21_5 = s21_3;
+    std::multiset<int> std_5 = std_3;
+    EXPECT_TRUE(s21_5 == std_5);
+
+    s21::multiset<int> s21_6 = std::move(s21_3);
+    std::multiset<int> std_6 = std::move(std_3);
+    EXPECT_TRUE(s21_6 == std_6);
+    EXPECT_TRUE(s21_3 == std_3);
+
+    s21::multiset<int> s21_7 = {1, 2, 3, 2, 2, 2};
+    std::multiset<int> std_7 = {1, 2, 3, 2, 2, 2};
+    s21::multiset<int> s21_8(std::move(s21_7));
+    std::multiset<int> std_8(std::move(std_7));
+    EXPECT_TRUE(s21_7 == std_7);
+    EXPECT_TRUE(s21_8 == std_8);
+
+    s21::multiset<int> s21_9({1, 2, 3, 3, 3, 3});
+    std::multiset<int> std_9({1, 2, 3, 3, 3, 3});
+    EXPECT_TRUE(s21_9 == std_9);
+
+    s21::multiset<std::list<int>> s21_10;
+    std::multiset<std::list<int>> std_10;
+    EXPECT_TRUE(s21_10 == std_10);
+
+    s21::multiset<std::list<int>> s21_11 = {};
+    std::multiset<std::list<int>> std_11 = {};
+    EXPECT_TRUE(s21_11 == std_11);
+
+    s21::multiset<std::string> s21_12 = {"bb", "ba", "aa", "aa"};
+    std::multiset<std::string> std_12 = {"bb", "ba", "aa", "aa"};
+    EXPECT_TRUE(s21_12 == std_12);
+
+    s21::multiset<std::string> s21_13(s21_12);
+    std::multiset<std::string> std_13(std_12);
+    EXPECT_TRUE(s21_13 == std_13);
+
+    s21::multiset<std::string> s21_14 = s21_13;
+    std::multiset<std::string> std_14 = std_13;
+    EXPECT_TRUE(s21_14 == std_14);
+
+    s21::multiset<std::string> s21_15 = std::move(s21_12);
+    std::multiset<std::string> std_15 = std::move(std_12);
+    EXPECT_TRUE(s21_15 == std_15);
+    EXPECT_TRUE(s21_12 == std_12);
+
+    s21::multiset<std::string> s21_16 = {"bb", "ba", "aa", "aa"};
+    std::multiset<std::string> std_16 = {"bb", "ba", "aa", "aa"};
+    s21::multiset<std::string> s21_17(std::move(s21_16));
+    std::multiset<std::string> std_17(std::move(std_16));
+    EXPECT_TRUE(s21_16 == std_16);
+    EXPECT_TRUE(s21_17 == std_17);
+
+    s21::multiset<std::string> s21_18({"bb", "ba", "aa", "ba"});
+    std::multiset<std::string> std_18({"bb", "ba", "aa", "ba"});
+    EXPECT_TRUE(s21_18 == std_18);
+}
+
+TEST(MULTISET, OperatorEq) {
+    s21::multiset<int> s21_1 = {1, 2, 3, 3, 3};
+    std::multiset<int> std_1 = {1, 2, 3, 3, 3};
+    s21::multiset<int> s21_2 = {1, 2, 3, 3, 3, 4, 4};
+    std::multiset<int> std_2 = {1, 2, 3, 3, 3, 4, 4};
+    s21_1 = s21_2;
+    std_1 = std_2;
+    EXPECT_TRUE(s21_1 == std_1);
+    s21::multiset<int>& s21_1_1 = s21_1;
+    std::multiset<int>& std_1_1 = std_1;
+    s21_1_1 = s21_1;
+    std_1_1 = std_1;
+    EXPECT_TRUE(s21_1_1 == std_1_1);
+
+    s21::multiset<int> s21_3 = {1, 2, 3, 3, 3};
+    std::multiset<int> std_3 = {1, 2, 3, 3, 3};
+    s21::multiset<int> s21_4 = {1, 2, 3, 3, 3, 4, 4};
+    std::multiset<int> std_4 = {1, 2, 3, 3, 3, 4, 4};
+    s21_3 = std::move(s21_4);
+    std_3 = std::move(std_4);
+    EXPECT_TRUE(s21_3 == std_3);
+    EXPECT_TRUE(s21_4 == std_4);
+    s21::multiset<int>& s21_3_1 = s21_3;
+    std::multiset<int>& std_3_1 = std_3;
+    s21_3_1 = s21_3;
+    std_3_1 = std_3;
+    EXPECT_TRUE(s21_3_1 == std_3_1);
+
+    s21::multiset<int>& s21_3_2 = s21_3_1;
+    std::multiset<int>& std_3_2 = std_3_1;
+    s21_3_2 = std::move(s21_3_1);
+    std_3_2 = std::move(std_3_1);
+    EXPECT_TRUE(s21_3_2 == std_3_2);
+
+    s21::multiset<int> s21_5 = {1, 2, 3, 3};
+    std::multiset<int> std_5 = {1, 2, 3, 3};
+    s21::multiset<int> s21_6 = {};
+    std::multiset<int> std_6 = {};
+    s21_5 = s21_6;
+    std_5 = std_6;
+    EXPECT_TRUE(s21_5 == std_5);
+
+    s21::multiset<int> s21_7 = {1, 2, 3, 2, 2};
+    std::multiset<int> std_7 = {1, 2, 3, 2, 2};
+    s21::multiset<int> s21_8 = {};
+    std::multiset<int> std_8 = {};
+    s21_7 = std::move(s21_8);
+    std_7 = std::move(std_8);
+    EXPECT_TRUE(s21_7 == std_7);
+    EXPECT_TRUE(s21_8 == std_8);
+
+    s21::multiset<int> s21_9 = {};
+    std::multiset<int> std_9 = {};
+    s21::multiset<int> s21_10 = {4, 5, 6, 7, 7, 6};
+    std::multiset<int> std_10 = {4, 5, 6, 7, 7, 6};
+    s21_9 = s21_10;
+    std_9 = std_10;
+    EXPECT_TRUE(s21_9 == std_9);
+
+    s21::multiset<int> s21_11 = {};
+    std::multiset<int> std_11 = {};
+    s21::multiset<int> s21_12 = {4, 5, 6, 7, 1, 2};
+    std::multiset<int> std_12 = {4, 5, 6, 7, 2, 1};
+    s21_11 = std::move(s21_12);
+    std_11 = std::move(std_12);
+    EXPECT_TRUE(s21_11 == std_11);
+    EXPECT_TRUE(s21_12 == std_12);
+
+    s21::multiset<int> s21_13 = {};
+    std::multiset<int> std_13 = {};
+    s21::multiset<int> s21_14 = {};
+    std::multiset<int> std_14 = {};
+    s21_13 = s21_14;
+    std_13 = std_14;
+    EXPECT_TRUE(s21_13 == std_13);
+
+    s21::multiset<int> s21_15 = {};
+    std::multiset<int> std_15 = {};
+    s21::multiset<int> s21_16 = {};
+    std::multiset<int> std_16 = {};
+    s21_15 = std::move(s21_16);
+    std_15 = std::move(std_16);
+    EXPECT_TRUE(s21_15 == std_15);
+    EXPECT_TRUE(s21_16 == std_16);
+
+    s21::multiset<std::string> s21_17({"bb", "ba", "aa"});
+    std::multiset<std::string> std_17({"bb", "ba", "aa"});
+    s21::multiset<std::string> s21_18({"bb", "ba", "aa", "cc"});
+    std::multiset<std::string> std_18({"bb", "ba", "aa", "cc"});
+    s21_17 = s21_18;
+    std_17 = std_18;
+    EXPECT_TRUE(s21_17 == std_17);
+
+    s21::multiset<int> s21_19;
+    std::multiset<int> std_19;
+    s21_19 = {4, 5, 6, 7};
+    std_19 = {4, 5, 6, 7};
+    EXPECT_TRUE(s21_19 == std_19);
+    s21_19 = {};
+    std_19 = {};
+    EXPECT_TRUE(s21_19 == std_19);
+}
+
+TEST(MULTISET, CountFindSwapContains) {
+    s21::multiset<int> s21_1 = {1, 2, 3, 1, 2, 3};
+    std::multiset<int> std_1 = {1, 2, 3, 1, 2, 3};
+    EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
+    EXPECT_TRUE(s21_1.count(5) == std_1.count(5));
+    s21_1.clear();
+    std_1.clear();
+    EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
+    EXPECT_FALSE(s21_1.contains(1));
+
+    s21::multiset<std::string> s21_2({"bb", "ba", "aa"});
+    std::multiset<std::string> std_2({"bb", "ba", "aa"});
+    EXPECT_TRUE(s21_2.count("bb") == std_2.count("bb"));
+    EXPECT_TRUE(s21_2.count("qq") == std_2.count("qq"));
+    EXPECT_TRUE(s21_2.contains("bb"));
+    s21_2.clear();
+    std_2.clear();
+    EXPECT_TRUE(s21_2.count("ba") == std_2.count("ba"));
+
+    s21::multiset<int> s21_3 = {1, 2, 3};
+    std::multiset<int> std_3 = {1, 2, 3};
+    auto s21_it = s21_3.find(1);
+    auto it = std_3.find(1);
+    EXPECT_TRUE(*s21_it == *it);
+    s21_it = s21_3.find(10);
+    EXPECT_TRUE((*(--s21_it)) == (*(--s21_3.end())));
+
+    const s21::multiset<int> s21_4 = {1, 2, 3, 1, 1};
+    const std::multiset<int> std_4 = {1, 2, 3, 1, 1};
+    auto s21_cit = s21_4.find(1);
+    auto cit = std_4.find(1);
+    EXPECT_TRUE(*s21_cit == *cit);
+    s21_cit = s21_4.find(10);
+    EXPECT_TRUE((*(--s21_cit)) == (*(--s21_4.cend())));
+
+    s21_1 = {10, 20, 30, 10};
+    std_1 = {10, 20, 30, 10};
+    s21_3 = {1, 2, 3, 2};
+    std_3 = {1, 2, 3, 2};
+    s21_1.swap(s21_3);
+    std_1.swap(std_3);
+    EXPECT_TRUE(s21_1 == std_1);
+    EXPECT_TRUE(s21_3 == std_3);
+}
+
+TEST(MULTISET, Erase) {
+    s21::multiset<int> s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 90, 90};
+    std::multiset<int> std_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 90, 90};
+    auto sit_1 = s21_1.erase(s21_1.begin());
+    auto it_1 = std_1.erase(std_1.begin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(-- --s21_1.end());
+    it_1 = std_1.erase(-- --std_1.end());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(++ ++s21_1.begin());
+    it_1 = std_1.erase(++ ++std_1.begin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+    s21_1 = {50};
+    std_1 = {50};
+    sit_1 = s21_1.erase(s21_1.cbegin());
+    it_1 = std_1.erase(std_1.cbegin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
+    std_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
+    sit_1 = s21_1.erase(++ ++ ++s21_1.cbegin());
+    it_1 = std_1.erase(++ ++ ++std_1.cbegin());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+    sit_1 = s21_1.erase(-- --s21_1.end());
+    it_1 = std_1.erase(-- --std_1.end());
+    EXPECT_TRUE(*sit_1 == *it_1);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
+    std_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
+    s21_1.erase(s21_1.cbegin(), s21_1.cend());
+    std_1.erase(std_1.cbegin(), std_1.cend());
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37, 50, 50};
+    std_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37, 50, 50};
     size_t s_res = s21_1.erase(99);
     size_t res = std_1.erase(99);
     EXPECT_TRUE(s_res == res);

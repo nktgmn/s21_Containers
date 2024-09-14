@@ -1,5 +1,5 @@
-#ifndef S21_SET_H_
-#define S21_SET_H_
+#ifndef S21_MULTISET_H_
+#define S21_MULTISET_H_
 
 #include <algorithm>
 #include <initializer_list>
@@ -8,24 +8,24 @@
 namespace s21 {
 
 template <typename Key>
-class set {
+class multiset {
    public:
     class SetIterator;
     class ConstSetIterator;
 
     using key = const Key;
-    using iter = typename set<Key>::SetIterator;
-    using c_iter = typename set<Key>::ConstSetIterator;
+    using iter = typename multiset<Key>::SetIterator;
+    using c_iter = typename multiset<Key>::ConstSetIterator;
 
-    set() noexcept;
-    set(const set& other);
-    set(std::initializer_list<key> init);
-    set(set&& other);
-    ~set() noexcept;
+    multiset() noexcept;
+    multiset(const multiset& other);
+    multiset(std::initializer_list<key> init);
+    multiset(multiset&& other);
+    ~multiset() noexcept;
 
-    set& operator=(const set& other);
-    set& operator=(set&& other) noexcept;
-    set& operator=(std::initializer_list<key> ilist);
+    multiset& operator=(const multiset& other);
+    multiset& operator=(multiset&& other) noexcept;
+    multiset& operator=(std::initializer_list<key> ilist);
 
     iter begin() noexcept;
     iter end() noexcept;
@@ -44,8 +44,8 @@ class set {
     iter erase(c_iter pos);
     iter erase(c_iter first, c_iter last);
     size_t erase(const Key& key);
-    void swap(set& other) noexcept;
-    // void merge(set& other);
+    void swap(multiset& other) noexcept;
+    // void merge(multiset& other);
 
     size_t count(const Key& key) const;
     iter find(const Key& key);
@@ -73,8 +73,8 @@ class set {
 
 }  // namespace s21
 
-#include "../iterators/s21_set_iterators.h"
-#include "../iterators/s21_set_iterators.tpp"
-#include "s21_set.tpp"
+#include "../iterators/s21_multiset_iterators.h"
+#include "../iterators/s21_multiset_iterators.tpp"
+#include "s21_multiset.tpp"
 
-#endif  // S21_SET_H_
+#endif  // S21_MULTISET_H_
