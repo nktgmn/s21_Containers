@@ -3,8 +3,6 @@
 
 #include <initializer_list>
 
-#include "../iterators/s21_list_iterators.tpp"
-
 namespace s21 {
 
 template <typename T>
@@ -144,6 +142,7 @@ bool operator!=(const list<T>& left, const list<T>& right);
 
 };  // namespace s21
 
+#include "../iterators/s21_list_iterators.tpp"
 #include "s21_list.tpp"
 
 #endif  // S21_LIST_H

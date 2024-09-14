@@ -80,5 +80,6 @@ bool operator!=(const vector<T> &left, const vector<T> &right);
 }  // namespace s21
 
 #include "../iterators/s21_seq_iterators.tpp"
+#include "s21_vector.tpp"
 
 #endif  // S21_VECTOR_H

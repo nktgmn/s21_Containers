@@ -1,8 +1,6 @@
 #ifndef S21_VECTOR_TPP
 #define S21_VECTOR_TPP
 
-#include "s21_vector.h"
-
 namespace s21 {
 
 template <typename T>

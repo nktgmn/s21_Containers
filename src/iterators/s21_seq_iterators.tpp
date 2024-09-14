@@ -1,8 +1,6 @@
 #ifndef S21_SEQ_ITERATORS_TPP
 #define S21_SEQ_ITERATORS_TPP
 
-#include "s21_seq_iterators.h"
-
 namespace s21 {
 
 template <typename T>

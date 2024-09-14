@@ -1,8 +1,6 @@
 #ifndef S21_LIST_ITERATORS_TPP
 #define S21_LIST_ITERATORS_TPP
 
-#include "../list/s21_list.h"
-
 namespace s21 {
 
 template <typename T>
