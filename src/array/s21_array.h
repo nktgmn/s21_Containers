@@ -3,20 +3,20 @@
 
 #include <initializer_list>
 
-#include "../iterators/s21_seq_iterators.tpp"
+#include "../iterators/s21_seq_iterators.h"
 
 namespace s21 {
 
 template <typename T, std::size_t N>
 class array {
    public:
+    using iter = SequenceIterator<T>;
+    using c_iter = ConstSequenceIterator<T>;
+
     array() noexcept;
     array(const array& other);
     array(std::initializer_list<T> init);
     array(array&& other) noexcept;
-
-    using Iterator = SequenceIterator<T>;
-    using ConstIterator = ConstSequenceIterator<T>;
 
     array& operator=(const array& other);
     array& operator=(array&& other) noexcept;
@@ -40,10 +40,10 @@ class array {
     void fill(const T& value);
     void swap(array& other) noexcept;
 
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    ConstIterator cbegin() const noexcept;
-    ConstIterator cend() const noexcept;
+    iter begin() noexcept;
+    iter end() noexcept;
+    c_iter cbegin() const noexcept;
+    c_iter cend() const noexcept;
 
    private:
     T data_[N];

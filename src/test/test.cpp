@@ -413,6 +413,11 @@ TEST(VECTOR, InsertMany) {
     s21_1.shrink_to_fit();
     std_1.shrink_to_fit();
     EXPECT_TRUE(s21_1 == std_1);
+
+    s21::vector<int> s21_2 = {1, 2, 3, 0, 1, 2};
+    std::vector<int> std_2 = {5, 5, 4, 1, 2, 3, 0, 1, 2};
+    s21_2.insert_many(s21_2.cbegin(), 4, 5, 5);
+    EXPECT_TRUE(s21_2 == std_2);
 }
 
 TEST(ARRAY, SizeMaxSizeEmpty) {
@@ -638,6 +643,20 @@ TEST(STACK, All) {
     EXPECT_TRUE(s21_3.size() == std_3.size());
     EXPECT_TRUE(s21_3.top() == std_3.top());
     EXPECT_TRUE(s21_3.empty() == std_3.empty());
+
+    s21::stack<int, s21::vector<int>> s21_6;
+    std::stack<int, std::vector<int>> std_6;
+    for (int k = 0; k < 4; ++k) {
+        s21_6.push(k);
+        std_6.push(k);
+    }
+    std_6.push(4);
+    std_6.push(5);
+    std_6.push(5);
+    s21_6.insert_many_back(4, 5, 5);
+    EXPECT_TRUE(s21_6.size() == std_6.size());
+    EXPECT_TRUE(s21_6.top() == s21_6.top());
+    EXPECT_TRUE(s21_6.empty() == s21_6.empty());
 }
 
 TEST(QUEUE, All) {
@@ -724,6 +743,21 @@ TEST(QUEUE, All) {
     EXPECT_TRUE(s21_3.front() == std_3.front());
     EXPECT_TRUE(s21_3.back() == std_3.back());
     EXPECT_TRUE(s21_3.empty() == std_3.empty());
+
+    s21::queue<int, s21::list<int>> s21_6;
+    std::queue<int, std::list<int>> std_6;
+    for (int k = 0; k < 4; ++k) {
+        s21_6.push(k);
+        std_6.push(k);
+    }
+    std_6.push(4);
+    std_6.push(5);
+    std_6.push(5);
+    s21_6.insert_many_back(4, 5, 5);
+    EXPECT_TRUE(s21_6.size() == std_6.size());
+    EXPECT_TRUE(s21_6.empty() == s21_6.empty());
+    EXPECT_TRUE(s21_6.front() == s21_6.front());
+    EXPECT_TRUE(s21_6.back() == s21_6.back());
 }
 
 TEST(LIST, Constructors) {
@@ -1535,6 +1569,23 @@ TEST(LIST, Sort) {
     EXPECT_TRUE(s21_1 == std_1);
 }
 
+TEST(LIST, InsertMany) {
+    s21::list<int> s21_1 = {1, 2, 3, 0, 1, 2};
+    std::list<int> std_1 = {1, 2, 3, 0, 1, 2, 4, 5, 5};
+    s21_1.insert_many_back(4, 5, 5);
+    EXPECT_TRUE(s21_1 == std_1);
+
+    s21::list<int> s21_2 = {1, 2, 3, 0, 1, 2};
+    std::list<int> std_2 = {5, 5, 4, 1, 2, 3, 0, 1, 2};
+    s21_2.insert_many_front(4, 5, 5);
+    EXPECT_TRUE(s21_2 == std_2);
+
+    s21::list<int> s21_3 = {1, 2, 3, 0, 1, 2};
+    std::list<int> std_3 = {5, 5, 4, 1, 2, 3, 0, 1, 2};
+    s21_3.insert_many(s21_3.cbegin(), 4, 5, 5);
+    EXPECT_TRUE(s21_2 == std_2);
+}
+
 TEST(MAP, Constructors) {
     s21::map<int, int> s21_1;
     std::map<int, int> std_1;
@@ -1950,7 +2001,6 @@ TEST(MAP, InsertMany) {
     std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}, {-1, 4}, {5, 5}};
     s21_1.insert_many(std::make_pair(-1, 4), std::make_pair(5, 5));
     EXPECT_TRUE(s21_1 == std_1);
-
 }
 
 TEST(SET, Constructors) {
@@ -2260,7 +2310,6 @@ TEST(SET, InsertMany) {
     std::set<int> std_1 = {1, 2, 3, 0, 4, 5};
     s21_1.insert_many(4, 5);
     EXPECT_TRUE(s21_1 == std_1);
-
 }
 
 TEST(MULTISET, Constructors) {

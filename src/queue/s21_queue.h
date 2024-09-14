@@ -34,6 +34,9 @@ class queue {
 
     void swap(queue& other) noexcept;
 
+    template <typename... Args>
+    void insert_many_back(Args&&... args);
+
    private:
     Container c_;
 };

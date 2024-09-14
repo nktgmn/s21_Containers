@@ -77,6 +77,12 @@ void stack<T, Container>::swap(stack& other) noexcept {
     return vector_.swap(other.vector_);
 }
 
+template <typename T, typename Container>
+template <typename... Args>
+void stack<T, Container>::insert_many_back(Args&&... args) {
+    (push(std::forward<Args>(args)), ...);
+}
+
 }  // namespace s21
 
 #endif  // S21_STACK_TPP

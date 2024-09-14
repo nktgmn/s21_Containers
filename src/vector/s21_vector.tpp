@@ -264,14 +264,14 @@ void vector<T>::shrink_to_fit() {
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, const T &value) {
+typename vector<T>::iter vector<T>::insert(c_iter pos, const T &value) {
     return insert(pos, 1, value);
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, T &&value) {
+typename vector<T>::iter vector<T>::insert(c_iter pos, T &&value) {
     size_t diff = 0;
-    ConstIterator counter_pos = cbegin();
+    c_iter counter_pos = cbegin();
     while (counter_pos != pos) {
         ++diff;
         ++counter_pos;
@@ -316,13 +316,13 @@ typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, T &
         ++size_;
     }
 
-    return Iterator(data_ + diff);
+    return iter(data_ + diff);
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, size_t count, const T &value) {
+typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &value) {
     size_t diff = 0;
-    ConstIterator counter_pos = cbegin();
+    c_iter counter_pos = cbegin();
     while (counter_pos != pos) {
         ++diff;
         ++counter_pos;
@@ -393,28 +393,27 @@ typename vector<T>::Iterator vector<T>::insert(vector<T>::ConstIterator pos, siz
         size_ += count;
     }
 
-    return Iterator(data_ + diff);
+    return iter(data_ + diff);
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator pos) {
-    return Iterator(erase(pos, ++pos));
+typename vector<T>::iter vector<T>::erase(c_iter pos) {
+    return iter(erase(pos, ++pos));
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::erase(vector<T>::ConstIterator first,
-                                              vector<T>::ConstIterator last) {
-    Iterator it_return;
-    Iterator it_last = begin() + (last - cbegin());
+typename vector<T>::iter vector<T>::erase(c_iter first, c_iter last) {
+    iter it_return;
+    iter it_last = begin() + (last - cbegin());
 
     if (first >= last) {
         it_return = it_last;
     } else {
-        Iterator it_first = begin() + (first - cbegin());
+        iter it_first = begin() + (first - cbegin());
 
         std::ptrdiff_t diff = last - first;
 
-        it_return = Iterator(it_first);
+        it_return = iter(it_first);
 
         while ((it_first < it_last) && (it_last <= end())) {
             (*it_first).~T();
@@ -575,23 +574,23 @@ void vector<T>::swap(vector &other) noexcept {
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::begin() noexcept {
-    return Iterator(data_);
+typename vector<T>::iter vector<T>::begin() noexcept {
+    return iter(data_);
 }
 
 template <typename T>
-typename vector<T>::Iterator vector<T>::end() noexcept {
-    return Iterator(data_ + size_);
+typename vector<T>::iter vector<T>::end() noexcept {
+    return iter(data_ + size_);
 }
 
 template <typename T>
-typename vector<T>::ConstIterator vector<T>::cbegin() const noexcept {
-    return ConstIterator(data_);
+typename vector<T>::c_iter vector<T>::cbegin() const noexcept {
+    return c_iter(data_);
 }
 
 template <typename T>
-typename vector<T>::ConstIterator vector<T>::cend() const noexcept {
-    return ConstIterator(data_ + size_);
+typename vector<T>::c_iter vector<T>::cend() const noexcept {
+    return c_iter(data_ + size_);
 }
 
 template <typename T>
@@ -621,6 +620,19 @@ bool operator==(const s21::vector<T> &left, const s21::vector<T> &right) {
 template <typename T>
 bool operator!=(const vector<T> &left, const vector<T> &right) {
     return !(left == right);
+}
+
+template <typename T>
+template <typename... Args>
+typename vector<T>::iter vector<T>::insert_many(c_iter pos, Args&&... args) {
+    std::ptrdiff_t index = pos - cbegin();
+
+    reserve(size() + sizeof...(Args));
+
+    c_iter insert_pos = cbegin() + index;
+    (insert(insert_pos, std::forward<Args>(args)), ...);
+
+    return begin() + index;
 }
 
 template <typename T>

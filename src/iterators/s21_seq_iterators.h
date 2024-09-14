@@ -6,6 +6,9 @@
 namespace s21 {
 
 template <typename T>
+class vector;
+
+template <typename T>
 class SequenceIterator {
    public:
     SequenceIterator() noexcept;
@@ -35,6 +38,8 @@ class SequenceIterator {
 
    private:
     T* ptr_;
+
+    friend class vector<T>;    
 };
 
 template <typename T>
@@ -67,6 +72,8 @@ class ConstSequenceIterator {
 
    private:
     const T* ptr_;
+
+    friend class vector<T>;
 };
 
 }  // namespace s21

@@ -39,7 +39,6 @@ class set {
     void clear() noexcept;
     std::pair<iter, bool> insert(const key& value);
     std::pair<iter, bool> insert(key&& value);
-    // много других insert
     iter erase(iter pos);
     iter erase(c_iter pos);
     iter erase(c_iter first, c_iter last);
@@ -51,7 +50,7 @@ class set {
     iter find(const Key& key);
     c_iter find(const Key& key) const;
     bool contains(const Key& key) const;
-    
+
     template <typename... Args>
     std::vector<std::pair<iter, bool>> insert_many(Args&&... args);
 

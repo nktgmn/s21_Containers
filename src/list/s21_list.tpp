@@ -770,6 +770,25 @@ void list<T>::sort() {
 }
 
 template <typename T>
+template <typename... Args>
+typename list<T>::ListIterator list<T>::insert_many(ListConstIterator pos, Args&&... args) {
+    (insert(pos, std::forward<Args>(args)), ...);
+    return ListIterator(pos.ptr_);
+}
+
+template <typename T>
+template <typename... Args>
+void list<T>::insert_many_back(Args&&... args) {
+    (push_back(std::forward<Args>(args)), ...);
+}
+
+template <typename T>
+template <typename... Args>
+void list<T>::insert_many_front(Args&&... args) {
+    (push_front(std::forward<Args>(args)), ...);
+}
+
+template <typename T>
 bool operator==(const list<T>& left, const list<T>& right) {
     bool res = true;
 

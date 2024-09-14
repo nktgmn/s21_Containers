@@ -86,6 +86,12 @@ void queue<T, Container>::swap(queue& other) noexcept {
     return c_.swap(other.c_);
 }
 
+template <typename T, typename Container>
+template <typename... Args>
+void queue<T, Container>::insert_many_back(Args&&... args) {
+    (push(std::forward<Args>(args)), ...);
+}
+
 }  // namespace s21
 
 #endif  // S21_QUEUE_TPP

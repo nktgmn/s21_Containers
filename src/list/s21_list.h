@@ -125,6 +125,15 @@ class list {
     void reverse();
     void unique();
     void sort();
+
+    template <typename... Args>
+    ListIterator insert_many(ListConstIterator pos, Args&&... args);
+
+    template <typename... Args>
+    void insert_many_back(Args&&... args);
+
+    template <typename... Args>
+    void insert_many_front(Args&&... args);
 };
 
 template <typename T>

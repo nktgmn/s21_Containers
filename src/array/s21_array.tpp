@@ -150,23 +150,23 @@ void array<T, N>::swap(array& other) noexcept {
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::Iterator array<T, N>::begin() noexcept {
-    return Iterator(data_);
+typename array<T, N>::iter array<T, N>::begin() noexcept {
+    return iter(data_);
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::Iterator array<T, N>::end() noexcept {
-    return Iterator(data_ + size_);
+typename array<T, N>::iter array<T, N>::end() noexcept {
+    return iter(data_ + size_);
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::ConstIterator array<T, N>::cbegin() const noexcept {
-    return ConstIterator(data_);
+typename array<T, N>::c_iter array<T, N>::cbegin() const noexcept {
+    return c_iter(&data_[0]);
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::ConstIterator array<T, N>::cend() const noexcept {
-    return ConstIterator(data_ + size_);
+typename array<T, N>::c_iter array<T, N>::cend() const noexcept {
+    return c_iter(data_ + size_);
 }
 
 template <typename T, std::size_t N>
