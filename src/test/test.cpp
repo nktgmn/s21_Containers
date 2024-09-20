@@ -2242,7 +2242,6 @@ TEST(SET, Erase) {
     std_1 = {50};
     sit_1 = s21_1.erase(s21_1.cbegin());
     it_1 = std_1.erase(std_1.cbegin());
-    EXPECT_TRUE(*sit_1 == *it_1);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
@@ -2537,7 +2536,7 @@ TEST(MULTISET, OperatorEq) {
     EXPECT_TRUE(s21_19 == std_19);
 }
 
-TEST(MULTISET, CountFindSwapContainsEqualRange) {
+TEST(MULTISET, CountFindSwapContainsEqualRangeMaxSize) {
     s21::multiset<int> s21_1 = {1, 2, 3, 1, 2, 3};
     std::multiset<int> std_1 = {1, 2, 3, 1, 2, 3};
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
@@ -2546,6 +2545,7 @@ TEST(MULTISET, CountFindSwapContainsEqualRange) {
     std_1.clear();
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
     EXPECT_FALSE(s21_1.contains(1));
+    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
     s21::multiset<std::string> s21_2({"bb", "ba", "aa"});
     std::multiset<std::string> std_2({"bb", "ba", "aa"});
@@ -2611,7 +2611,6 @@ TEST(MULTISET, Erase) {
     std_1 = {50};
     sit_1 = s21_1.erase(s21_1.cbegin());
     it_1 = std_1.erase(std_1.cbegin());
-    EXPECT_TRUE(*sit_1 == *it_1);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 37};
