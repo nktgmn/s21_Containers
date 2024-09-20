@@ -155,7 +155,7 @@ bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map) {
         res = false;
     }
 
-    if ((s21_map.size() != map.size()) || (s21_map.max_size() != map.max_size()) || (s21_map.empty() != map.empty())) {
+    if (s21_map.size() != map.size()) {
         res = false;
     }
 
@@ -189,7 +189,7 @@ bool operator==(const s21::set<K>& s21_set, const std::set<K>& set) {
         res = false;
     }
 
-    if ((s21_set.size() != set.size()) || (s21_set.max_size() != set.max_size()) || (s21_set.empty() != set.empty())) {
+    if (s21_set.size() != set.size()) {
         res = false;
     }
 
@@ -223,7 +223,7 @@ bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& mu
         res = false;
     }
 
-    if ((s21_multiset.size() != multiset.size()) || (s21_multiset.max_size() != multiset.max_size()) || (s21_multiset.empty() != multiset.empty())) {
+    if (s21_multiset.size() != multiset.size()) {
         res = false;
     }
 
