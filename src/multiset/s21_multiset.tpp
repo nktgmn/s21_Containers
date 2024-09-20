@@ -316,7 +316,7 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
         node = new_node;
 
         ++size_;
-        if (leftmost && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -353,7 +353,7 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
 
         node = new_node;
         ++size_;
-        if (leftmost && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -385,7 +385,7 @@ typename multiset<Key>::BaseNode* multiset<Key>::merge_insert(BaseNode* node, Ba
         node->height = 1;
 
         ++size_;
-        if (leftmost && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return node;
