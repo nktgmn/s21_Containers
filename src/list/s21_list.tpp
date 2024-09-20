@@ -184,7 +184,7 @@ size_t list<T>::size() const noexcept {
 
 template <typename T>
 size_t list<T>::max_size() const noexcept {
-    return std::numeric_limits<size_t>::max() / sizeof(Node);
+    return std::allocator_traits<std::allocator<Node>>::max_size(std::allocator<Node>());
 }
 
 template <typename T>

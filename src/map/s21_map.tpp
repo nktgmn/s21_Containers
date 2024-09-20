@@ -224,7 +224,7 @@ size_t map<Key, Value>::size() const noexcept {
 
 template <typename Key, typename Value>
 size_t map<Key, Value>::max_size() const noexcept {
-    return std::numeric_limits<size_t>::max() / sizeof(Node);
+    return std::allocator_traits<std::allocator<Node>>::max_size(std::allocator<Node>());
 }
 
 template <typename Key, typename Value>
