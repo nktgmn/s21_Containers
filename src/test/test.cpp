@@ -510,9 +510,9 @@ TEST(ARRAY, Iterators) {
     s21::array<int, 3> s21_1 = {1, 2, 3};
     std::array<int, 3> std_1 = {1, 2, 3};
     EXPECT_TRUE(*s21_1.begin() == *std_1.begin());
-    EXPECT_TRUE(*s21_1.end() == *std_1.end());
+    EXPECT_TRUE(*(--s21_1.end()) == *(--std_1.end()));
     EXPECT_TRUE(*s21_1.cbegin() == *std_1.cbegin());
-    EXPECT_TRUE(*s21_1.cend() == *std_1.cend());
+    EXPECT_TRUE(*(--s21_1.cend()) == *(--std_1.cend()));
 }
 
 TEST(ARRAY, FillSwapEqual) {
