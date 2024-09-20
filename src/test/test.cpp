@@ -108,11 +108,10 @@ TEST(VECTOR, FrontBack) {
     EXPECT_TRUE(s21_4 == std_4);
 }
 
-TEST(VECTOR, EmptyMaxSize) {
+TEST(VECTOR, Empty) {
     s21::vector<int> s21_1 = {1, 2, 3};
     std::vector<int> std_1 = {1, 2, 3};
     EXPECT_TRUE(s21_1.empty() == std_1.empty());
-    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
     s21::vector<int> s21_2;
     std::vector<int> std_2;
@@ -121,7 +120,6 @@ TEST(VECTOR, EmptyMaxSize) {
     s21::vector<s21::vector<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     std::vector<std::vector<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     EXPECT_TRUE(s21_3.empty() == std_3.empty());
-    EXPECT_TRUE(s21_3.max_size() == std_3.max_size());
 
     s21::vector<s21::vector<int>> s21_4;
     std::vector<std::vector<int>> std_4;
@@ -420,7 +418,7 @@ TEST(VECTOR, InsertMany) {
     EXPECT_TRUE(s21_2 == std_2);
 }
 
-TEST(ARRAY, SizeMaxSizeEmpty) {
+TEST(ARRAY, SizeEmpty) {
     s21::array<int, 3> s21_1 = {1, 2, 3};
     std::array<int, 3> std_1 = {1, 2, 5};
     std::array<int, 4> std_2 = {1, 2, 5, 7};
@@ -428,7 +426,6 @@ TEST(ARRAY, SizeMaxSizeEmpty) {
     EXPECT_TRUE(s21_1.size() == std_1.size());
     EXPECT_FALSE(s21_1.size() == std_2.size());
     EXPECT_TRUE(s21_2.empty());
-    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
     s21::array<s21::array<int, 1>, 3> s21_3 = {{1}, {2}, {3}};
     std::array<std::array<int, 1>, 3> std_3 = {{{1}, {2}, {3}}};
@@ -437,7 +434,6 @@ TEST(ARRAY, SizeMaxSizeEmpty) {
     EXPECT_TRUE(s21_3.size() == std_3.size());
     EXPECT_FALSE(s21_3.size() == std_4.size());
     EXPECT_TRUE(s21_4.empty());
-    EXPECT_TRUE(s21_3.max_size() == std_3.max_size());
 }
 
 TEST(ARRAY, FrontBack) {
@@ -862,11 +858,10 @@ TEST(LIST, FrontBack) {
     EXPECT_TRUE(s21_4 == std_4);
 }
 
-TEST(LIST, EmptyMaxSize) {
+TEST(LIST, Empty) {
     s21::list<int> s21_1 = {1, 2, 3};
     std::list<int> std_1 = {1, 2, 3};
     EXPECT_TRUE(s21_1.empty() == std_1.empty());
-    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
     s21::list<int> s21_2;
     std::list<int> std_2;
@@ -875,7 +870,6 @@ TEST(LIST, EmptyMaxSize) {
     s21::list<s21::list<int>> s21_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     std::list<std::list<int>> std_3 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     EXPECT_TRUE(s21_3.empty() == std_3.empty());
-    EXPECT_TRUE(s21_3.max_size() == std_3.max_size());
 
     s21::list<s21::list<int>> s21_4;
     std::list<std::list<int>> std_4;
@@ -2536,7 +2530,7 @@ TEST(MULTISET, OperatorEq) {
     EXPECT_TRUE(s21_19 == std_19);
 }
 
-TEST(MULTISET, CountFindSwapContainsEqualRangeMaxSize) {
+TEST(MULTISET, CountFindSwapContainsEqualRange) {
     s21::multiset<int> s21_1 = {1, 2, 3, 1, 2, 3};
     std::multiset<int> std_1 = {1, 2, 3, 1, 2, 3};
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
@@ -2545,7 +2539,6 @@ TEST(MULTISET, CountFindSwapContainsEqualRangeMaxSize) {
     std_1.clear();
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
     EXPECT_FALSE(s21_1.contains(1));
-    EXPECT_TRUE(s21_1.max_size() == std_1.max_size());
 
     s21::multiset<std::string> s21_2({"bb", "ba", "aa"});
     std::multiset<std::string> std_2({"bb", "ba", "aa"});

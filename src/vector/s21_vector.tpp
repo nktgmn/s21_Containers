@@ -217,7 +217,7 @@ size_t vector<T>::size() const noexcept {
 
 template <typename T>
 size_t vector<T>::max_size() const noexcept {
-    return std::allocator_traits<std::allocator<T>>::max_size(std::allocator<T>());
+    return std::numeric_limits<size_t>::max() / sizeof(T);
 }
 
 template <typename T>
