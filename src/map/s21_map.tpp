@@ -243,6 +243,7 @@ void map<Key, Value>::delete_node(Node* node) {
         delete_node(static_cast<Node*>(node->left));
         delete_node(static_cast<Node*>(node->right));
         --size_;
+        node->~Node();
         delete[] reinterpret_cast<char*>(node);
     }
 }
@@ -561,6 +562,7 @@ typename map<Key, Value>::iter map<Key, Value>::erase_private(iter pos, bool del
     --size_;
 
     if (del == true) {
+        node->~Node();
         delete[] reinterpret_cast<char*>(node);
     }
 
