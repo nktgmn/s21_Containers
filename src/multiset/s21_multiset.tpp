@@ -178,7 +178,7 @@ size_t multiset<Key>::size() const noexcept {
 
 template <typename Key>
 size_t multiset<Key>::max_size() const noexcept {
-    return std::numeric_limits<size_t>::max() / sizeof(Node);
+    return std::allocator_traits<std::allocator<T>>::max_size(std::allocator<T>());
 }
 
 template <typename Key>
