@@ -1884,7 +1884,6 @@ TEST(MAP, Erase) {
     std_1 = {{50, 50}};
     sit_1 = s21_1.erase(s21_1.cbegin());
     it_1 = std_1.erase(std_1.cbegin());
-    EXPECT_TRUE((*sit_1).first == (*it_1).first);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
@@ -1919,7 +1918,6 @@ TEST(MAP, Erase) {
     std_1 = {{20, 20}, {10, 10}, {30, 30}, {25, 25}, {40, 40}, {22, 22}};
     sit_1 = s21_1.erase(--s21_1.end());
     it_1 = std_1.erase(--std_1.end());
-    EXPECT_TRUE((*sit_1).first == (*it_1).first);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {{10, 10}, {5, 5}, {20, 20}, {15, 15}, {30, 30}, {25, 25}};
@@ -2279,7 +2277,6 @@ TEST(SET, Erase) {
     std_1 = {20, 10, 30, 25, 40, 22};
     sit_1 = s21_1.erase(--s21_1.end());
     it_1 = std_1.erase(--std_1.end());
-    EXPECT_TRUE(*sit_1 == *it_1);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {10, 5, 20, 15, 30, 25};
@@ -2649,7 +2646,6 @@ TEST(MULTISET, Erase) {
     std_1 = {20, 10, 30, 25, 40, 22};
     sit_1 = s21_1.erase(--s21_1.end());
     it_1 = std_1.erase(--std_1.end());
-    EXPECT_TRUE(*sit_1 == *it_1);
     EXPECT_TRUE(s21_1 == std_1);
 
     s21_1 = {10, 5, 20, 15, 30, 25};
