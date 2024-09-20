@@ -48,7 +48,7 @@ leaks: test
 ifeq ($(OS), Darwin)
 	leaks --atExit -- $(TEST_OUTPUT)
 else
-	valgrind --leak-check=full --show-leak-kinds=all $(TEST_OUTPUT)
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all $(TEST_OUTPUT)
 endif
 
 
