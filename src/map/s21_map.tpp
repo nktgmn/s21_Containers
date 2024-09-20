@@ -378,7 +378,7 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
         node = new_node;
 
         ++size_;
-        if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node && value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return {node, true};
@@ -397,7 +397,7 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     }
 
     node = rebalance_node(node);
-    std::cout << "insert_private copy end" << std::endl;
+
     return {node, inserted};
 }
 
@@ -414,7 +414,7 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
         node = new_node;
 
         ++size_;
-        if (leftmost && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node && value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return {node, true};
@@ -448,7 +448,7 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::merge_insert(BaseNode* node
         node->height = 1;
 
         ++size_;
-        if (leftmost && static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node && static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return node;
