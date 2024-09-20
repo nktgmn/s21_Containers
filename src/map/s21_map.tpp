@@ -31,13 +31,10 @@ template <typename Key, typename Value>
 map<Key, Value>::Node::Node(pair&& value) : BaseNode(), kv(value) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
-    std::cout << "default const" << std::endl;
-}
+map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
 
 template <typename Key, typename Value>
 map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
-    std::cout << "copy const start" << std::endl;
     try {
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
             insert(*it);
@@ -47,12 +44,10 @@ map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fak
         delete fake_node;
         throw;
     }
-    std::cout << "copy const end" << std::endl;
 }
 
 template <typename Key, typename Value>
 map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
-    std::cout << "init const start" << std::endl;
     try {
         for (const auto& elem : init) {
             insert(elem);
@@ -62,12 +57,10 @@ map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode(
         delete fake_node;
         throw;
     }
-    std::cout << "init const end" << std::endl;
 }
 
 template <typename Key, typename Value>
 map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
-    std::cout << "move const start" << std::endl;
     if (other.size() > 0) {
         fake_node->left = other.fake_node->left;
         fake_node->left->parent = fake_node;
@@ -77,7 +70,6 @@ map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_nod
         other.leftmost = other.fake_node;
         other.size_ = 0;
     }
-    std::cout << "move const end" << std::endl;
 }
 
 template <typename Key, typename Value>
@@ -88,7 +80,6 @@ map<Key, Value>::~map() noexcept {
 
 template <typename Key, typename Value>
 map<Key, Value>& map<Key, Value>::operator=(const map& other) {
-    std::cout << "operator= copy start" << std::endl;
     if (this == &other) {
         return *this;
     }
@@ -109,14 +100,11 @@ map<Key, Value>& map<Key, Value>::operator=(const map& other) {
         new_map.size_ = 0;
     }
 
-    std::cout << "operator= copy end" << std::endl;
-
     return *this;
 }
 
 template <typename Key, typename Value>
 map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
-    std::cout << "operator= move start" << std::endl;
     clear();
 
     if (this != &other) {
@@ -132,13 +120,11 @@ map<Key, Value>& map<Key, Value>::operator=(map&& other) noexcept {
     other.leftmost = other.fake_node;
     other.size_ = 0;
 
-    std::cout << "operator= move end" << std::endl;
     return *this;
 }
 
 template <typename Key, typename Value>
 map<Key, Value>& map<Key, Value>::operator=(std::initializer_list<pair> ilist) {
-    std::cout << "operator= init start" << std::endl;
     if (ilist.size() > 0) {
         map<Key, Value> new_map(ilist);
 
@@ -157,7 +143,6 @@ map<Key, Value>& map<Key, Value>::operator=(std::initializer_list<pair> ilist) {
         clear();
     }
 
-    std::cout << "operator= init end" << std::endl;
     return *this;
 }
 
@@ -362,7 +347,6 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node)
 
 template <typename Key, typename Value>
 std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
-    std::cout << "insert_private copy start" << std::endl;
     bool inserted = false;
 
     if (node == nullptr) {
@@ -403,7 +387,6 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
 
 template <typename Key, typename Value>
 std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, pair&& value) {
-    std::cout << "insert_private move start" << std::endl;
     bool inserted = false;
 
     if (node == nullptr) {
@@ -433,7 +416,7 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
     }
 
     node = rebalance_node(node);
-    std::cout << "insert_private move end" << std::endl;
+
     return {node, inserted};
 }
 
@@ -478,14 +461,12 @@ void map<Key, Value>::clear() noexcept {
 
 template <typename Key, typename Value>
 std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pair& value) {
-    std::cout << "insert start" << std::endl;
     auto insert_res = insert_private(fake_node->left, value);
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
         fake_node->left->parent = fake_node;
         leftmost = fake_node->left;
     }
-    std::cout << "insert end" << std::endl;
     return {iter(insert_res.first), insert_res.second};
 }
 

@@ -1635,8 +1635,6 @@ TEST(MAP, Constructors) {
     std::map<std::string, std::list<int>> std_12 = {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
     EXPECT_TRUE(s21_12 == std_12);
 
-    std::cout << "----------" << std::endl;
-
     s21::map<std::string, std::list<int>> s21_13(s21_12);
     std::map<std::string, std::list<int>> std_13(std_12);
     EXPECT_TRUE(s21_13 == std_13);
