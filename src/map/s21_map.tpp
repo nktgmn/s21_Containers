@@ -22,7 +22,8 @@ struct map<Key, Value>::Node : BaseNode {
 };
 
 template <typename Key, typename Value>
-map<Key, Value>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
+map<Key, Value>::BaseNode::BaseNode()
+    : left(nullptr), right(nullptr), parent(this), height(1) {}
 
 template <typename Key, typename Value>
 map<Key, Value>::Node::Node(const pair& value) : BaseNode(), kv(value) {}
@@ -31,10 +32,12 @@ template <typename Key, typename Value>
 map<Key, Value>::Node::Node(pair&& value) : BaseNode(), kv(value) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::map() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+map<Key, Value>::map() noexcept
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+map<Key, Value>::map(const map& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
             insert(*it);
@@ -47,7 +50,8 @@ map<Key, Value>::map(const map& other) : fake_node(new BaseNode()), leftmost(fak
 }
 
 template <typename Key, typename Value>
-map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+map<Key, Value>::map(std::initializer_list<pair> init)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (const auto& elem : init) {
             insert(elem);
@@ -60,7 +64,8 @@ map<Key, Value>::map(std::initializer_list<pair> init) : fake_node(new BaseNode(
 }
 
 template <typename Key, typename Value>
-map<Key, Value>::map(map&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
+map<Key, Value>::map(map&& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
     if (other.size() > 0) {
         fake_node->left = other.fake_node->left;
         fake_node->left->parent = fake_node;
@@ -174,7 +179,8 @@ Value& map<Key, Value>::operator[](const Key& key) {
         if ((*it).first == key) {
             return (*it).second;
         } else if ((*it).first > key) {
-            BaseNode* node = static_cast<Node*>(insert_private(it.node, {key, Value()}).first);
+            BaseNode* node = static_cast<Node*>(
+                insert_private(it.node, {key, Value()}).first);
             auto iterator = iter(node);
             return static_cast<Node*>((--iterator).node)->kv.second;
         }
@@ -182,9 +188,11 @@ Value& map<Key, Value>::operator[](const Key& key) {
 
     BaseNode* node;
     if (size() > 0) {
-        node = static_cast<Node*>(insert_private((--end()).node, {key, Value()}).first);
+        node = static_cast<Node*>(
+            insert_private((--end()).node, {key, Value()}).first);
     } else {
-        node = static_cast<Node*>(insert_private(nullptr, {key, Value()}).first);
+        node =
+            static_cast<Node*>(insert_private(nullptr, {key, Value()}).first);
         fake_node->left = node;
         fake_node->left->parent = fake_node;
         leftmost = fake_node->left;
@@ -234,7 +242,8 @@ int map<Key, Value>::get_height(BaseNode* node) {
 
 template <typename Key, typename Value>
 int map<Key, Value>::get_balance_factor(BaseNode* node) {
-    return node != nullptr ? get_height(node->left) - get_height(node->right) : 0;
+    return node != nullptr ? get_height(node->left) - get_height(node->right)
+                           : 0;
 }
 
 template <typename Key, typename Value>
@@ -249,8 +258,10 @@ void map<Key, Value>::delete_node(Node* node) {
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(BaseNode* node) {
-    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
+typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(
+    BaseNode* node) {
+    node->height =
+        std::max(get_height(node->left), get_height(node->right)) + 1;
 
     int balance_factor = get_balance_factor(node);
 
@@ -276,7 +287,8 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rebalance_node(BaseNode* no
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(
+    BaseNode* node) {
     BaseNode* current = node;
 
     while (current->left != nullptr) {
@@ -287,7 +299,8 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::min_value_node(BaseNode* no
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(
+    BaseNode* node) {
     BaseNode* new_root = node->left;
     BaseNode* right = new_root->right;
 
@@ -309,14 +322,17 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_right(BaseNode* node
         right->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(
+    BaseNode* node) {
     BaseNode* new_root = node->right;
     BaseNode* left = new_root->left;
 
@@ -340,14 +356,17 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::rotate_left(BaseNode* node)
         left->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
+std::pair<typename map<Key, Value>::BaseNode*, bool>
+map<Key, Value>::insert_private(BaseNode* node, const pair& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -363,7 +382,8 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
         node = new_node;
 
         ++size_;
-        if (leftmost != fake_node && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node &&
+            value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return {node, true};
@@ -387,7 +407,8 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_private(BaseNode* node, pair&& value) {
+std::pair<typename map<Key, Value>::BaseNode*, bool>
+map<Key, Value>::insert_private(BaseNode* node, pair&& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -398,7 +419,8 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
         node = new_node;
 
         ++size_;
-        if (leftmost != fake_node && value.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node &&
+            value.first < static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return {node, true};
@@ -422,7 +444,8 @@ std::pair<typename map<Key, Value>::BaseNode*, bool> map<Key, Value>::insert_pri
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::BaseNode* map<Key, Value>::merge_insert(BaseNode* node, BaseNode* src_node, map& source) {
+typename map<Key, Value>::BaseNode* map<Key, Value>::merge_insert(
+    BaseNode* node, BaseNode* src_node, map& source) {
     if (node == nullptr) {
         source.erase_private(iter(src_node), false);
 
@@ -432,15 +455,19 @@ typename map<Key, Value>::BaseNode* map<Key, Value>::merge_insert(BaseNode* node
         node->height = 1;
 
         ++size_;
-        if (leftmost != fake_node && static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(leftmost)->kv.first) {
+        if (leftmost != fake_node &&
+            static_cast<Node*>(src_node)->kv.first <
+                static_cast<Node*>(leftmost)->kv.first) {
             leftmost = node;
         }
         return node;
-    } else if (static_cast<Node*>(src_node)->kv.first < static_cast<Node*>(node)->kv.first) {
+    } else if (static_cast<Node*>(src_node)->kv.first <
+               static_cast<Node*>(node)->kv.first) {
         BaseNode* insert_res = merge_insert(node->left, src_node, source);
         node->left = insert_res;
         node->left->parent = node;
-    } else if (static_cast<Node*>(src_node)->kv.first > static_cast<Node*>(node)->kv.first) {
+    } else if (static_cast<Node*>(src_node)->kv.first >
+               static_cast<Node*>(node)->kv.first) {
         BaseNode* insert_res = merge_insert(node->right, src_node, source);
         node->right = insert_res;
         node->right->parent = node;
@@ -461,7 +488,8 @@ void map<Key, Value>::clear() noexcept {
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pair& value) {
+std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(
+    const pair& value) {
     auto insert_res = insert_private(fake_node->left, value);
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -472,7 +500,8 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(const pa
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& value) {
+std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(
+    pair&& value) {
     auto insert_res = insert_private(fake_node->left, std::move(value));
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -484,7 +513,8 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert(pair&& v
 }
 
 template <typename Key, typename Value>
-std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert_or_assign(const Key& k, Value&& obj) {
+std::pair<typename map<Key, Value>::iter, bool>
+map<Key, Value>::insert_or_assign(const Key& k, Value&& obj) {
     auto iter = find(k);
     if (iter == end()) {
         return insert({k, std::forward<Value>(obj)});
@@ -495,7 +525,8 @@ std::pair<typename map<Key, Value>::iter, bool> map<Key, Value>::insert_or_assig
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase_private(iter pos, bool del) {
+typename map<Key, Value>::iter map<Key, Value>::erase_private(iter pos,
+                                                              bool del) {
     auto next = pos;
     ++next;
 
@@ -585,7 +616,8 @@ typename map<Key, Value>::iter map<Key, Value>::erase(c_iter pos) {
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iter map<Key, Value>::erase(c_iter first, c_iter last) {
+typename map<Key, Value>::iter map<Key, Value>::erase(c_iter first,
+                                                      c_iter last) {
     iter it_first(first.node);
     iter it_last(last.node);
 
@@ -694,7 +726,8 @@ bool map<Key, Value>::contains(const Key& key) const {
 
 template <typename Key, typename Value>
 template <typename... Args>
-std::vector<std::pair<typename map<Key, Value>::iter, bool>> map<Key, Value>::insert_many(Args&&... args) {
+std::vector<std::pair<typename map<Key, Value>::iter, bool>>
+map<Key, Value>::insert_many(Args&&... args) {
     std::vector<std::pair<iter, bool>> res;
     size_t args_count = sizeof...(Args);
     res.reserve(args_count);

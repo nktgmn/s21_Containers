@@ -78,6 +78,9 @@ vector<T> &vector<T>::operator=(const vector &other) {
                 new (new_data + k) T(other.data_[k]);
             }
 
+            for (; k < new_cap; ++k) {
+                new (new_data + k) T();
+            }
         } catch (...) {
             for (size_t i = 0; i < k; ++i) {
                 (new_data + i)->~T();
@@ -327,32 +330,36 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
     }
 
     if (size_ + count <= capacity_) {
-        for (size_t k = size_; k > diff; --k) {
-            *(data_ + k) = std::move(*(data_ + k - 1));
+        for (size_t k = 0; k < size_ - diff; ++k) {
+            *(data_ + size_ - 1 + count - k) = std::move(*(data_ + size_ - 1 - k));
         }
 
+        size_t k = 0;
         try {
-            *(data_ + diff) = value;
-        } catch (...) {
-            for (size_t k = size_; k > diff; --k) {
-                *(data_ + k - 1) = std::move(*(data_ + k));
+            for (; k < count; ++k) {
+                *(data_ + diff + k) = value;
             }
+        } catch (...) {
+            for (size_t i = 0; i < k; ++i) {
+                delete (data_ + diff + i);
+            }
+
+            for (size_t k = 0; k < size_ - diff; ++k) {
+                *(data_ + diff + k) = std::move(*(data_ + diff + count + k));
+            }
+
             throw;
         }
 
-        ++size_;
-
     } else {
-        size_t new_cap;
+        size_t new_cap = size_ + count;
         if (capacity_ == 0) {
             new_cap = count;
         } else if (size_ + count <= capacity_ * 2) {
             new_cap = capacity_ * 2;
-        } else {
-            new_cap = size_ + count;
         }
 
-        T *old_data = data_;
+        T* old_data = data_;
 
         try {
             data_ = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
@@ -366,20 +373,28 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
             for (; k < count; ++k) {
                 *(data_ + diff + k) = value;
             }
+            for (; k < new_cap - size_; ++k) {
+                *(data_ + size_ + k) = T();
+            }
         } catch (...) {
             for (size_t i = 0; i < k; ++i) {
-                delete (data_ + diff + i);
+                if (i < count) {
+                    delete (data_ + diff + i);
+                } else {
+                    delete (data_ + size_ + i);
+                }
             }
+            
             delete[] reinterpret_cast<char *>(data_);
             data_ = old_data;
             throw;
         }
 
-        for (size_t k = 0; k < size_ + count; ++k) {
+        for (size_t k = 0; k < size_; ++k) {
             if (k < diff) {
                 *(data_ + k) = std::move(*(old_data + k));
-            } else if (k >= diff + count) {
-                *(data_ + k) = std::move(*(old_data + k - count));
+            } else {
+                *(data_ + k + count) = std::move(*(old_data + k));
             }
         }
 
@@ -388,8 +403,9 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
         }
         delete[] reinterpret_cast<char *>(old_data);
         capacity_ = new_cap;
-        size_ += count;
     }
+
+    size_ += count;
 
     return iter(data_ + diff);
 }
@@ -622,7 +638,7 @@ bool operator!=(const vector<T> &left, const vector<T> &right) {
 
 template <typename T>
 template <typename... Args>
-typename vector<T>::iter vector<T>::insert_many(c_iter pos, Args&&... args) {
+typename vector<T>::iter vector<T>::insert_many(c_iter pos, Args &&...args) {
     std::ptrdiff_t index = pos - cbegin();
 
     reserve(size() + sizeof...(Args));
@@ -635,7 +651,7 @@ typename vector<T>::iter vector<T>::insert_many(c_iter pos, Args&&... args) {
 
 template <typename T>
 template <typename... Args>
-void vector<T>::insert_many_back(Args&&... args) {
+void vector<T>::insert_many_back(Args &&...args) {
     (push_back(std::forward<Args>(args)), ...);
 }
 

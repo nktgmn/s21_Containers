@@ -75,7 +75,8 @@ class map {
     BaseNode* rotate_right(BaseNode* node);
     BaseNode* rotate_left(BaseNode* node);
     iter erase_private(iter pos, bool del);
-    std::pair<BaseNode*, bool> insert_private(BaseNode* node, const pair& value);
+    std::pair<BaseNode*, bool> insert_private(BaseNode* node,
+                                              const pair& value);
     std::pair<BaseNode*, bool> insert_private(BaseNode* node, pair&& value);
     BaseNode* merge_insert(BaseNode* node, BaseNode* src, map& source);
 };

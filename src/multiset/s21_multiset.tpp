@@ -22,7 +22,8 @@ struct multiset<Key>::Node : BaseNode {
 };
 
 template <typename Key>
-multiset<Key>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
+multiset<Key>::BaseNode::BaseNode()
+    : left(nullptr), right(nullptr), parent(this), height(1) {}
 
 template <typename Key>
 multiset<Key>::Node::Node(const key& value) : BaseNode(), data(value) {}
@@ -31,10 +32,12 @@ template <typename Key>
 multiset<Key>::Node::Node(key&& value) : BaseNode(), data(value) {}
 
 template <typename Key>
-multiset<Key>::multiset() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+multiset<Key>::multiset() noexcept
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
 
 template <typename Key>
-multiset<Key>::multiset(const multiset& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+multiset<Key>::multiset(const multiset& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
             insert(*it);
@@ -47,7 +50,8 @@ multiset<Key>::multiset(const multiset& other) : fake_node(new BaseNode()), left
 }
 
 template <typename Key>
-multiset<Key>::multiset(std::initializer_list<key> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+multiset<Key>::multiset(std::initializer_list<key> init)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (const auto& elem : init) {
             insert(elem);
@@ -60,7 +64,8 @@ multiset<Key>::multiset(std::initializer_list<key> init) : fake_node(new BaseNod
 }
 
 template <typename Key>
-multiset<Key>::multiset(multiset&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
+multiset<Key>::multiset(multiset&& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
     if (other.size() > 0) {
         fake_node->left = other.fake_node->left;
         fake_node->left->parent = fake_node;
@@ -188,7 +193,8 @@ int multiset<Key>::get_height(BaseNode* node) {
 
 template <typename Key>
 int multiset<Key>::get_balance_factor(BaseNode* node) {
-    return node != nullptr ? get_height(node->left) - get_height(node->right) : 0;
+    return node != nullptr ? get_height(node->left) - get_height(node->right)
+                           : 0;
 }
 
 template <typename Key>
@@ -203,8 +209,10 @@ void multiset<Key>::delete_node(Node* node) {
 }
 
 template <typename Key>
-typename multiset<Key>::BaseNode* multiset<Key>::rebalance_node(BaseNode* node) {
-    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
+typename multiset<Key>::BaseNode* multiset<Key>::rebalance_node(
+    BaseNode* node) {
+    node->height =
+        std::max(get_height(node->left), get_height(node->right)) + 1;
 
     int balance_factor = get_balance_factor(node);
 
@@ -230,7 +238,8 @@ typename multiset<Key>::BaseNode* multiset<Key>::rebalance_node(BaseNode* node) 
 }
 
 template <typename Key>
-typename multiset<Key>::BaseNode* multiset<Key>::min_value_node(BaseNode* node) {
+typename multiset<Key>::BaseNode* multiset<Key>::min_value_node(
+    BaseNode* node) {
     BaseNode* current = node;
 
     while (current->left != nullptr) {
@@ -263,8 +272,10 @@ typename multiset<Key>::BaseNode* multiset<Key>::rotate_right(BaseNode* node) {
         right->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
@@ -294,14 +305,17 @@ typename multiset<Key>::BaseNode* multiset<Key>::rotate_left(BaseNode* node) {
         left->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private(BaseNode* node, const key& value) {
+std::pair<typename multiset<Key>::BaseNode*, bool>
+multiset<Key>::insert_private(BaseNode* node, const key& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -317,7 +331,8 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
         node = new_node;
 
         ++size_;
-        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node &&
+            value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -339,7 +354,8 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private(BaseNode* node, key&& value) {
+std::pair<typename multiset<Key>::BaseNode*, bool>
+multiset<Key>::insert_private(BaseNode* node, key&& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -354,7 +370,8 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
 
         node = new_node;
         ++size_;
-        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node &&
+            value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -376,7 +393,8 @@ std::pair<typename multiset<Key>::BaseNode*, bool> multiset<Key>::insert_private
 }
 
 template <typename Key>
-typename multiset<Key>::BaseNode* multiset<Key>::merge_insert(BaseNode* node, BaseNode* src_node, multiset& source) {
+typename multiset<Key>::BaseNode* multiset<Key>::merge_insert(
+    BaseNode* node, BaseNode* src_node, multiset& source) {
     if (node == nullptr) {
         source.erase_private(iter(src_node), false);
 
@@ -386,11 +404,13 @@ typename multiset<Key>::BaseNode* multiset<Key>::merge_insert(BaseNode* node, Ba
         node->height = 1;
 
         ++size_;
-        if (leftmost != fake_node && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node && static_cast<Node*>(src_node)->data <
+                                         static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return node;
-    } else if (static_cast<Node*>(src_node)->data >= static_cast<Node*>(node)->data) {
+    } else if (static_cast<Node*>(src_node)->data >=
+               static_cast<Node*>(node)->data) {
         BaseNode* insert_res = merge_insert(node->right, src_node, source);
         node->right = insert_res;
         node->right->parent = node;
@@ -413,7 +433,8 @@ void multiset<Key>::clear() noexcept {
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(const key& value) {
+std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(
+    const key& value) {
     auto insert_res = insert_private(fake_node->left, value);
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -425,7 +446,8 @@ std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(const key& v
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(key&& value) {
+std::pair<typename multiset<Key>::iter, bool> multiset<Key>::insert(
+    key&& value) {
     auto insert_res = insert_private(fake_node->left, std::move(value));
     if (!fake_node->left) {
         fake_node->left = insert_res.first;
@@ -638,14 +660,16 @@ bool multiset<Key>::contains(const Key& key) const {
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::iter, typename multiset<Key>::iter> multiset<Key>::equal_range(const Key& key) {
+std::pair<typename multiset<Key>::iter, typename multiset<Key>::iter>
+multiset<Key>::equal_range(const Key& key) {
     iter lower = lower_bound(key);
     iter upper = upper_bound(key);
     return {lower, upper};
 }
 
 template <typename Key>
-std::pair<typename multiset<Key>::c_iter, typename multiset<Key>::c_iter> multiset<Key>::equal_range(const Key& key) const {
+std::pair<typename multiset<Key>::c_iter, typename multiset<Key>::c_iter>
+multiset<Key>::equal_range(const Key& key) const {
     c_iter lower = lower_bound(key);
     c_iter upper = upper_bound(key);
     return {lower, upper};
@@ -663,7 +687,8 @@ typename multiset<Key>::iter multiset<Key>::lower_bound(const Key& key) {
 }
 
 template <typename Key>
-typename multiset<Key>::c_iter multiset<Key>::lower_bound(const Key& key) const {
+typename multiset<Key>::c_iter multiset<Key>::lower_bound(
+    const Key& key) const {
     auto it = cbegin();
 
     while ((*it < key) && (it != cend())) {
@@ -685,7 +710,8 @@ typename multiset<Key>::iter multiset<Key>::upper_bound(const Key& key) {
 }
 
 template <typename Key>
-typename multiset<Key>::c_iter multiset<Key>::upper_bound(const Key& key) const {
+typename multiset<Key>::c_iter multiset<Key>::upper_bound(
+    const Key& key) const {
     auto it = cbegin();
 
     while ((*it <= key) && (it != cend())) {
@@ -697,7 +723,8 @@ typename multiset<Key>::c_iter multiset<Key>::upper_bound(const Key& key) const 
 
 template <typename Key>
 template <typename... Args>
-std::vector<std::pair<typename multiset<Key>::iter, bool>> multiset<Key>::insert_many(Args&&... args) {
+std::vector<std::pair<typename multiset<Key>::iter, bool>>
+multiset<Key>::insert_many(Args&&... args) {
     std::vector<std::pair<iter, bool>> res;
     size_t args_count = sizeof...(Args);
     res.reserve(args_count);

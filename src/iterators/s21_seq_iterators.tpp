@@ -13,13 +13,17 @@ template <typename T>
 SequenceIterator<T>::SequenceIterator(T* ptr) noexcept : ptr_(ptr) {}
 
 template <typename T>
-ConstSequenceIterator<T>::ConstSequenceIterator(const T* ptr) noexcept : ptr_(ptr) {}
+ConstSequenceIterator<T>::ConstSequenceIterator(const T* ptr) noexcept
+    : ptr_(ptr) {}
 
 template <typename T>
-SequenceIterator<T>::SequenceIterator(const SequenceIterator& other) noexcept : ptr_(other.ptr_) {}
+SequenceIterator<T>::SequenceIterator(const SequenceIterator& other) noexcept
+    : ptr_(other.ptr_) {}
 
 template <typename T>
-ConstSequenceIterator<T>::ConstSequenceIterator(const ConstSequenceIterator& other) noexcept : ptr_(other.ptr_) {}
+ConstSequenceIterator<T>::ConstSequenceIterator(
+    const ConstSequenceIterator& other) noexcept
+    : ptr_(other.ptr_) {}
 
 template <typename T>
 SequenceIterator<T>::~SequenceIterator() noexcept {}
@@ -104,7 +108,8 @@ ConstSequenceIterator<T>& ConstSequenceIterator<T>::operator+=(
 }
 
 template <typename T>
-SequenceIterator<T>& SequenceIterator<T>::operator-=(std::ptrdiff_t diff) noexcept {
+SequenceIterator<T>& SequenceIterator<T>::operator-=(
+    std::ptrdiff_t diff) noexcept {
     ptr_ -= diff;
     return *this;
 }

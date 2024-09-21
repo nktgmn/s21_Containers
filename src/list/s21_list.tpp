@@ -771,7 +771,8 @@ void list<T>::sort() {
 
 template <typename T>
 template <typename... Args>
-typename list<T>::ListIterator list<T>::insert_many(ListConstIterator pos, Args&&... args) {
+typename list<T>::ListIterator list<T>::insert_many(ListConstIterator pos,
+                                                    Args&&... args) {
     (insert(pos, std::forward<Args>(args)), ...);
     return ListIterator(pos.ptr_);
 }

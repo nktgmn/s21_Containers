@@ -24,13 +24,16 @@ template <typename Key, typename Value>
 map<Key, Value>::c_iter::ConstMapIterator(Node* ptr) noexcept : node(ptr) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::iter::MapIterator(const iter& other) noexcept : node(other.node) {}
+map<Key, Value>::iter::MapIterator(const iter& other) noexcept
+    : node(other.node) {}
 
 template <typename Key, typename Value>
-map<Key, Value>::c_iter::ConstMapIterator(const c_iter& other) noexcept : node(other.node) {}
+map<Key, Value>::c_iter::ConstMapIterator(const c_iter& other) noexcept
+    : node(other.node) {}
 
 template <typename Key, typename Value>
-typename map<Key, Value>::iter& map<Key, Value>::iter::operator=(const iter& other) noexcept {
+typename map<Key, Value>::iter& map<Key, Value>::iter::operator=(
+    const iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }
@@ -39,7 +42,8 @@ typename map<Key, Value>::iter& map<Key, Value>::iter::operator=(const iter& oth
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator=(const c_iter& other) noexcept {
+typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator=(
+    const c_iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }
@@ -53,7 +57,8 @@ typename map<Key, Value>::pair& map<Key, Value>::iter::operator*() noexcept {
 }
 
 template <typename Key, typename Value>
-const typename map<Key, Value>::pair& map<Key, Value>::c_iter::operator*() noexcept {
+const typename map<Key, Value>::pair&
+map<Key, Value>::c_iter::operator*() noexcept {
     return static_cast<Node*>(node)->kv;
 }
 
@@ -77,7 +82,8 @@ typename map<Key, Value>::iter& map<Key, Value>::iter::operator++() noexcept {
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator++() noexcept {
+typename map<Key, Value>::c_iter&
+map<Key, Value>::c_iter::operator++() noexcept {
     if (node->right) {
         node = node->right;
         while (node->left) {
@@ -115,7 +121,8 @@ typename map<Key, Value>::iter& map<Key, Value>::iter::operator--() noexcept {
 }
 
 template <typename Key, typename Value>
-typename map<Key, Value>::c_iter& map<Key, Value>::c_iter::operator--() noexcept {
+typename map<Key, Value>::c_iter&
+map<Key, Value>::c_iter::operator--() noexcept {
     if (node->left) {
         node = node->left;
         while (node->right) {

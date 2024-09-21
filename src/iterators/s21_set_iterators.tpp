@@ -27,7 +27,8 @@ template <typename Key>
 set<Key>::iter::SetIterator(const iter& other) noexcept : node(other.node) {}
 
 template <typename Key>
-set<Key>::c_iter::ConstSetIterator(const c_iter& other) noexcept : node(other.node) {}
+set<Key>::c_iter::ConstSetIterator(const c_iter& other) noexcept
+    : node(other.node) {}
 
 template <typename Key>
 typename set<Key>::iter& set<Key>::iter::operator=(const iter& other) noexcept {
@@ -39,7 +40,8 @@ typename set<Key>::iter& set<Key>::iter::operator=(const iter& other) noexcept {
 }
 
 template <typename Key>
-typename set<Key>::c_iter& set<Key>::c_iter::operator=(const c_iter& other) noexcept {
+typename set<Key>::c_iter& set<Key>::c_iter::operator=(
+    const c_iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }

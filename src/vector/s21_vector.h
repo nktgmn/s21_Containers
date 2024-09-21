@@ -60,10 +60,10 @@ class vector {
     c_iter cend() const noexcept;
 
     template <typename... Args>
-    iter insert_many(c_iter pos, Args&&... args);
+    iter insert_many(c_iter pos, Args &&...args);
 
     template <typename... Args>
-    void insert_many_back(Args&&... args);
+    void insert_many_back(Args &&...args);
 
    private:
     T *data_;

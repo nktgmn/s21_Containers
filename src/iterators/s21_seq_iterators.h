@@ -39,7 +39,7 @@ class SequenceIterator {
    private:
     T* ptr_;
 
-    friend class vector<T>;    
+    friend class vector<T>;
 };
 
 template <typename T>

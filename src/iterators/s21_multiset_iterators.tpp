@@ -24,13 +24,16 @@ template <typename Key>
 multiset<Key>::c_iter::ConstSetIterator(Node* ptr) noexcept : node(ptr) {}
 
 template <typename Key>
-multiset<Key>::iter::SetIterator(const iter& other) noexcept : node(other.node) {}
+multiset<Key>::iter::SetIterator(const iter& other) noexcept
+    : node(other.node) {}
 
 template <typename Key>
-multiset<Key>::c_iter::ConstSetIterator(const c_iter& other) noexcept : node(other.node) {}
+multiset<Key>::c_iter::ConstSetIterator(const c_iter& other) noexcept
+    : node(other.node) {}
 
 template <typename Key>
-typename multiset<Key>::iter& multiset<Key>::iter::operator=(const iter& other) noexcept {
+typename multiset<Key>::iter& multiset<Key>::iter::operator=(
+    const iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }
@@ -39,7 +42,8 @@ typename multiset<Key>::iter& multiset<Key>::iter::operator=(const iter& other) 
 }
 
 template <typename Key>
-typename multiset<Key>::c_iter& multiset<Key>::c_iter::operator=(const c_iter& other) noexcept {
+typename multiset<Key>::c_iter& multiset<Key>::c_iter::operator=(
+    const c_iter& other) noexcept {
     if (this != &other) {
         node = other.node;
     }

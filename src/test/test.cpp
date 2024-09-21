@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "test.h"
+
+#include <gtest/gtest.h>
 
 TEST(VECTOR, Constructors) {
     s21::vector<int> s21_1;
@@ -135,6 +135,8 @@ TEST(VECTOR, Insert) {
     auto std_it_2 = std_1.insert(std_it_1, 9);
     EXPECT_TRUE(*s21_it_2 == *std_it_2);
     EXPECT_TRUE(s21_1 == std_1);
+
+
     s21_it_1 = s21_1.cbegin();
     std_it_1 = std_1.cbegin();
     for (int k = 0; k < 2; ++k) {
@@ -142,8 +144,22 @@ TEST(VECTOR, Insert) {
         ++std_it_1;
     }
     const int y = 8;
+
+    
+
     auto s21_it_3 = s21_1.insert(s21_it_1, y);
     auto std_it_3 = std_1.insert(std_it_1, y);
+
+
+    // for (auto it = s21_1.begin(); it != s21_1.end(); ++it) {
+    //     std::cout << *it << " ";
+    // }
+    // std::cout << "; " << s21_1.size() << " " << s21_1.capacity() << std::endl;
+    // for (auto it = std_1.begin(); it != std_1.end(); ++it) {
+    //     std::cout << *it << " ";
+    // }
+    // std::cout << "; " << std_1.size() << " " << std_1.capacity() << std::endl;
+
     EXPECT_TRUE(*s21_it_3 == *std_it_3);
     s21_it_1 = s21_1.cend();
     std_it_1 = std_1.cend();
@@ -1032,8 +1048,10 @@ TEST(LIST, Erase) {
     EXPECT_TRUE(*s21_it_4 == *std_it_4);
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21::list<s21::list<int>> s21_2 = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}};
-    std::list<std::list<int>> std_2 = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}};
+    s21::list<s21::list<int>> s21_2 = {{1, 2}, {3, 4},  {5, 6},
+                                       {7, 8}, {9, 10}, {11, 12}};
+    std::list<std::list<int>> std_2 = {{1, 2}, {3, 4},  {5, 6},
+                                       {7, 8}, {9, 10}, {11, 12}};
     auto s21_it_5 = s21_2.cbegin();
     auto std_it_5 = std_2.cbegin();
     auto s21_it_6 = s21_2.erase(s21_it_5);
@@ -1095,8 +1113,10 @@ TEST(LIST, PushPop) {
     }
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21::list<s21::list<int>> s21_2 = {{1}, {2, 3}, {3, 4, 5}, {0}, {-2}, {2, 55}};
-    std::list<std::list<int>> std_2 = {{1}, {2, 3}, {3, 4, 5}, {0}, {-2}, {2, 55}};
+    s21::list<s21::list<int>> s21_2 = {{1}, {2, 3}, {3, 4, 5},
+                                       {0}, {-2},   {2, 55}};
+    std::list<std::list<int>> std_2 = {{1}, {2, 3}, {3, 4, 5},
+                                       {0}, {-2},   {2, 55}};
     s21_2.push_front({1, 2});
     std_2.push_front({1, 2});
     EXPECT_TRUE(s21_2 == std_2);
@@ -1629,8 +1649,10 @@ TEST(MAP, Constructors) {
     std::map<std::list<int>, std::string> std_11 = {};
     EXPECT_TRUE(s21_11 == std_11);
 
-    s21::map<std::string, std::list<int>> s21_12 = {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
-    std::map<std::string, std::list<int>> std_12 = {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
+    s21::map<std::string, std::list<int>> s21_12 = {
+        {"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
+    std::map<std::string, std::list<int>> std_12 = {
+        {"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
     EXPECT_TRUE(s21_12 == std_12);
 
     s21::map<std::string, std::list<int>> s21_13(s21_12);
@@ -1646,15 +1668,19 @@ TEST(MAP, Constructors) {
     EXPECT_TRUE(s21_15 == std_15);
     EXPECT_TRUE(s21_12 == std_12);
 
-    s21::map<std::string, std::list<int>> s21_16 = {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
-    std::map<std::string, std::list<int>> std_16 = {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
+    s21::map<std::string, std::list<int>> s21_16 = {
+        {"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
+    std::map<std::string, std::list<int>> std_16 = {
+        {"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}};
     s21::map<std::string, std::list<int>> s21_17(std::move(s21_16));
     std::map<std::string, std::list<int>> std_17(std::move(std_16));
     EXPECT_TRUE(s21_16 == std_16);
     EXPECT_TRUE(s21_17 == std_17);
 
-    s21::map<std::string, std::list<int>> s21_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    std::map<std::string, std::list<int>> std_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_18(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_18(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     EXPECT_TRUE(s21_18 == std_18);
 }
 
@@ -1743,10 +1769,14 @@ TEST(MAP, OperatorEq) {
     EXPECT_TRUE(s21_15 == std_15);
     EXPECT_TRUE(s21_16 == std_16);
 
-    s21::map<std::string, std::list<int>> s21_17({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    std::map<std::string, std::list<int>> std_17({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    s21::map<std::string, std::list<int>> s21_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
-    std::map<std::string, std::list<int>> std_18({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_17(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_17(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_18(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
+    std::map<std::string, std::list<int>> std_18(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}, {"cc", {1, 5}}});
     s21_17 = s21_18;
     std_17 = std_18;
     EXPECT_TRUE(s21_17 == std_17);
@@ -1775,16 +1805,20 @@ TEST(MAP, AtOperatorBracketsInsertOrAssign) {
     EXPECT_TRUE(s21_2.at(1) == std_2.at(1));
     EXPECT_THROW(s21_2.at(-2), std::out_of_range);
 
-    s21::map<std::string, std::list<int>> s21_3({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    std::map<std::string, std::list<int>> std_3({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_3(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_3(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     EXPECT_TRUE(s21_3.at("bb") == std_3.at("bb"));
     EXPECT_THROW(s21_3.at("accc"), std::out_of_range);
     s21_3.at("ba") = {1};
     std_3.at("ba") = {1};
     EXPECT_TRUE(s21_3 == std_3);
 
-    const s21::map<std::string, std::list<int>> s21_4({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    const std::map<std::string, std::list<int>> std_4({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    const s21::map<std::string, std::list<int>> s21_4(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    const std::map<std::string, std::list<int>> std_4(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     EXPECT_TRUE(s21_4.at("aa") == std_4.at("aa"));
     EXPECT_THROW(s21_4.at("z"), std::out_of_range);
 
@@ -1828,8 +1862,10 @@ TEST(MAP, CountFindSwapContains) {
     EXPECT_TRUE(s21_1.count(1) == std_1.count(1));
     EXPECT_FALSE(s21_1.contains(1));
 
-    s21::map<std::string, std::list<int>> s21_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
-    std::map<std::string, std::list<int>> std_2({{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    s21::map<std::string, std::list<int>> s21_2(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
+    std::map<std::string, std::list<int>> std_2(
+        {{"bb", {1, 2}}, {"ba", {1}}, {"aa", {1, 5}}});
     EXPECT_TRUE(s21_2.count("bb") == std_2.count("bb"));
     EXPECT_TRUE(s21_2.count("qq") == std_2.count("qq"));
     EXPECT_TRUE(s21_2.contains("bb"));
@@ -1864,8 +1900,12 @@ TEST(MAP, CountFindSwapContains) {
 }
 
 TEST(MAP, Erase) {
-    s21::map<int, int> s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {90, 90}};
-    std::map<int, int> std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {90, 90}};
+    s21::map<int, int> s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20},
+                                {40, 40}, {60, 60}, {80, 80}, {10, 10},
+                                {25, 25}, {35, 35}, {90, 90}};
+    std::map<int, int> std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20},
+                                {40, 40}, {60, 60}, {80, 80}, {10, 10},
+                                {25, 25}, {35, 35}, {90, 90}};
     auto sit_1 = s21_1.erase(s21_1.begin());
     auto it_1 = std_1.erase(std_1.begin());
     EXPECT_TRUE((*sit_1).first == (*it_1).first);
@@ -1884,8 +1924,10 @@ TEST(MAP, Erase) {
     it_1 = std_1.erase(std_1.cbegin());
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
-    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
     sit_1 = s21_1.erase(++ ++ ++s21_1.cbegin());
     it_1 = std_1.erase(++ ++ ++std_1.cbegin());
     EXPECT_TRUE((*sit_1).first == (*it_1).first);
@@ -1895,14 +1937,18 @@ TEST(MAP, Erase) {
     EXPECT_TRUE((*sit_1).first == (*it_1).first);
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
-    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
     s21_1.erase(s21_1.cbegin(), s21_1.cend());
     std_1.erase(std_1.cbegin(), std_1.cend());
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
-    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60},
+             {80, 80}, {10, 10}, {25, 25}, {35, 35}, {37, 37}};
     size_t s_res = s21_1.erase(99);
     size_t res = std_1.erase(99);
     EXPECT_TRUE(s_res == res);
@@ -1925,8 +1971,10 @@ TEST(MAP, Erase) {
     EXPECT_TRUE((*sit_1).first == (*it_1).first);
     EXPECT_TRUE(s21_1 == std_1);
 
-    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {65, 65}};
-    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20}, {40, 40}, {60, 60}, {80, 80}, {65, 65}};
+    s21_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20},
+             {40, 40}, {60, 60}, {80, 80}, {65, 65}};
+    std_1 = {{50, 50}, {30, 30}, {70, 70}, {20, 20},
+             {40, 40}, {60, 60}, {80, 80}, {65, 65}};
     sit_1 = s21_1.erase(++ ++ ++s21_1.begin());
     it_1 = std_1.erase(++ ++ ++std_1.begin());
     EXPECT_TRUE((*sit_1).first == (*it_1).first);
@@ -1994,7 +2042,8 @@ TEST(MAP, Merge) {
 
 TEST(MAP, InsertMany) {
     s21::map<int, int> s21_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}};
-    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33}, {0, 0}, {-1, 4}, {5, 5}};
+    std::map<int, int> std_1 = {{1, 11}, {2, 22}, {3, 33},
+                                {0, 0},  {-1, 4}, {5, 5}};
     s21_1.insert_many(std::make_pair(-1, 4), std::make_pair(5, 5));
     EXPECT_TRUE(s21_1 == std_1);
 }
@@ -2579,13 +2628,17 @@ TEST(MULTISET, CountFindSwapContainsEqualRange) {
     EXPECT_TRUE(s21_3 == std_3);
 
     s21_1 = {9, 10, 10, 10, 30, 10};
-    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> res = {++s21_1.begin(), --s21_1.end()};
-    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> eq = s21_1.equal_range(10);
+    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> res = {
+        ++s21_1.begin(), --s21_1.end()};
+    std::pair<s21::multiset<int>::iter, s21::multiset<int>::iter> eq =
+        s21_1.equal_range(10);
     EXPECT_TRUE(res == eq);
 
     const s21::multiset<int> s21_5 = {9, 10, 10, 10, 30, 10};
-    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_res = {++s21_5.cbegin(), --s21_5.cend()};
-    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_eq = s21_5.equal_range(10);
+    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_res = {
+        ++s21_5.cbegin(), --s21_5.cend()};
+    std::pair<s21::multiset<int>::c_iter, s21::multiset<int>::c_iter> c_eq =
+        s21_5.equal_range(10);
     EXPECT_TRUE(c_res == c_eq);
 }
 

@@ -22,7 +22,8 @@ struct set<Key>::Node : BaseNode {
 };
 
 template <typename Key>
-set<Key>::BaseNode::BaseNode() : left(nullptr), right(nullptr), parent(this), height(1) {}
+set<Key>::BaseNode::BaseNode()
+    : left(nullptr), right(nullptr), parent(this), height(1) {}
 
 template <typename Key>
 set<Key>::Node::Node(const key& value) : BaseNode(), data(value) {}
@@ -31,10 +32,12 @@ template <typename Key>
 set<Key>::Node::Node(key&& value) : BaseNode(), data(value) {}
 
 template <typename Key>
-set<Key>::set() noexcept : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
+set<Key>::set() noexcept
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {}
 
 template <typename Key>
-set<Key>::set(const set& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+set<Key>::set(const set& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (auto it = other.cbegin(); it != other.cend(); ++it) {
             insert(*it);
@@ -47,7 +50,8 @@ set<Key>::set(const set& other) : fake_node(new BaseNode()), leftmost(fake_node)
 }
 
 template <typename Key>
-set<Key>::set(std::initializer_list<key> init) : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
+set<Key>::set(std::initializer_list<key> init)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(0) {
     try {
         for (const auto& elem : init) {
             insert(elem);
@@ -60,7 +64,8 @@ set<Key>::set(std::initializer_list<key> init) : fake_node(new BaseNode()), left
 }
 
 template <typename Key>
-set<Key>::set(set&& other) : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
+set<Key>::set(set&& other)
+    : fake_node(new BaseNode()), leftmost(fake_node), size_(other.size_) {
     if (other.size() > 0) {
         fake_node->left = other.fake_node->left;
         fake_node->left->parent = fake_node;
@@ -188,7 +193,8 @@ int set<Key>::get_height(BaseNode* node) {
 
 template <typename Key>
 int set<Key>::get_balance_factor(BaseNode* node) {
-    return node != nullptr ? get_height(node->left) - get_height(node->right) : 0;
+    return node != nullptr ? get_height(node->left) - get_height(node->right)
+                           : 0;
 }
 
 template <typename Key>
@@ -204,7 +210,8 @@ void set<Key>::delete_node(Node* node) {
 
 template <typename Key>
 typename set<Key>::BaseNode* set<Key>::rebalance_node(BaseNode* node) {
-    node->height = std::max(get_height(node->left), get_height(node->right)) + 1;
+    node->height =
+        std::max(get_height(node->left), get_height(node->right)) + 1;
 
     int balance_factor = get_balance_factor(node);
 
@@ -263,8 +270,10 @@ typename set<Key>::BaseNode* set<Key>::rotate_right(BaseNode* node) {
         right->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
@@ -294,14 +303,17 @@ typename set<Key>::BaseNode* set<Key>::rotate_left(BaseNode* node) {
         left->parent = node;
     }
 
-    node->height = 1 + std::max(get_height(node->left), get_height(node->right));
-    new_root->height = 1 + std::max(get_height(new_root->left), get_height(new_root->right));
+    node->height =
+        1 + std::max(get_height(node->left), get_height(node->right));
+    new_root->height =
+        1 + std::max(get_height(new_root->left), get_height(new_root->right));
 
     return new_root;
 }
 
 template <typename Key>
-std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode* node, const key& value) {
+std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(
+    BaseNode* node, const key& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -317,7 +329,8 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
         node = new_node;
 
         ++size_;
-        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node &&
+            value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -341,7 +354,8 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 }
 
 template <typename Key>
-std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode* node, key&& value) {
+std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(
+    BaseNode* node, key&& value) {
     bool inserted = false;
 
     if (node == nullptr) {
@@ -356,7 +370,8 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 
         node = new_node;
         ++size_;
-        if (leftmost != fake_node && value < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node &&
+            value < static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return {node, true};
@@ -380,7 +395,9 @@ std::pair<typename set<Key>::BaseNode*, bool> set<Key>::insert_private(BaseNode*
 }
 
 template <typename Key>
-typename set<Key>::BaseNode* set<Key>::merge_insert(BaseNode* node, BaseNode* src_node, set& source) {
+typename set<Key>::BaseNode* set<Key>::merge_insert(BaseNode* node,
+                                                    BaseNode* src_node,
+                                                    set& source) {
     if (node == nullptr) {
         source.erase_private(iter(src_node), false);
 
@@ -390,15 +407,18 @@ typename set<Key>::BaseNode* set<Key>::merge_insert(BaseNode* node, BaseNode* sr
         node->height = 1;
 
         ++size_;
-        if (leftmost != fake_node && static_cast<Node*>(src_node)->data < static_cast<Node*>(leftmost)->data) {
+        if (leftmost != fake_node && static_cast<Node*>(src_node)->data <
+                                         static_cast<Node*>(leftmost)->data) {
             leftmost = node;
         }
         return node;
-    } else if (static_cast<Node*>(src_node)->data < static_cast<Node*>(node)->data) {
+    } else if (static_cast<Node*>(src_node)->data <
+               static_cast<Node*>(node)->data) {
         BaseNode* insert_res = merge_insert(node->left, src_node, source);
         node->left = insert_res;
         node->left->parent = node;
-    } else if (static_cast<Node*>(src_node)->data > static_cast<Node*>(node)->data) {
+    } else if (static_cast<Node*>(src_node)->data >
+               static_cast<Node*>(node)->data) {
         BaseNode* insert_res = merge_insert(node->right, src_node, source);
         node->right = insert_res;
         node->right->parent = node;
@@ -642,7 +662,8 @@ bool set<Key>::contains(const Key& key) const {
 
 template <typename Key>
 template <typename... Args>
-std::vector<std::pair<typename set<Key>::iter, bool>> set<Key>::insert_many(Args&&... args) {
+std::vector<std::pair<typename set<Key>::iter, bool>> set<Key>::insert_many(
+    Args&&... args) {
     std::vector<std::pair<iter, bool>> res;
     size_t args_count = sizeof...(Args);
     res.reserve(args_count);

@@ -27,10 +27,12 @@ template <typename T, typename N>
 bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec);
 
 template <typename T, typename S, size_t N>
-bool operator==(const s21::array<T, N>& s21_array, const std::array<S, N>& array);
+bool operator==(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array);
 
 template <typename T, typename S, size_t N>
-bool operator!=(const s21::array<T, N>& s21_array, const std::array<S, N>& array);
+bool operator!=(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array);
 
 template <typename K, typename V>
 bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map);
@@ -45,10 +47,12 @@ template <typename K>
 bool operator!=(const s21::set<K>& s21_set, const std::set<K>& set);
 
 template <typename K>
-bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset);
+bool operator==(const s21::multiset<K>& s21_multiset,
+                const std::multiset<K>& multiset);
 
 template <typename K>
-bool operator!=(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset);
+bool operator!=(const s21::multiset<K>& s21_multiset,
+                const std::multiset<K>& multiset);
 
 template <typename T, typename N>
 bool operator==(const s21::list<T>& s21_lst, const std::list<N>& lst) {
@@ -116,7 +120,8 @@ bool operator!=(const s21::vector<T>& s21_vec, const std::vector<N>& vec) {
 }
 
 template <typename T, typename S, size_t N>
-bool operator==(const s21::array<T, N>& s21_array, const std::array<S, N>& array) {
+bool operator==(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array) {
     bool res = true;
 
     for (size_t i = 0; i < N; ++i) {
@@ -129,7 +134,8 @@ bool operator==(const s21::array<T, N>& s21_array, const std::array<S, N>& array
 }
 
 template <typename T, typename S, size_t N>
-bool operator!=(const s21::array<T, N>& s21_array, const std::array<S, N>& array) {
+bool operator!=(const s21::array<T, N>& s21_array,
+                const std::array<S, N>& array) {
     return !(s21_array == array);
 }
 
@@ -143,7 +149,8 @@ bool operator==(const s21::map<K, V>& s21_map, const std::map<K, V>& map) {
     auto it_end = map.cend();
 
     while (s21_it_beg != s21_it_end) {
-        if (((*s21_it_beg).first != (*it_beg).first) || ((*s21_it_beg).second != (*it_beg).second)) {
+        if (((*s21_it_beg).first != (*it_beg).first) ||
+            ((*s21_it_beg).second != (*it_beg).second)) {
             res = false;
             break;
         }
@@ -202,7 +209,8 @@ bool operator!=(const s21::set<K>& s21_set, const std::set<K>& set) {
 }
 
 template <typename K>
-bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset) {
+bool operator==(const s21::multiset<K>& s21_multiset,
+                const std::multiset<K>& multiset) {
     bool res = true;
 
     auto s21_it_beg = s21_multiset.cbegin();
@@ -231,7 +239,8 @@ bool operator==(const s21::multiset<K>& s21_multiset, const std::multiset<K>& mu
 }
 
 template <typename K>
-bool operator!=(const s21::multiset<K>& s21_multiset, const std::multiset<K>& multiset) {
+bool operator!=(const s21::multiset<K>& s21_multiset,
+                const std::multiset<K>& multiset) {
     return !(s21_multiset == multiset);
 }
 
