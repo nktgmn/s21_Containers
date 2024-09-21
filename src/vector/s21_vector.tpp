@@ -30,18 +30,28 @@ vector<T>::vector(std::initializer_list<T> init)
 
 template <typename T>
 vector<T>::vector(const vector &other)
-    : data_(reinterpret_cast<T *>(new char[other.size() * sizeof(T)])),
+    : data_(reinterpret_cast<T *>(new char[other.capacity() * sizeof(T)])),
       size_(other.size_),
       capacity_(other.capacity_) {
     size_t k = 0;
-
     try {
-        for (; k < size_; ++k) {
-            new (data_ + k) T(other.data_[k]);
+        for (; k < capacity_; ++k) {
+            new (data_ + k) T();
         }
-
     } catch (...) {
         for (size_t i = 0; i < k; ++i) {
+            (data_ + i)->~T();
+        }
+        delete[] reinterpret_cast<char *>(data_);
+        throw;
+    }
+
+    try {
+        for (size_t i = 0; i < size_; ++i) {
+            data_[i] = other.data_[i];
+        }
+    } catch (...) {
+        for (size_t i = 0; i < capacity_; ++i) {
             (data_ + i)->~T();
         }
         delete[] reinterpret_cast<char *>(data_);
@@ -66,23 +76,30 @@ vector<T>::~vector() {
 template <typename T>
 vector<T> &vector<T>::operator=(const vector &other) {
     if (this != &other) {
-        size_t k = 0;
-
         size_t new_cap =
             other.capacity_ > capacity_ ? other.capacity_ : capacity_;
 
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
+        size_t k = 0;
         try {
-            for (; k < other.size_; ++k) {
-                new (new_data + k) T(other.data_[k]);
-            }
-
             for (; k < new_cap; ++k) {
                 new (new_data + k) T();
             }
         } catch (...) {
             for (size_t i = 0; i < k; ++i) {
+                (new_data + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(new_data);
+            throw;
+        }
+
+        try {
+            for (size_t i = 0; i < other.size_; ++i) {
+                new_data[i] = other.data_[i];
+            }
+        } catch (...) {
+            for (size_t i = 0; i < new_cap; ++i) {
                 (new_data + i)->~T();
             }
             delete[] reinterpret_cast<char *>(new_data);
@@ -120,20 +137,32 @@ vector<T> &vector<T>::operator=(vector &&other) noexcept {
 
 template <typename T>
 vector<T> &vector<T>::operator=(std::initializer_list<T> ilist) {
-    size_t k = 0;
-
     size_t new_cap = ilist.size() > capacity_ ? ilist.size() : capacity_;
 
     T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
+    size_t k = 0;
+    try {
+        for (; k < new_cap; ++k) {
+            new (new_data + k) T();
+        }
+    } catch (...) {
+        for (size_t i = 0; i < k; ++i) {
+            (new_data + i)->~T();
+        }
+        delete[] reinterpret_cast<char *>(new_data);
+        throw;
+    }
+
+    size_t s = 0;
     try {
         for (const auto &elem : ilist) {
-            new (new_data + k) T(elem);
-            ++k;
+            new_data[s] = elem;
+            ++s;
         }
 
     } catch (...) {
-        for (size_t i = 0; i < k; ++i) {
+        for (size_t i = 0; i < new_cap; ++i) {
             (new_data + i)->~T();
         }
         delete[] reinterpret_cast<char *>(new_data);
@@ -231,9 +260,20 @@ void vector<T>::reserve(size_t new_cap) {
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
         size_t k = 0;
+        try {
+            for (; k < new_cap; ++k) {
+                new (new_data + k) T();
+            }
+        } catch (...) {
+            for (size_t i = 0; i < k; ++i) {
+                (new_data + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(new_data);
+            throw;
+        }
 
-        for (; k < size_; ++k) {
-            new (new_data + k) T(std::move(data_[k]));
+        for (size_t i = 0; i < size_; ++i) {
+            new_data[i] = std::move(data_[i]);
         }
 
         delete[] reinterpret_cast<char *>(data_);
@@ -290,11 +330,25 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, T &&value) {
     } else {
         size_t new_cap = capacity_ > 0 ? capacity_ * 2 : 1;
 
-        T *old_data = data_;
+        T* old_data = data_;
 
         try {
             data_ = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
         } catch (...) {
+            data_ = old_data;
+            throw;
+        }
+
+        size_t k = 0;
+        try {
+            for (; k < new_cap; ++k) {
+                new (data_ + k) T();
+            }
+        } catch (...) {
+            for (size_t i = 0; i < k; ++i) {
+                (data_ + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(data_);
             data_ = old_data;
             throw;
         }
@@ -331,7 +385,8 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
 
     if (size_ + count <= capacity_) {
         for (size_t k = 0; k < size_ - diff; ++k) {
-            *(data_ + size_ - 1 + count - k) = std::move(*(data_ + size_ - 1 - k));
+            *(data_ + size_ - 1 + count - k) =
+                std::move(*(data_ + size_ - 1 - k));
         }
 
         size_t k = 0;
@@ -341,7 +396,7 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
             }
         } catch (...) {
             for (size_t i = 0; i < k; ++i) {
-                delete (data_ + diff + i);
+                (data_ + diff + i)->~T();
             }
 
             for (size_t k = 0; k < size_ - diff; ++k) {
@@ -370,21 +425,26 @@ typename vector<T>::iter vector<T>::insert(c_iter pos, size_t count, const T &va
 
         size_t k = 0;
         try {
-            for (; k < count; ++k) {
-                *(data_ + diff + k) = value;
-            }
-            for (; k < new_cap - size_; ++k) {
-                *(data_ + size_ + k) = T();
+            for (; k < new_cap; ++k) {
+                new (data_ + k) T();
             }
         } catch (...) {
             for (size_t i = 0; i < k; ++i) {
-                if (i < count) {
-                    delete (data_ + diff + i);
-                } else {
-                    delete (data_ + size_ + i);
-                }
+                (data_ + i)->~T();
             }
-            
+            delete[] reinterpret_cast<char *>(data_);
+            data_ = old_data;
+            throw;
+        }
+
+        try {
+            for (size_t i = 0; i < count; ++i) {
+                data_[diff + i] = value;
+            }
+        } catch (...) {
+            for (size_t i = 0; i < new_cap; ++i) {
+                (data_ + i)->~T();
+            }
             delete[] reinterpret_cast<char *>(data_);
             data_ = old_data;
             throw;
@@ -459,15 +519,31 @@ void vector<T>::push_back(const T &value) {
 
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
+        size_t k = 0;
         try {
-            new (new_data + size_) T(value);
+            for (; k < new_cap; ++k) {
+                new (new_data + k) T();
+            }
         } catch (...) {
+            for (size_t i = 0; i < k; ++i) {
+                (new_data + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(new_data);
+            throw;
+        }
+
+        try {
+            new_data[size_] = value;
+        } catch (...) {
+            for (size_t i = 0; i < new_cap; ++i) {
+                (new_data + i)->~T();
+            }
             delete[] reinterpret_cast<char *>(new_data);
             throw;
         }
 
         for (size_t k = 0; k < size_; ++k) {
-            new (new_data + k) T(std::move(data_[k]));
+            new_data[k] = std::move(data_[k]);
         }
 
         delete[] reinterpret_cast<char *>(data_);
@@ -486,9 +562,22 @@ void vector<T>::push_back(T &&value) {
     } else {
         size_t new_cap = capacity_ > 0 ? capacity_ * 2 : 1;
 
-        T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
+        T* new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
-        new (new_data + size_) T(std::move(value));
+        size_t k = 0;
+        try {
+            for (; k < new_cap; ++k) {
+                new (new_data + k) T();
+            }
+        } catch (...) {
+            for (size_t i = 0; i < k; ++i) {
+                (new_data + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(new_data);
+            throw;
+        }
+
+        new_data[size_] = std::move(value);
 
         for (size_t k = 0; k < size_; ++k) {
             new (new_data + k) T(std::move(data_[k]));
@@ -535,21 +624,32 @@ void vector<T>::resize(size_t count, const T &value) {
         T *new_data = reinterpret_cast<T *>(new char[new_cap * sizeof(T)]);
 
         size_t k = 0;
-
         try {
-            for (; k < count - size_; ++k) {
-                new (new_data + size_ + k) T(value);
+            for (; k < new_cap; ++k) {
+                new (new_data + k) T();
             }
         } catch (...) {
-            for (size_t j = 0; j < k; ++j) {
-                new_data[size_ + j].~T();
+            for (size_t i = 0; i < k; ++i) {
+                (new_data + i)->~T();
+            }
+            delete[] reinterpret_cast<char *>(new_data);
+            throw;
+        }
+
+        try {
+            for (size_t i = 0; i < count - size_; ++i) {
+                new_data[size_ + i] = value;
+            }
+        } catch (...) {
+            for (size_t i = 0; i < new_cap; ++i) {
+                new_data[i].~T();
             }
             delete[] reinterpret_cast<char *>(new_data);
             throw;
         }
 
         for (size_t i = 0; i < size_; ++i) {
-            new (new_data + i) T(std::move(data_[i]));
+            new_data[i] = std::move(data_[i]);
         }
 
         delete[] reinterpret_cast<char *>(data_);
@@ -562,7 +662,7 @@ void vector<T>::resize(size_t count, const T &value) {
     size_t i = 0;
     try {
         while (size_ < count) {
-            new (data_ + size_) T(value);
+            data_[size_] = value;
             ++size_;
             ++i;
         }

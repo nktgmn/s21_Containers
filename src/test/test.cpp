@@ -136,7 +136,6 @@ TEST(VECTOR, Insert) {
     EXPECT_TRUE(*s21_it_2 == *std_it_2);
     EXPECT_TRUE(s21_1 == std_1);
 
-
     s21_it_1 = s21_1.cbegin();
     std_it_1 = std_1.cbegin();
     for (int k = 0; k < 2; ++k) {
@@ -145,20 +144,8 @@ TEST(VECTOR, Insert) {
     }
     const int y = 8;
 
-    
-
     auto s21_it_3 = s21_1.insert(s21_it_1, y);
     auto std_it_3 = std_1.insert(std_it_1, y);
-
-
-    // for (auto it = s21_1.begin(); it != s21_1.end(); ++it) {
-    //     std::cout << *it << " ";
-    // }
-    // std::cout << "; " << s21_1.size() << " " << s21_1.capacity() << std::endl;
-    // for (auto it = std_1.begin(); it != std_1.end(); ++it) {
-    //     std::cout << *it << " ";
-    // }
-    // std::cout << "; " << std_1.size() << " " << std_1.capacity() << std::endl;
 
     EXPECT_TRUE(*s21_it_3 == *std_it_3);
     s21_it_1 = s21_1.cend();
@@ -181,8 +168,20 @@ TEST(VECTOR, Insert) {
     auto std_it_5 = std_2.cbegin();
     const s21::vector<int> s21_3 = {4, 5};
     const std::vector<int> std_3 = {4, 5};
+
+    // for (size_t k = 0; k < s21_1.capacity(); ++k) {
+    //     std::cout << s21_1.data()[k] << " ";
+    // }
+    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
+    // for (size_t k = 0; k < std_1.capacity(); ++k) {
+    //     std::cout << std_1.data()[k] << " ";
+    // }
+    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
+
     auto s21_it_6 = s21_2.insert(s21_it_5, s21_3);
     auto std_it_6 = std_2.insert(std_it_5, std_3);
+    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
+    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
     EXPECT_TRUE(*s21_it_6 == *std_it_6);
     s21_it_5 = s21_2.cbegin();
     std_it_5 = std_2.cbegin();
