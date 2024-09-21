@@ -168,20 +168,8 @@ TEST(VECTOR, Insert) {
     auto std_it_5 = std_2.cbegin();
     const s21::vector<int> s21_3 = {4, 5};
     const std::vector<int> std_3 = {4, 5};
-
-    // for (size_t k = 0; k < s21_1.capacity(); ++k) {
-    //     std::cout << s21_1.data()[k] << " ";
-    // }
-    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
-    // for (size_t k = 0; k < std_1.capacity(); ++k) {
-    //     std::cout << std_1.data()[k] << " ";
-    // }
-    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
-
     auto s21_it_6 = s21_2.insert(s21_it_5, s21_3);
     auto std_it_6 = std_2.insert(std_it_5, std_3);
-    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
-    std::cout << "; " << s21_2.size() << " " << s21_2.capacity() << std::endl;
     EXPECT_TRUE(*s21_it_6 == *std_it_6);
     s21_it_5 = s21_2.cbegin();
     std_it_5 = std_2.cbegin();
