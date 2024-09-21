@@ -32,6 +32,18 @@ template <typename T>
 ConstSequenceIterator<T>::~ConstSequenceIterator() noexcept {}
 
 template <typename T>
+SequenceIterator<T>& SequenceIterator<T>::operator=(const SequenceIterator& other) {
+    ptr_ = other.ptr_;
+    return *this;
+}
+
+template <typename T>
+ConstSequenceIterator<T>& ConstSequenceIterator<T>::operator=(const ConstSequenceIterator& other) {
+    ptr_ = other.ptr_;
+    return *this;
+}
+
+template <typename T>
 T& SequenceIterator<T>::operator*() noexcept {
     return *ptr_;
 }

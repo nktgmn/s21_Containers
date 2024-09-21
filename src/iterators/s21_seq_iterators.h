@@ -16,6 +16,8 @@ class SequenceIterator {
     SequenceIterator(const SequenceIterator& other) noexcept;
     ~SequenceIterator() noexcept;
 
+    SequenceIterator& operator=(const SequenceIterator& other);
+
     T& operator*() noexcept;
 
     SequenceIterator& operator++() noexcept;
@@ -49,6 +51,8 @@ class ConstSequenceIterator {
     ConstSequenceIterator(const T* ptr) noexcept;
     ConstSequenceIterator(const ConstSequenceIterator& other) noexcept;
     ~ConstSequenceIterator() noexcept;
+
+    ConstSequenceIterator& operator=(const ConstSequenceIterator& other);
 
     const T& operator*() const noexcept;
 
