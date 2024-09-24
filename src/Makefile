@@ -53,18 +53,11 @@ endif
 
 
 clang_format:
-	# cp ../materials/linters/.clang-format ./.clang-format
-	find . -name "*.tpp" -o -name "*.cpp" -o -name "*.h" | xargs clang-format -i
-	#rm -f .clang-format
+	find . -name "*.tpp" -o -name "*.cpp" -o -name "*.h" | xargs clang-format -i -style="{BasedOnStyle: Google, IndentWidth: 4}"
 
 
 clang_check:
-	# cp ../materials/linters/.clang-format ./.clang-format
-	find . -name "*.tpp" -o -name "*.cpp" -o -name "*.h" | xargs clang-format -i
-	#rm -f .clang-format
-
-cppcheck:
-	cppcheck --enable=all --inconclusive --std=c++17 --language=c++ .
+	find . -name "*.tpp" -o -name "*.cpp" -o -name "*.h" | xargs clang-format -n -style="{BasedOnStyle: Google, IndentWidth: 4}"
 
 clean:
 	rm -rf $(GCOV_FOLDER) $(TEST_OUTPUT)

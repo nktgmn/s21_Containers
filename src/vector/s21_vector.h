@@ -66,11 +66,11 @@ class vector {
     void insert_many_back(Args &&...args);
 
    private:
-    T* data_;
+    T *data_;
     size_t size_;
     size_t capacity_;
 
-    void initialize_memory(T* data, size_t sz);
+    void initialize_memory(T *data, size_t sz);
 };
 
 template <typename T>

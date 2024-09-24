@@ -2761,6 +2761,25 @@ TEST(MULTISET, InsertMany) {
     std::multiset<int> std_1 = {1, 2, 3, 0, 4, 5, 1, 2, 5};
     s21_1.insert_many(4, 5, 5);
     EXPECT_TRUE(s21_1 == std_1);
+
+    s21::vector<int> a = {1, 2, 3, 4, 5, 6};
+    for (size_t i = 0; i < 20; ++i) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << std::endl;
+
+    a.reserve(20);
+    for (size_t i = 0; i < 20; ++i) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << std::endl;
+
+    a.erase(a.cbegin(), ++ ++a.cbegin());
+    a.reserve(20);
+    for (size_t i = 0; i < 20; ++i) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 int main(int argc, char** argv) {
